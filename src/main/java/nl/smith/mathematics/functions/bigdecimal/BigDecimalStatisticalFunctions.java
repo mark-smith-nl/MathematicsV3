@@ -2,11 +2,15 @@ package nl.smith.mathematics.functions.bigdecimal;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import nl.smith.mathematics.functions.definition.StatisticalFunctions;
 
 @Component
+@Validated
 public class BigDecimalStatisticalFunctions implements StatisticalFunctions<BigDecimal> {
 
 	/*
@@ -19,7 +23,7 @@ public class BigDecimalStatisticalFunctions implements StatisticalFunctions<BigD
 	 */
 
 	@Override
-	public BigDecimal deviation(BigDecimal... numbers) {
+	public BigDecimal deviation(@NotEmpty BigDecimal... numbers) {
 		// TODO Auto-generated method stub
 		return null;
 	}

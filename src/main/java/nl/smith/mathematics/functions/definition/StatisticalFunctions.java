@@ -1,5 +1,7 @@
 package nl.smith.mathematics.functions.definition;
 
+import javax.validation.constraints.NotEmpty;
+
 import nl.smith.mathematics.annotation.MathematicalFunction;
 
 public interface StatisticalFunctions<T extends Number> extends Functions<T> {
@@ -13,8 +15,8 @@ public interface StatisticalFunctions<T extends Number> extends Functions<T> {
 	// @SuppressWarnings("unchecked")
 	// T average(@NotEmpty T... numbers);
 
-	@MathematicalFunction(description = "Standard deviation...")
+	@MathematicalFunction(description = "Standard deviation of a set of numbers")
 	@SuppressWarnings("unchecked")
-	T deviation(T... numbers);
+	T deviation(@NotEmpty T... numbers);
 
 }

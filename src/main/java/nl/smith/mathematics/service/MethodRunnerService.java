@@ -79,7 +79,8 @@ public class MethodRunnerService {
 	}
 
 	public static void main(String[] args) {
-		Class clazz = BigDecimalStatisticalFunctions.class;
+		BigDecimalStatisticalFunctions functionContainer = new BigDecimalStatisticalFunctions();
+		Class clazz = functionContainer.getClass();
 		Class interfaceClazz = clazz.getInterfaces()[0];
 		List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
 		System.out.println(methods.size());
@@ -89,15 +90,18 @@ public class MethodRunnerService {
 			System.out.println(method.getParameters());
 			Type parameterizedType = method.getParameters()[0].getParameterizedType();
 			Class parameterClass = (Class) parameterizedType;
+
 			if (method.isBridge()) {
 				try {
 					Method annotatedMethod = interfaceClazz.getDeclaredMethod(method.getName(), parameterClass);
 					System.out.println(annotatedMethod.getAnnotations().length);
 					MathematicalFunction annotation = (MathematicalFunction) annotatedMethod.getAnnotations()[0];
+
 					System.out.println(annotation.description());
 				} catch (NoSuchMethodException | SecurityException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+
 				}
 			}
 		});
