@@ -2,17 +2,23 @@ package nl.smith.mathematics.service;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import nl.smith.mathematics.annotation.MathematicalFunction;
+import nl.smith.mathematics.functions.bigdecimal.BigDecimalStatisticalFunctions;
 import nl.smith.mathematics.functions.definition.Functions;
 
 @Service
@@ -32,7 +38,7 @@ public class MethodRunnerService {
 	public MethodRunnerService(Set<Functions<? extends Number>> functionContainers) {
 		this.functionContainers = functionContainers;
 
-		// Add function container to the appropriate typed function container
+		// Add function container to the appropriate number type function container
 		functionContainers.forEach(functionContainer -> {
 			Class<? extends Functions> functionContainerClazz = functionContainer.getClass();
 
@@ -49,8 +55,22 @@ public class MethodRunnerService {
 			}
 
 			set.add(functionContainer);
+			Set<Method> methods = Arrays.asList(functionContainerClazz.getDeclaredMethods()).stream().filter(method -> !method.isBridge()).collect(Collectors.toSet());
+			methods.forEach(method -> {
+				if (method.getName().equals("deviation")) {
 
-			Arrays.asList(functionContainerClazz.getDeclaredMethods()).forEach(System.out::println);
+					System.out.println("--->" + method);
+					if (method.getReturnType().equals(Number.class)) {
+						System.out.print("Number ");
+						System.out.println(method.getAnnotations().length);
+					}
+					if (method.getReturnType().equals(BigDecimal.class)) {
+						System.out.print("BigDecimal ");
+						System.out.println(method.getAnnotations().length);
+					}
+				}
+			});
+			System.out.println("-------");
 
 		});
 
@@ -58,4 +78,29 @@ public class MethodRunnerService {
 
 	}
 
+	public static void main(String[] args) {
+		Class clazz = BigDecimalStatisticalFunctions.class;
+		Class interfaceClazz = clazz.getInterfaces()[0];
+		List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
+		System.out.println(methods.size());
+		methods.forEach(method -> {
+			System.out.println(String.format("public %s %s.%s() isBridge: %s annotations: %d", method.getReturnType().getSimpleName(), clazz.getSimpleName(), method.getName(),
+					method.isBridge(), method.getAnnotations().length));
+			System.out.println(method.getParameters());
+			Type parameterizedType = method.getParameters()[0].getParameterizedType();
+			Class parameterClass = (Class) parameterizedType;
+			if (method.isBridge()) {
+				try {
+					Method annotatedMethod = interfaceClazz.getDeclaredMethod(method.getName(), parameterClass);
+					System.out.println(annotatedMethod.getAnnotations().length);
+					MathematicalFunction annotation = (MathematicalFunction) annotatedMethod.getAnnotations()[0];
+					System.out.println(annotation.description());
+				} catch (NoSuchMethodException | SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
+	}
 }

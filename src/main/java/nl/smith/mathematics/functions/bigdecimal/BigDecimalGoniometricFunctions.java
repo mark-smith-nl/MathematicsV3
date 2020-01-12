@@ -4,11 +4,9 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.NotEmpty;
 
-import org.springframework.stereotype.Component;
-
 import nl.smith.mathematics.functions.definition.GoniometricFunctions;
 
-@Component
+//@Component
 public class BigDecimalGoniometricFunctions implements GoniometricFunctions<BigDecimal> {
 
 	@Override
