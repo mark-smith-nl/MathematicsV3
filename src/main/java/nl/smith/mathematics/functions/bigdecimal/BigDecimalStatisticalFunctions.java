@@ -4,11 +4,12 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.NotEmpty;
 
-import nl.smith.mathematics.annotation.FunctionContainer;
+import org.springframework.stereotype.Component;
+
 import nl.smith.mathematics.functions.definition.StatisticalFunctions;
 
-@FunctionContainer
-public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDecimal> {
+@Component
+public class BigDecimalStatisticalFunctions implements StatisticalFunctions<BigDecimal> {
 
 	@Override
 	public BigDecimal min(BigDecimal... numbers) {
@@ -29,6 +30,11 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 
 	@Override
 	public BigDecimal deviation(BigDecimal... numbers) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public BigDecimal doIt(BigDecimal number, int a) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -2,10 +2,13 @@ package nl.smith.mathematics.functions.rationalnumber;
 
 import javax.validation.constraints.NotEmpty;
 
+import org.springframework.stereotype.Component;
+
 import nl.smith.mathematics.functions.definition.StatisticalFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 
-public class RationalNumberStatisticalFunctions extends StatisticalFunctions<RationalNumber> {
+@Component
+public class RationalNumberStatisticalFunctions implements StatisticalFunctions<RationalNumber> {
 
 	@Override
 	public RationalNumber min(RationalNumber... numbers) {
