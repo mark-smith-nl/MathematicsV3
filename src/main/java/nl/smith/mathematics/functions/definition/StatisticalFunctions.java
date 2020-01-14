@@ -4,7 +4,7 @@ import javax.validation.constraints.NotEmpty;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
 
-public interface StatisticalFunctions<T extends Number> extends Functions<T> {
+public abstract class StatisticalFunctions<T extends Number> {
 
 	// @SuppressWarnings("unchecked")
 	// T min(T... numbers);
@@ -15,8 +15,8 @@ public interface StatisticalFunctions<T extends Number> extends Functions<T> {
 	// @SuppressWarnings("unchecked")
 	// T average(@NotEmpty T... numbers);
 
-	@MathematicalFunction(description = "Standard deviation of a set of numbers")
+	@MathematicalFunction(description = "Standard deviation of a set of numbers1234")
 	@SuppressWarnings("unchecked")
-	T deviation(@NotEmpty T... numbers);
+	public abstract T deviation(@NotEmpty T numbers);
 
 }

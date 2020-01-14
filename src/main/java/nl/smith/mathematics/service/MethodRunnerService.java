@@ -1,5 +1,6 @@
 package nl.smith.mathematics.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -41,11 +42,10 @@ public class MethodRunnerService {
 		// Add function container to the appropriate number type function container
 		functionContainers.forEach(functionContainer -> {
 			Class<? extends Functions> functionContainerClazz = functionContainer.getClass();
+			LOGGER.info("Process function container: {}: ", functionContainerClazz.getCanonicalName());
 
 			ParameterizedType parameterizedType = (ParameterizedType) functionContainerClazz.getGenericInterfaces()[0];
 			Class<? extends Number> numberTypeClass = (Class<? extends Number>) parameterizedType.getActualTypeArguments()[0];
-
-			LOGGER.info("Process function container: {}: ", functionContainerClazz.getCanonicalName());
 
 			Set<Functions<? extends Number>> set = numberTypeClassFunctionContainers.get(numberTypeClass);
 			if (set == null) {
@@ -81,7 +81,7 @@ public class MethodRunnerService {
 	public static void main(String[] args) {
 		BigDecimalStatisticalFunctions functionContainer = new BigDecimalStatisticalFunctions();
 		Class clazz = functionContainer.getClass();
-		Class interfaceClazz = clazz.getInterfaces()[0];
+		Class superClass = clazz.getSuperclass();
 		List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
 		System.out.println(methods.size());
 		methods.forEach(method -> {
@@ -93,7 +93,7 @@ public class MethodRunnerService {
 
 			if (method.isBridge()) {
 				try {
-					Method annotatedMethod = interfaceClazz.getDeclaredMethod(method.getName(), parameterClass);
+					Method annotatedMethod = superClass.getDeclaredMethod(method.getName(), parameterClass);
 					System.out.println(annotatedMethod.getAnnotations().length);
 					MathematicalFunction annotation = (MathematicalFunction) annotatedMethod.getAnnotations()[0];
 
@@ -102,6 +102,14 @@ public class MethodRunnerService {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 
+				}
+			} else {
+				try {
+					System.out.println(method.isBridge());
+					System.out.println(method.invoke(functionContainer, BigDecimal.ONE));
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		});

@@ -11,21 +11,12 @@ import nl.smith.mathematics.functions.definition.StatisticalFunctions;
 
 @Component
 @Validated
-public class BigDecimalStatisticalFunctions implements StatisticalFunctions<BigDecimal> {
-
-	/*
-	 * @Override public BigDecimal min(BigDecimal... numbers) { // TODO Auto-generated method stub return null; }
-	 * 
-	 * @Override public BigDecimal max(BigDecimal... numbers) { // TODO Auto-generated method stub return null; }
-	 * 
-	 * @Override public BigDecimal average(@NotEmpty(message = "A list of one or more numbers should be provided.") BigDecimal... numbers) { return numbers[0].add(BigDecimal.TEN);
-	 * }
-	 */
+public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDecimal> {
 
 	@Override
-	public BigDecimal deviation(@NotEmpty BigDecimal... numbers) {
+	public BigDecimal deviation(@NotEmpty BigDecimal numbers) {
 		// TODO Auto-generated method stub
-		return null;
+		return new BigDecimal(456);
 	}
 
 }

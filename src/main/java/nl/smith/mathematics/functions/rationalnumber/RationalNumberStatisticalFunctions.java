@@ -4,7 +4,7 @@ import nl.smith.mathematics.functions.definition.StatisticalFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 
 //@Component
-public class RationalNumberStatisticalFunctions implements StatisticalFunctions<RationalNumber> {
+public class RationalNumberStatisticalFunctions extends StatisticalFunctions<RationalNumber> {
 
 	/*
 	 * @Override public RationalNumber min(RationalNumber... numbers) { // TODO Auto-generated method stub return null; }
@@ -15,7 +15,7 @@ public class RationalNumberStatisticalFunctions implements StatisticalFunctions<
 	 */
 
 	@Override
-	public RationalNumber deviation(RationalNumber... numbers) {
+	public RationalNumber deviation(RationalNumber numbers) {
 		// TODO Auto-generated method stub
 		return null;
 	}
