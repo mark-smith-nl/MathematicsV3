@@ -9,11 +9,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 /**
  * @author mark
- * Mark a method that it is a mathematical function.
+ * Mark a class that it contains mathematical functions.
  */
-public @interface MathematicalFunction {
+public @interface MathematicalFunctionContainer {
 	String description();
 }
