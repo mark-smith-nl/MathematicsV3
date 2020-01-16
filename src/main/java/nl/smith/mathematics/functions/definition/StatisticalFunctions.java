@@ -8,7 +8,7 @@ import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.annotation.MathematicalFunctionContainer;
 
 @Validated
-@MathematicalFunctionContainer(description = "Statistical methods")
+@MathematicalFunctionContainer(description = "Statistical methods: mean, standard deviatioin, maimum, minimum")
 public abstract class StatisticalFunctions<T extends Number> extends FunctionContainer<T> {
 
 	@MathematicalFunction(description = "Standard deviation of a set of numbers")
