@@ -1,4 +1,4 @@
-package nl.smith.mathematics.functions.definition;
+package nl.smith.mathematics.mathematicalfunctions.definition;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.annotation.MathematicalFunctionContainer;

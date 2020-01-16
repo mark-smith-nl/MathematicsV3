@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import nl.smith.mathematics.annotation.MathematicalFunctionContainer;
-import nl.smith.mathematics.functions.definition.FunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.definition.FunctionContainer;
 
 @Service
 public class MethodRunnerService {

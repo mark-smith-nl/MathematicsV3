@@ -1,8 +1,8 @@
-package nl.smith.mathematics.functions.rationalnumber;
+package nl.smith.mathematics.mathematicalfunctions.rationalnumber;
 
 import org.springframework.stereotype.Component;
 
-import nl.smith.mathematics.functions.definition.StatisticalFunctions;
+import nl.smith.mathematics.mathematicalfunctions.definition.StatisticalFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 
 @Component

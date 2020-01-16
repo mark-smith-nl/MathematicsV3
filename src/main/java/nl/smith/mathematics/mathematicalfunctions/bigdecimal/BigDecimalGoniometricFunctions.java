@@ -1,10 +1,10 @@
-package nl.smith.mathematics.functions.bigdecimal;
+package nl.smith.mathematics.mathematicalfunctions.bigdecimal;
 
 import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 
-import nl.smith.mathematics.functions.definition.GoniometricFunctions;
+import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 
 @Component
 public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDecimal> {

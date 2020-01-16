@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 /**
  * @author mark
- * Mark a class that it contains mathematical functions.
+ * Mark a class that it contains mathematical mathematicalfunctions.
  */
 public @interface MathematicalFunctionContainer {
 	String description();
