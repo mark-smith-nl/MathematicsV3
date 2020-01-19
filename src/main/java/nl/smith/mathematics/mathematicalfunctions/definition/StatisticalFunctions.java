@@ -1,17 +1,15 @@
 package nl.smith.mathematics.mathematicalfunctions.definition;
 
-import javax.validation.constraints.Min;
-
-import org.springframework.validation.annotation.Validated;
-
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.annotation.MathematicalFunctions;
+import org.springframework.validation.annotation.Validated;
 
-@Validated
-@MathematicalFunctions (name="Statistical functions", description = "Statistical methods: mean, standard deviatioin, maimum, minimum")
-public abstract class StatisticalFunctions<T extends Number> extends FunctionContainer<T> {
+import javax.validation.constraints.Min;
 
-	@MathematicalFunction(description = "Standard deviation of a set of numbers")
-	public abstract T deviation(@Min(value = 1, message = "From must be greater than 0") T numbers);
+@Validated @MathematicalFunctions (name = "Statistical functions", description = "Statistical methods: mean, standard deviatioin, maimum, minimum") public abstract class StatisticalFunctions<T extends Number>
+  extends AbstractFunctionContainer<T> {
+
+  @MathematicalFunction (description = "Standard deviation of a set of numbers")
+  public abstract T deviation(@Min (value = 1, message = "From must be greater than 0") T numbers);
 
 }

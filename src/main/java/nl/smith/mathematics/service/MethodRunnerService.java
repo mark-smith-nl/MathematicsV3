@@ -1,17 +1,14 @@
 package nl.smith.mathematics.service;
 
-import nl.smith.mathematics.mathematicalfunctions.definition.FunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.definition.AbstractFunctionContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,9 +18,9 @@ import java.util.stream.Collectors;
 
   private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
 
-  private final Set<FunctionContainer<? extends Number>> functionContainers;
+  private final Set<AbstractFunctionContainer<? extends Number>> abstractFunctionContainers;
 
-  private final Map<? extends Class<? extends Number>, List<FunctionContainer<? extends Number>>> functionContainersByNumberType;
+  private final Map<? extends Class<? extends Number>, List<AbstractFunctionContainer<? extends Number>>> functionContainersByNumberType;
 
   private final Set<Class<? extends Number>> numberTypes;
 
@@ -31,10 +28,10 @@ import java.util.stream.Collectors;
   private Class<? extends Number> numberType;
 
   @Autowired
-  public MethodRunnerService(@NotEmpty Set<FunctionContainer<? extends Number>> functionContainers) {
-    this.functionContainers = Collections.unmodifiableSet(functionContainers);
+  public MethodRunnerService(@NotEmpty Set<AbstractFunctionContainer<? extends Number>> abstractFunctionContainers) {
+    this.abstractFunctionContainers = Collections.unmodifiableSet(abstractFunctionContainers);
 
-    functionContainersByNumberType = Collections.unmodifiableMap(functionContainers.stream()
+    functionContainersByNumberType = Collections.unmodifiableMap(abstractFunctionContainers.stream()
       .collect(Collectors.groupingBy(container -> container.getNumberType())));
 
     numberTypes = Collections.unmodifiableSet(functionContainersByNumberType.keySet());
@@ -60,7 +57,7 @@ import java.util.stream.Collectors;
     this.numberType = numberType;
   }
 
-  public List<FunctionContainer<? extends Number>> getAvailableFunctionContainers(){
+  public List<AbstractFunctionContainer<? extends Number>> getAvailableFunctionContainers(){
     return functionContainersByNumberType.get(numberType);
   }
 }
