@@ -1,92 +1,63 @@
 package nl.smith.mathematics.service;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import nl.smith.mathematics.mathematicalfunctions.definition.FunctionContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import nl.smith.mathematics.annotation.MathematicalFunctionContainer;
-import nl.smith.mathematics.mathematicalfunctions.definition.FunctionContainer;
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Service
-public class MethodRunnerService {
+@Service public class MethodRunnerService {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
 
-	private final Map<Class<?>, String> functions = new HashMap<>();
+  private final Set<FunctionContainer<? extends Number>> functionContainers;
 
-	private final Set<Class<? extends Number>> numberTypes = new HashSet<>();
+  private final Map<? extends Class<? extends Number>, List<FunctionContainer<? extends Number>>> functionContainersByNumberType;
 
-	private String descriptions;
+  private final Set<Class<? extends Number>> numberTypes;
 
-	@Autowired
-	public MethodRunnerService(Set<FunctionContainer<? extends Number>> functionContainers) {
-		initialize(functionContainers);
-	}
+  /** The selected numbertype to work with */
+  private Class<? extends Number> numberType;
 
-	private void initialize(Set<FunctionContainer<? extends Number>> functionContainers) {
-		inspectNumberTypeContainers(functionContainers);
-	}
+  @Autowired
+  public MethodRunnerService(@NotEmpty Set<FunctionContainer<? extends Number>> functionContainers) {
+    this.functionContainers = Collections.unmodifiableSet(functionContainers);
 
-	/** Add function container to the appropriate set of number type function containers. */
-	private void inspectNumberTypeContainers(Set<FunctionContainer<? extends Number>> functionContainers) {
-		final StringBuilder descriptions = new StringBuilder();
-		functionContainers.forEach(functionContainer -> {
-			Class<?> proxyFunctionContainerClazz = functionContainer.getClass();
-			Class<?> functionContainerClazz = proxyFunctionContainerClazz.getSuperclass();
-			LOGGER.info("Inspect function container: {}: ", functionContainerClazz.getCanonicalName());
+    functionContainersByNumberType = Collections.unmodifiableMap(functionContainers.stream()
+      .collect(Collectors.groupingBy(container -> container.getNumberType())));
 
-			Type genericInterfaceClazz = functionContainerClazz.getGenericSuperclass();
-			Class<?> functionContainerSuperClazz = functionContainerClazz.getSuperclass();
+    numberTypes = Collections.unmodifiableSet(functionContainersByNumberType.keySet());
 
-			if (functionContainerSuperClazz.isAnnotationPresent(MathematicalFunctionContainer.class)) {
-				@SuppressWarnings("unchecked")
-				Class<? extends Number> numberType = (Class<? extends Number>) ((ParameterizedType) genericInterfaceClazz).getActualTypeArguments()[0];
+    numberType = numberTypes.size() == 1 ? new ArrayList<Class<? extends Number>>(numberTypes).get(0) :  null;
 
-				numberTypes.add(numberType);
+    LOGGER.info("\n\nSpecified number types: {}\nUsed number type: {}\n",   numberTypes.stream().map(c -> c.getSimpleName()).sorted().collect(Collectors.joining(", ")), numberType == null ? "Number type not defined": numberType.getSimpleName());
+  }
 
-				if (!functions.containsKey(functionContainerSuperClazz)) {
-					MathematicalFunctionContainer annotation = functionContainerSuperClazz.getAnnotation(MathematicalFunctionContainer.class);
-					String description = annotation.description();
-					descriptions.append(description).append("\n\n");
-					functions.put(functionContainerSuperClazz, annotation.description());
-				}
-			} else {
-				LOGGER.warn("The generic interface {} should be annotated with {}.", functionContainerSuperClazz.getCanonicalName(),
-						MathematicalFunctionContainer.class.getCanonicalName());
-			}
-		});
+  public Set<Class<? extends Number>> getNumberTypes() {
+    return numberTypes;
+  }
 
-		this.descriptions = descriptions.toString();
+  public Class<? extends Number> getNumberType() {
+    return numberType;
+  }
 
-		LOGGER.info("\n\nDetected numberr types: {}", getNumberTypesAsString());
+  public void setNumberType(@NotEmpty(message = "Please specify a valid number type") String numberType) throws ClassNotFoundException {
+    setNumberType((Class<? extends Number>) Class.forName(numberType));
+  }
 
-		LOGGER.info("\n\nFunctions:\n{}", getDescriptions());
-
-	}
-
-	public Set<Class<? extends Number>> getNumberTypes() {
-		return numberTypes;
-	}
-
-	public String getNumberTypesAsString() {
-		// @formatter:off
-		return numberTypes.stream()
-				.map(clazz -> clazz.getCanonicalName())
-				.collect(Collectors.joining(", "));
-		// @formatter:on
-	}
-
-	public String getDescriptions() {
-		return descriptions;
-	}
-
+  public void setNumberType(Class<? extends Number> numberType) {
+    this.numberType = numberType;
+  }
 }
+
