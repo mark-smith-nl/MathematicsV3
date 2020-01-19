@@ -59,5 +59,9 @@ import java.util.stream.Collectors;
   public void setNumberType(Class<? extends Number> numberType) {
     this.numberType = numberType;
   }
+
+  public List<FunctionContainer<? extends Number>> getAvailableFunctionContainers(){
+    return functionContainersByNumberType.get(numberType);
+  }
 }
 

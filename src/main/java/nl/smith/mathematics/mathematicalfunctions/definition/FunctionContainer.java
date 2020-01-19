@@ -7,7 +7,7 @@ import javax.annotation.PostConstruct;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-@Validated @MathematicalFunctions (description = "There is no description of this set of mathematical functions")
+@Validated @MathematicalFunctions (name = "Unnamed functionset", description = "There is no description of this set of mathematical functions")
 public abstract class FunctionContainer<T extends Number> {
 
   private Class<T> numberType;

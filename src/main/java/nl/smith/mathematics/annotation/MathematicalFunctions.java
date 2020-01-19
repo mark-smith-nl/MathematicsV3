@@ -17,5 +17,9 @@ import java.lang.annotation.Target;
  * Mark a class that it contains mathematical mathematicalfunctions.
  */
 public @interface MathematicalFunctions {
+
+	String name();
+
 	String description();
+
 }
