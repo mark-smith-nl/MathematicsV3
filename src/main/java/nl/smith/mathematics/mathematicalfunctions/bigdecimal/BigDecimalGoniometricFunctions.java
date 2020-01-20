@@ -14,4 +14,9 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
 		return new BigDecimal(456);
 	}
 
+	@Override
+	public BigDecimal cos(BigDecimal angle) {
+		return new BigDecimal(456);
+	}
+
 }

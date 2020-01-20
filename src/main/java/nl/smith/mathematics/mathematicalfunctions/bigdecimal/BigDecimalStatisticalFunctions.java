@@ -16,4 +16,8 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 		return new BigDecimal(456);
 	}
 
+	@Override
+	public BigDecimal mean(BigDecimal numbers) {
+		return null;
+	}
 }

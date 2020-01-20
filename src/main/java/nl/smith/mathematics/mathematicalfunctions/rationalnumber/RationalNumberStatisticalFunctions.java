@@ -16,4 +16,8 @@ public class RationalNumberStatisticalFunctions extends StatisticalFunctions<Rat
 		return null;
 	}
 
+	@Override
+	public RationalNumber mean(RationalNumber numbers) {
+		return null;
+	}
 }
