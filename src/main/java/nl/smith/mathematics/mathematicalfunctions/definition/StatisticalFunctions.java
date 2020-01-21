@@ -7,13 +7,13 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
 
-@Validated @MathematicalFunctions (name = "Statistical functions", description = "Statistical methods: mean, standard deviatioin, maimum, minimum") public abstract class StatisticalFunctions<T extends Number>
-  extends AbstractFunctionContainer<T> {
+@MathematicalFunctions(name = "Statistical functions", description = "Statistical methods: mean, standard deviatioin, maimum, minimum")
+public abstract class StatisticalFunctions<T extends Number> extends AbstractFunctionContainer<T> {
 
-  @MathematicalFunction (description = "Standard deviation of a set of numbers")
-  public abstract T deviation(@Min (value = 1, message = "From must be greater than 0") T numbers);
+    @MathematicalFunction(description = "Standard deviation of a set of numbers")
+    public abstract T deviation(@Min(value = 1, message = "From must be greater than 0") T numbers);
 
-  @MathematicalFunction (description = "Bla")
-  public abstract T mean(@Min (value = 1, message = "From must be greater than 0") T numbers);
+    @MathematicalFunction(description = "The mean value of a set of numbers")
+    public abstract T mean(@Min(value = 1, message = "From must be greater than 0") T numbers);
 
 }

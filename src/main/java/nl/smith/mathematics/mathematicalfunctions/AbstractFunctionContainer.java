@@ -8,64 +8,65 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.security.Signature;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@Validated @MathematicalFunctions (name = "Unnamed functionset", description = "There is no description of this set of mathematical functions") public abstract class AbstractFunctionContainer<T extends Number> {
+@Validated
+@MathematicalFunctions(name = "Unnamed functionset", description = "There is no description of this set of mathematical functions")
+public abstract class AbstractFunctionContainer<T extends Number> {
 
-  private final static Logger LOGGER = LoggerFactory.getLogger(AbstractFunctionContainer.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(AbstractFunctionContainer.class);
 
-  private Class<T> numberType;
+    private Class<T> numberType;
 
-  private Set<Signature> signatures = new HashSet<>();
+    private Map<MethodSignature, Method> callableMathematicalFunctions = new HashMap<>();
 
-  public Class<T> getNumberType() {
-    return numberType;
-  }
-
-  @PostConstruct
-  private void postConstruct() {
-    setNumberType();
-    setSignatures();
-  }
-
-  private void setNumberType() {
-    Class<?> functionContainerClazz = this.getClass();
-
-    if (functionContainerClazz.getAnnotation(MathematicalFunctions.class) == AbstractFunctionContainer.class.getAnnotation(MathematicalFunctions.class)) {
-      LOGGER.warn("Please annotate your {} subclass with the {} annotation describing the name and context of your mathematical function set.",
-        AbstractFunctionContainer.class.getCanonicalName(), MathematicalFunctions.class.getCanonicalName());
+    public Class<T> getNumberType() {
+        return numberType;
     }
 
-    Type genericInterfaceClazz = functionContainerClazz.getGenericSuperclass();
+    @PostConstruct
+    private void postConstruct() {
+        setNumberType();
+        setCallableMathematicalFunctions();
+    }
 
-    numberType = (Class<T>) ((ParameterizedType) genericInterfaceClazz).getActualTypeArguments()[0];
-  }
+    private void setNumberType() {
+        Class<?> functionContainerClazz = this.getClass();
 
-  private void setSignatures() {
-    Class<?> functionContainerClazz = this.getClass();
-    Class<?> functionContainerSuperClazz = functionContainerClazz.getSuperclass();
+        if (functionContainerClazz.getAnnotation(MathematicalFunctions.class) == AbstractFunctionContainer.class.getAnnotation(MathematicalFunctions.class)) {
+            LOGGER.warn("Please annotate your {} subclass with the {} annotation describing the name and context of your mathematical function set.",
+                    AbstractFunctionContainer.class.getCanonicalName(), MathematicalFunctions.class.getCanonicalName());
+        }
 
-    // @formatter:off
-    Set<Method> mathematicalFunctions = Arrays.stream(functionContainerSuperClazz.getDeclaredMethods())
-        .filter(m -> m.isAnnotationPresent(MathematicalFunction.class))
-       // .filter(m -> Modifier.isAbstract(m.getModifiers()))
-        //.filter(m -> m.getReturnType() == numberType)
-        //.filter(m -> m.getParameterCount() > 0)
-        .collect(Collectors.toSet());
-    // @formatter:on
+        Type genericInterfaceClazz = functionContainerClazz.getGenericSuperclass();
 
-    mathematicalFunctions.forEach(m -> {
-      signatures.add(new Signature(m.getAnnotation(MathematicalFunction.class), m.getName(), m, m.getParameterCount()));
-    });
+        numberType = (Class<T>) ((ParameterizedType) genericInterfaceClazz).getActualTypeArguments()[0];
+    }
 
-    System.out.println("===>" + signatures.size());
-  }
+    private void setCallableMathematicalFunctions() {
+        Class<?> functionContainerClazz = this.getClass();
+        Class<?> functionContainerSuperClazz = functionContainerClazz.getSuperclass();
 
+        // @formatter:off
+        Set<Method> mathematicalFunctions = Arrays.stream(functionContainerSuperClazz.getDeclaredMethods())
+                .filter(m -> m.isAnnotationPresent(MathematicalFunction.class))
+                // .filter(m -> Modifier.isAbstract(m.getModifiers()))
+                //.filter(m -> m.getReturnType() == numberType)
+                //.filter(m -> m.getParameterCount() > 0)
+                .collect(Collectors.toSet());
+        // @formatter:on
+
+        mathematicalFunctions.forEach(m -> {
+            callableMathematicalFunctions.put(new MethodSignature(m.getAnnotation(MathematicalFunction.class), m.getName(), m.getParameterCount()), m);
+        });
+
+    }
+
+    public Map<MethodSignature, Method> getCallableMathematicalFunctions() {
+        return callableMathematicalFunctions;
+    }
 }

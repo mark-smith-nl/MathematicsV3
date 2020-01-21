@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
   private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
 
-  private final Set<AbstractFunctionContainer<? extends Number>> abstractFunctionContainers;
+  private final Set<AbstractFunctionContainer<? extends Number>> functionContainers;
 
   private final Map<? extends Class<? extends Number>, List<AbstractFunctionContainer<? extends Number>>> functionContainersByNumberType;
 
@@ -27,18 +27,19 @@ import java.util.stream.Collectors;
   /** The selected numbertype to work with */
   private Class<? extends Number> numberType;
 
-  @Autowired
-  public MethodRunnerService(@NotEmpty Set<AbstractFunctionContainer<? extends Number>> abstractFunctionContainers) {
-    this.abstractFunctionContainers = Collections.unmodifiableSet(abstractFunctionContainers);
+  public MethodRunnerService(@NotEmpty Set<AbstractFunctionContainer<? extends Number>> functionContainers) {
+    this.functionContainers = Collections.unmodifiableSet(functionContainers);
 
-    functionContainersByNumberType = Collections.unmodifiableMap(abstractFunctionContainers.stream()
+    functionContainersByNumberType = Collections.unmodifiableMap(functionContainers.stream()
       .collect(Collectors.groupingBy(container -> container.getNumberType())));
 
     numberTypes = Collections.unmodifiableSet(functionContainersByNumberType.keySet());
 
     numberType = numberTypes.size() == 1 ? new ArrayList<Class<? extends Number>>(numberTypes).get(0) :  null;
 
-    LOGGER.info("\n\nSpecified number types: {}\nUsed number type: {}\n",   numberTypes.stream().map(c -> c.getSimpleName()).sorted().collect(Collectors.joining(", ")), numberType == null ? "Number type not defined": numberType.getSimpleName());
+    LOGGER.info("\nSpecified number types: {}\nUsed number type: {}\n",   numberTypes.stream().map(c -> c.getSimpleName()).sorted().collect(Collectors.joining(", ")), numberType == null ? "Number type not defined": numberType.getSimpleName());
+
+    functionContainers.forEach(f -> f.getCallableMathematicalFunctions().forEach((k,v) -> LOGGER.info("\n{}\n", k)));
   }
 
   public Set<Class<? extends Number>> getNumberTypes() {
