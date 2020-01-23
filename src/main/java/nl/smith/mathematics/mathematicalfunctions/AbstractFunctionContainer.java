@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.security.Signature;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,7 +21,7 @@ public abstract class AbstractFunctionContainer<T extends Number> {
 
     private Class<T> numberType;
 
-    private Map<MethodSignature, Method> callableMathematicalFunctions = new HashMap<>();
+    private Map<MathematicalMethod, Method> callableMathematicalFunctions = new HashMap<>();
 
     public Class<T> getNumberType() {
         return numberType;
@@ -54,19 +53,16 @@ public abstract class AbstractFunctionContainer<T extends Number> {
         // @formatter:off
         Set<Method> mathematicalFunctions = Arrays.stream(functionContainerSuperClazz.getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(MathematicalFunction.class))
-                // .filter(m -> Modifier.isAbstract(m.getModifiers()))
-                //.filter(m -> m.getReturnType() == numberType)
-                //.filter(m -> m.getParameterCount() > 0)
                 .collect(Collectors.toSet());
         // @formatter:on
 
         mathematicalFunctions.forEach(m -> {
-            callableMathematicalFunctions.put(new MethodSignature(m.getAnnotation(MathematicalFunction.class), m.getName(), m.getParameterCount()), m);
+            callableMathematicalFunctions.put(new MathematicalMethod(m.getAnnotation(MathematicalFunction.class), m.getName(), m.getParameterCount()), m);
         });
 
     }
 
-    public Map<MethodSignature, Method> getCallableMathematicalFunctions() {
+    public Map<MathematicalMethod, Method> getCallableMathematicalFunctions() {
         return callableMathematicalFunctions;
     }
 }

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
   private final Set<Class<? extends Number>> numberTypes;
 
-  /** The selected numbertype to work with */
+  /** The selected number type to work with */
   private Class<? extends Number> numberType;
 
   public MethodRunnerService(@NotEmpty Set<AbstractFunctionContainer<? extends Number>> functionContainers) {

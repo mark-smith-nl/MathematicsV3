@@ -4,7 +4,7 @@ import nl.smith.mathematics.annotation.MathematicalFunction;
 
 import java.util.Objects;
 
-public class MethodSignature {
+public class MathematicalMethod {
 
     private final MathematicalFunction annotation;
 
@@ -12,7 +12,7 @@ public class MethodSignature {
 
     private final int argumentCount;
 
-    public MethodSignature(MathematicalFunction annotation, String name, int argumentCount) {
+    public MathematicalMethod(MathematicalFunction annotation, String name, int argumentCount) {
         this.annotation = annotation;
         this.name = name;
         this.argumentCount = argumentCount;
@@ -22,9 +22,9 @@ public class MethodSignature {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MethodSignature methodSignature = (MethodSignature) o;
-        return argumentCount == methodSignature.argumentCount &&
-                Objects.equals(name, methodSignature.name);
+        MathematicalMethod mathematicalMethod = (MathematicalMethod) o;
+        return argumentCount == mathematicalMethod.argumentCount &&
+                Objects.equals(name, mathematicalMethod.name);
     }
 
     @Override
