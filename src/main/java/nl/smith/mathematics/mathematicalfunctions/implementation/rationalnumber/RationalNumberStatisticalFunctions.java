@@ -1,4 +1,4 @@
-package nl.smith.mathematics.mathematicalfunctions.rationalnumber;
+package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
 import org.springframework.stereotype.Component;
 

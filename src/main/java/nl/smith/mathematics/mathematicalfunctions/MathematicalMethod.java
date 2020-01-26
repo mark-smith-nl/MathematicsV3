@@ -2,46 +2,50 @@ package nl.smith.mathematics.mathematicalfunctions;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
 
+import java.lang.instrument.IllegalClassFormatException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 public class MathematicalMethod {
 
-    private final MathematicalFunction annotation;
-
     private final String name;
 
-    private final int argumentCount;
+    private final String description;
 
-    public MathematicalMethod(MathematicalFunction annotation, String name, int argumentCount) {
-        this.annotation = annotation;
-        this.name = name;
-        this.argumentCount = argumentCount;
-    }
+    private final String signature;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MathematicalMethod mathematicalMethod = (MathematicalMethod) o;
-        return argumentCount == mathematicalMethod.argumentCount &&
-                Objects.equals(name, mathematicalMethod.name);
-    }
+    private final Method method;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, argumentCount);
-    }
+    public MathematicalMethod(Method method) {
+        MathematicalFunction annotation = method.getAnnotation(MathematicalFunction.class);
 
-    @Override
-    public String toString() {
-        String arguments = "number";
-        if (argumentCount == 0) {
-            arguments += "...";
-        } else {
-            for (int i=1; i<argumentCount; i++) {
-                arguments += ", number";
-            }
+        // Check modifiers: The method should be a non static abstract method (i.e. it should be implemented elsewhere.
+        int modifiers = method.getModifiers();
+        if (Modifier.isStatic(modifiers) || !Modifier.isAbstract(modifiers)) {
+            throw new IllegalStateException(String.format("\"The annotation %1$s is misplaced on the method:\\n%3$s.%2$s(...).\\nPlease see the documentation of the annotation %1$s.",
+                    annotation.getClass().getCanonicalName(), method.getName(), method.getDeclaringClass().getCanonicalName()));
         }
-        return String.format("%s\n%s(%s)", annotation.description(), name, arguments);
+
+        name = method.getName();
+        description = annotation.description();
+        signature = "Not implemented";
+        this.method = method;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public Method getMethod() {
+        return method;
     }
 }

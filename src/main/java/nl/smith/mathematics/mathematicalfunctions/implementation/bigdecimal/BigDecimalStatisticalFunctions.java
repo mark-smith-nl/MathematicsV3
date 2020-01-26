@@ -1,4 +1,4 @@
-package nl.smith.mathematics.mathematicalfunctions.bigdecimal;
+package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
 import java.math.BigDecimal;
 

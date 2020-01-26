@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import nl.smith.mathematics.mathematicalfunctions.bigdecimal.BigDecimalStatisticalFunctions;
+import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigDecimalStatisticalFunctions;
 
 @SpringBootApplication
 public class MathematicsV3Application {

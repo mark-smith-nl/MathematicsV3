@@ -1,9 +1,8 @@
 package nl.smith.mathematics.service;
 
-import nl.smith.mathematics.mathematicalfunctions.AbstractFunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotEmpty;
@@ -18,16 +17,16 @@ import java.util.stream.Collectors;
 
   private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
 
-  private final Set<AbstractFunctionContainer<? extends Number>> functionContainers;
+  private final Set<FunctionContainer<? extends Number>> functionContainers;
 
-  private final Map<? extends Class<? extends Number>, List<AbstractFunctionContainer<? extends Number>>> functionContainersByNumberType;
+  private final Map<? extends Class<? extends Number>, List<FunctionContainer<? extends Number>>> functionContainersByNumberType;
 
   private final Set<Class<? extends Number>> numberTypes;
 
   /** The selected number type to work with */
   private Class<? extends Number> numberType;
 
-  public MethodRunnerService(@NotEmpty Set<AbstractFunctionContainer<? extends Number>> functionContainers) {
+  public MethodRunnerService(@NotEmpty Set<FunctionContainer<? extends Number>> functionContainers) {
     this.functionContainers = Collections.unmodifiableSet(functionContainers);
 
     functionContainersByNumberType = Collections.unmodifiableMap(functionContainers.stream()
@@ -39,7 +38,7 @@ import java.util.stream.Collectors;
 
     LOGGER.info("\nSpecified number types: {}\nUsed number type: {}\n",   numberTypes.stream().map(c -> c.getSimpleName()).sorted().collect(Collectors.joining(", ")), numberType == null ? "Number type not defined": numberType.getSimpleName());
 
-    functionContainers.forEach(f -> f.getCallableMathematicalFunctions().forEach((k,v) -> LOGGER.info("\n{}\n", k)));
+    functionContainers.forEach(f -> f.getMathematicalFunctions().forEach((k,v) -> LOGGER.info("\n{}\n", k)));
   }
 
   public Set<Class<? extends Number>> getNumberTypes() {
@@ -58,7 +57,7 @@ import java.util.stream.Collectors;
     this.numberType = numberType;
   }
 
-  public List<AbstractFunctionContainer<? extends Number>> getAvailableFunctionContainers(){
+  public List<FunctionContainer<? extends Number>> getAvailableFunctionContainers(){
     return functionContainersByNumberType.get(numberType);
   }
 }

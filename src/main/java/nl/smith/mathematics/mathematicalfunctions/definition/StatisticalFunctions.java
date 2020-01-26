@@ -2,13 +2,12 @@ package nl.smith.mathematics.mathematicalfunctions.definition;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.annotation.MathematicalFunctions;
-import nl.smith.mathematics.mathematicalfunctions.AbstractFunctionContainer;
-import org.springframework.validation.annotation.Validated;
+import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 
 import javax.validation.constraints.Min;
 
 @MathematicalFunctions(name = "Statistical functions", description = "Statistical methods: mean, standard deviatioin, maimum, minimum")
-public abstract class StatisticalFunctions<T extends Number> extends AbstractFunctionContainer<T> {
+public abstract class StatisticalFunctions<T extends Number> extends FunctionContainer<T> {
 
     @MathematicalFunction(description = "Standard deviation of a set of numbers")
     public abstract T deviation(@Min(value = 1, message = "From must be greater than 0") T numbers);
