@@ -1,13 +1,14 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
-import java.math.BigDecimal;
-
+import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import org.springframework.stereotype.Component;
 
-import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
+import java.math.BigDecimal;
 
-@Component
+@Component(BigDecimalGoniometricFunctions.name)
 public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDecimal> {
+
+	public final static String name = "BigDecimalGoniometricFunctions";
 
 	@Override
 	public BigDecimal sin(BigDecimal angle) {

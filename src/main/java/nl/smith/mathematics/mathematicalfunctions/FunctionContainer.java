@@ -25,7 +25,7 @@ public abstract class FunctionContainer<T extends Number> {
     /** Map of callable mathematical functions using the methods signature as key. */
     private Map<String, MathematicalMethod> mathematicalFunctions = new HashMap<>();
 
-    public Class<T> getNumberType() {
+    public final Class<T> getNumberType() {
         return numberType;
     }
 
