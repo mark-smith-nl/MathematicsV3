@@ -1,2 +1,2 @@
 Project to evaluate mathematical expressions.
-Step 1. Aantations
+Step 1. Annotations
