@@ -2,6 +2,7 @@ package nl.smith.mathematics.mathematicalfunctions;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.annotation.MathematicalFunctions;
+import nl.smith.mathematics.exception.MissingClassAnnotationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
@@ -9,53 +10,53 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.PostConstruct;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Validated
-//@MathematicalFunctions(name = "Unnamed functionset", description = "There is no description of this set of mathematical functions")
 public abstract class FunctionContainer<T extends Number> {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FunctionContainer.class);
 
     private Class<T> numberType;
 
-    /** Map of callable mathematical functions using the methods signature as key. */
+    /**
+     * Map of callable mathematical functions using the methods signature as key.
+     */
     private Map<String, MathematicalMethod> mathematicalFunctions = new HashMap<>();
 
-    public final Class<T> getNumberType() {
+    public Class<T> getNumberType() {
         return numberType;
     }
 
-    /** Protected for test purposes. */
+    /**
+     * Protected for test purposes.
+     */
     @PostConstruct
     private void postConstruct() {
-        checkAnnotation();
+        checkCorrectAnnotated();
         initializeNumberType();
-        initializeMathematicalFunctions();
+        //  initializeMathematicalFunctions();
     }
 
-    /** Protected for test purposes. */
-    protected void checkAnnotation() {
+    /**
+     * Protected for test purposes.
+     */
+    protected void checkCorrectAnnotated() {
         Class<?> functionContainerClazz = this.getClass();
-        Class<?> functionContainerSuperClazz = functionContainerClazz.getSuperclass();
 
-        if (functionContainerClazz.isAnnotationPresent(MathematicalFunctions.class)) {
-           // throw new MissingClassAnnotationException(FunctionContainer.class, MathematicalFunctions.class.getCanonicalName()));
+        if (!functionContainerClazz.isAnnotationPresent(MathematicalFunctions.class)) {
+            throw new MissingClassAnnotationException(FunctionContainer.class, MathematicalFunctions.class);
         }
 
-        if (!functionContainerSuperClazz.isAnnotationPresent(MathematicalFunctions.class)) {
-            // throw new MissingClassAnnotationException(FunctionContainer.class, MathematicalFunctions.class.getCanonicalName()));
-        }
-      /*  if (functionContainerClazz.getAnnotation(MathematicalFunctions.class) == FunctionContainer.class.getAnnotation(MathematicalFunctions.class)) {
-            throw new IllegalStateException(String.format("Please annotate your %s (abstract) subclass mathematical function container with the %s annotation describing the name and context of your mathematical function set.",
-                    FunctionContainer.class.getCanonicalName(), MathematicalFunctions.class.getCanonicalName()));
-        }*/
     }
 
-    /** Protected for test purposes. */
+    /**
+     * Protected for test purposes.
+     */
     protected void initializeNumberType() {
         Class<?> functionContainerClazz = this.getClass();
 
@@ -86,4 +87,5 @@ public abstract class FunctionContainer<T extends Number> {
     public Map<String, MathematicalMethod> getMathematicalFunctions() {
         return mathematicalFunctions;
     }
+
 }

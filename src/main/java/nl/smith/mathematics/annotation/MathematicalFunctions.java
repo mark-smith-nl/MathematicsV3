@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-//@Inherited
+@Inherited
 /**
  * @author mark
  * Mark a class that it contains mathematical mathematicalfunctions.

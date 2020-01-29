@@ -6,11 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service public class MethodRunnerService {
@@ -59,6 +55,10 @@ import java.util.stream.Collectors;
 
   public List<FunctionContainer<? extends Number>> getAvailableFunctionContainers(){
     return functionContainersByNumberType.get(numberType);
+  }
+
+  public Set<FunctionContainer<? extends Number>> getFunctionContainers() {
+    return functionContainers;
   }
 }
 
