@@ -1,23 +1,19 @@
 package nl.smith.mathematics;
 
-import java.math.BigDecimal;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigDecimalStatisticalFunctions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
-import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigDecimalStatisticalFunctions;
+import java.math.BigDecimal;
 
 @SpringBootApplication
+@ComponentScan(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+		classes = FunctionContainer.class))
 public class MathematicsV3Application {
-
-	@Autowired
-	private BigDecimalStatisticalFunctions functionContainer;
-
-	/*
-	 * public MathematicsV3Application(Set<Functions<? extends Number>> functionContainers) { this.functionContainers = functionContainers; }
-	 */
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);

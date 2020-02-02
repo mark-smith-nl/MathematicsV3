@@ -1,8 +1,6 @@
 package nl.smith.mathematics.mathematicalfunctions;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
-import nl.smith.mathematics.annotation.MathematicalFunctions;
-import nl.smith.mathematics.exception.MissingClassAnnotationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
@@ -32,26 +30,15 @@ public abstract class FunctionContainer<T extends Number> {
         return numberType;
     }
 
+    public abstract String getDescription();
+
     /**
      * Protected for test purposes.
      */
     @PostConstruct
     private void postConstruct() {
-        checkCorrectAnnotated();
         initializeNumberType();
-        //  initializeMathematicalFunctions();
-    }
-
-    /**
-     * Protected for test purposes.
-     */
-    protected void checkCorrectAnnotated() {
-        Class<?> functionContainerClazz = this.getClass();
-
-        if (!functionContainerClazz.isAnnotationPresent(MathematicalFunctions.class)) {
-            throw new MissingClassAnnotationException(FunctionContainer.class, MathematicalFunctions.class);
-        }
-
+        initializeMathematicalFunctions();
     }
 
     /**
@@ -65,6 +52,11 @@ public abstract class FunctionContainer<T extends Number> {
         numberType = (Class<T>) ((ParameterizedType) genericInterfaceClazz).getActualTypeArguments()[0];
     }
 
+    /**
+     *  Check if the MathematicalFunction annotation is present on the concrete class.
+     *  If not present is bridge than check parent class
+     *  Check return type
+     */
     private void initializeMathematicalFunctions() {
         Class<?> functionContainerClazz = this.getClass();
         Class<?> functionContainerSuperClazz = functionContainerClazz.getSuperclass();

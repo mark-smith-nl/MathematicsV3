@@ -1,23 +1,33 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
-import org.springframework.stereotype.Component;
-
 import nl.smith.mathematics.mathematicalfunctions.definition.StatisticalFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
+import nl.smith.mathematics.util.ObjectWrapper;
 
-@Component
+import java.util.stream.Stream;
+
 public class RationalNumberStatisticalFunctions extends StatisticalFunctions<RationalNumber> {
 
-	/* @Override public RationalNumber min(RationalNumber... numbers) { // TODO Auto-generated method stub return null; } */
+	@Override
+	public RationalNumber sum(RationalNumber... numbers) {
+		ObjectWrapper<RationalNumber> sum = new ObjectWrapper<>(RationalNumber.ZERO);
+		Stream.of(numbers).forEach(n -> sum.setValue(sum.getValue().add(n)));
+
+		return sum.getValue();
+	}
 
 	@Override
-	public RationalNumber deviation(RationalNumber numbers) {
-		// TODO Auto-generated method stub
+	public RationalNumber prod(RationalNumber... numbers) {
 		return null;
 	}
 
 	@Override
-	public RationalNumber mean(RationalNumber numbers) {
+	public RationalNumber deviation(RationalNumber ... numbers) {
+		return null;
+	}
+
+	@Override
+	public RationalNumber mean(RationalNumber ... numbers) {
 		return null;
 	}
 }
