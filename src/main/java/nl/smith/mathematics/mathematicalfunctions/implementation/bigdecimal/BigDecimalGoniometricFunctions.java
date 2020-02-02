@@ -18,7 +18,4 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
 		return new BigDecimal(456);
 	}
 
-	public BigDecimal doIt() {
-		return null;
-	}
 }
