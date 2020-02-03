@@ -5,6 +5,7 @@ import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigD
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
@@ -28,4 +29,8 @@ public class MathematicsV3Application {
 		}
 	}
 
+	@Bean
+	public String getName() {
+		return "Hello";
+	}
 }

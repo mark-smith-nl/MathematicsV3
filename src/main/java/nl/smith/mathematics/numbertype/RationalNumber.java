@@ -22,21 +22,25 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
         this(numerator, BigInteger.ONE);
     }
 
-    public RationalNumber(BigInteger numerator, BigInteger denominator) {
-        if (denominator.equals(BigInteger.ZERO)) {
-            throw new ArithmeticException("Division by zero");
-        }
-        this.numerator = numerator;
-        this.denominator = denominator;
-    }
-
     public RationalNumber(long numerator, long denominator) {
-        this.numerator = BigInteger.valueOf(numerator);
-        this.denominator = BigInteger.valueOf(denominator);
+        this(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
     }
 
     public RationalNumber(RationalNumber rationalNumber) {
         this(rationalNumber.numerator, rationalNumber.denominator);
+    }
+
+    public RationalNumber(BigInteger numerator, BigInteger denominator) {
+        if (numerator == null || denominator == null) {
+            throw new IllegalArgumentException("Both numerator and denominator must be specified (not be null)");
+        }
+
+        if (denominator.equals(BigInteger.ZERO)) {
+            throw new ArithmeticException("Division by zero");
+        }
+
+        this.numerator = numerator;
+        this.denominator = denominator;
     }
 
     public RationalNumber[] divideAndRemainder() {
@@ -102,8 +106,8 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
         }
 
         if (this == obj) {
-        	return true;
-		}
+            return true;
+        }
 
         RationalNumber rationalNumber = (RationalNumber) obj;
 
@@ -120,7 +124,7 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
 
     public static RationalNumber valueOf(String value) {
 
-    	//x = ab.cde{efg}
+        //x = ab.cde{efg}
         return null;
     }
 }

@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 /**
  * @author mark
- * Mark a method that it is a mathematical function.
+ * Annotation to mark a method as a mathematical function.
  */
 public @interface MathematicalFunction {
 	String description();

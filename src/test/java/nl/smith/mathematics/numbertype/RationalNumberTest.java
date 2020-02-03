@@ -21,8 +21,20 @@ public class RationalNumberTest {
     }
 
     @Test
+    public void constructorUsingZeroDenominatorInteger() {
+        Exception exception = assertThrows(ArithmeticException.class, () ->  new RationalNumber(2, 0));
+        assertEquals(exception.getMessage(), "Division by zero");
+    }
+
+    @Test
     public void constructorUsingBigInteger() {
         assertEquals(new RationalNumber(BigInteger.valueOf(2)).getNumerator(), BigInteger.valueOf(2));
+    }
+
+    @Test
+    public void constructorUsingNullBigInteger() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> new RationalNumber((BigInteger) null));
+        assertEquals(exception.getMessage(), "Both numerator and denominator must be specified (not be null)");
     }
 
     @Test
@@ -34,14 +46,14 @@ public class RationalNumberTest {
 
     @Test
     public void constructorUsingBigIntegersDenominatorZero() {
-        assertThrows(ArithmeticException.class, () -> new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0)));
+        Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0)));
+        assertEquals(exception.getMessage(), "Division by zero");
     }
 
     @Test
-    public void constructorUsingRationalNumber() {
-        assertThrows(ArithmeticException.class, () -> {
-            new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0));
-        });
+    public void constructorUsingIllegalDenominator() {
+        Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0)));
+        assertEquals(exception.getMessage(), "Division by zero") ;
     }
 
     @Test

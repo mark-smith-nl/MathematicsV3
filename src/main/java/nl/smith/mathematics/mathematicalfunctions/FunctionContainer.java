@@ -37,8 +37,8 @@ public abstract class FunctionContainer<T extends Number> {
      */
     @PostConstruct
     private void postConstruct() {
-        initializeNumberType();
-        initializeMathematicalFunctions();
+       initializeNumberType();
+      //  initializeMathematicalFunctions();
     }
 
     /**
