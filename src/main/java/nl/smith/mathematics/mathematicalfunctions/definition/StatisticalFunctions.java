@@ -3,6 +3,8 @@ package nl.smith.mathematics.mathematicalfunctions.definition;
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 
+import javax.validation.constraints.NotNull;
+
 public abstract class StatisticalFunctions<T extends Number> extends FunctionContainer<T> {
 
     @Override
@@ -14,7 +16,7 @@ public abstract class StatisticalFunctions<T extends Number> extends FunctionCon
     public abstract T sum(T ... numbers);
 
     @MathematicalFunction(description = "Product of a set of numbers")
-    public abstract T prod(T ... numbers);
+    public abstract T prod(@NotNull T ... numbers);
 
     @MathematicalFunction(description = "Standard deviation of a set of numbers")
     public abstract T deviation(T ... numbers);

@@ -2,6 +2,10 @@ package nl.smith.mathematics.numbertype;
 
 import java.math.BigInteger;
 
+/** Immutable class to store rational numbers
+ * numerator ∊ ℤ
+ * denominator ℤ+
+ */
 public class RationalNumber extends Number implements ArithmeticFunctions<RationalNumber> {
 
     public static final RationalNumber ZERO = new RationalNumber(BigInteger.ZERO, BigInteger.ONE);
@@ -37,6 +41,11 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
 
         if (denominator.equals(BigInteger.ZERO)) {
             throw new ArithmeticException("Division by zero");
+        }
+
+        if (denominator.compareTo(BigInteger.ZERO) < 0) {
+            numerator = numerator.negate();
+            denominator = denominator.abs();
         }
 
         this.numerator = numerator;
@@ -97,6 +106,16 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
         BigInteger denominator = this.denominator.multiply(divisor.numerator);
 
         return new RationalNumber(numerator, denominator);
+    }
+
+    @Override
+    public RationalNumber negate() {
+        return new RationalNumber(numerator.negate(), denominator);
+    }
+
+    @Override
+    public RationalNumber abs() {
+        return new RationalNumber(numerator.abs(), denominator);
     }
 
     @Override

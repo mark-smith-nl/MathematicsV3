@@ -10,4 +10,8 @@ public interface ArithmeticFunctions<T extends Number> {
 
     T divide(T divisor);
 
+    T negate();
+
+    T abs();
+
 }
