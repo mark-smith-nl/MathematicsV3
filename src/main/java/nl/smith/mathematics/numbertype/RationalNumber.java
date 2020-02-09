@@ -141,9 +141,13 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
         return denominator;
     }
 
-    public static RationalNumber valueOf(String value) {
+    public static RationalNumber valueOf(BigInteger integerPart, BigInteger constantFractionalPart, BigInteger repeatingFractionalPart, BigInteger exponentPart) {
 
-        //x = ab.cde{efg}
-        return null;
+        boolean positive = integerPart.equals(integerPart.abs());
+        RationalNumber rationalNumber = RationalNumber.ONE;
+        boolean positiveExponent = exponentPart.equals(exponentPart.abs());
+        rationalNumber = positiveExponent ? rationalNumber.multiply(new RationalNumber(exponentPart)) : rationalNumber.divide(new RationalNumber(exponentPart));
+
+        return positive ? rationalNumber : rationalNumber.negate();
     }
 }
