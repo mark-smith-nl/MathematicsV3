@@ -1,5 +1,7 @@
 package nl.smith.mathematics.numbertype;
 
+import nl.smith.mathematics.util.RationalNumberUtil;
+
 import java.math.BigInteger;
 
 /** Immutable class to store rational numbers
@@ -141,13 +143,7 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
         return denominator;
     }
 
-    public static RationalNumber valueOf(BigInteger integerPart, BigInteger constantFractionalPart, BigInteger repeatingFractionalPart, BigInteger exponentPart) {
-
-        boolean positive = integerPart.equals(integerPart.abs());
-        RationalNumber rationalNumber = RationalNumber.ONE;
-        boolean positiveExponent = exponentPart.equals(exponentPart.abs());
-        rationalNumber = positiveExponent ? rationalNumber.multiply(new RationalNumber(exponentPart)) : rationalNumber.divide(new RationalNumber(exponentPart));
-
-        return positive ? rationalNumber : rationalNumber.negate();
+    public static RationalNumber valueOf(String numberString) {
+        return RationalNumberUtil.getRationalNumber(numberString);
     }
 }
