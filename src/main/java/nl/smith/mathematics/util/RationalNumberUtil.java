@@ -53,8 +53,8 @@ public class RationalNumberUtil {
 
         BigInteger denominator = BigInteger.TEN.pow(numberComponents.get(NumberComponent.CONSTANT_FRACTIONAL_PART).length()
                 + numberComponents.get(NumberComponent.REPEATING_FRACTIONAL_PART).length())
-
                 .subtract(BigInteger.TEN.pow(numberComponents.get(NumberComponent.CONSTANT_FRACTIONAL_PART).length()));
+
         if (numberComponents.get(NumberComponent.POSITIVE_EXPONENTIAL_PART) != null) {
             BigInteger exponent = BigInteger.TEN.pow(Integer.valueOf(numberComponents.get(NumberComponent.POSITIVE_EXPONENTIAL_PART)));
             if (numberComponents.get(NumberComponent.SIGN_EXPONENTIAL_PART) == null) {
@@ -68,7 +68,7 @@ public class RationalNumberUtil {
             numerator = numerator.negate();
         }
 
-        return new RationalNumber(numerator, denominator);
+        return new RationalNumber(numerator, denominator).normalized();
 
     }
 

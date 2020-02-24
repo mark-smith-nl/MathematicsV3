@@ -70,6 +70,7 @@ public class RationalNumberUtilTest {
         System.out.println(rationalNumber.getDenominator());
 
     }
+
     private static Stream<Arguments> numbers() {
         Stream<Arguments> s0 = Stream.of(NUMBERS).map(Arguments::of);
         Stream<Arguments> s1 = Stream.of(NUMBERS).filter(n -> !"0".equals(n)).map(n -> n.concat("E[00]")).map(Arguments::of);

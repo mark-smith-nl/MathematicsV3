@@ -32,6 +32,10 @@ public abstract class FunctionContainer<T extends Number> {
 
     public abstract String getDescription();
 
+    public FunctionContainer() {
+        LOGGER.info("Instantiating {}", this.getClass().getCanonicalName());
+    }
+
     /**
      * Protected for test purposes.
      */

@@ -4,11 +4,12 @@ import nl.smith.mathematics.util.RationalNumberUtil;
 
 import java.math.BigInteger;
 
-/** Immutable class to store rational numbers
+/**
+ * Immutable class to store rational numbers
  * numerator ∊ ℤ
  * denominator ℤ+
  */
-public class RationalNumber extends Number implements ArithmeticFunctions<RationalNumber> {
+public class RationalNumber extends Number implements ArithmeticFunctions<RationalNumber>, Comparable<RationalNumber> {
 
     public static final RationalNumber ZERO = new RationalNumber(BigInteger.ZERO, BigInteger.ONE);
 
@@ -52,6 +53,12 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
 
         this.numerator = numerator;
         this.denominator = denominator;
+    }
+
+    public RationalNumber normalized() {
+        BigInteger gcd = numerator.gcd(denominator);
+
+        return new RationalNumber(numerator.divide(gcd), denominator.divide(gcd));
     }
 
     public RationalNumber[] divideAndRemainder() {
@@ -145,5 +152,15 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
 
     public static RationalNumber valueOf(String numberString) {
         return RationalNumberUtil.getRationalNumber(numberString);
+    }
+
+    @Override
+    public String toString() {
+        return numerator.toString() + "/" + denominator.toString();
+    }
+
+    @Override
+    public int compareTo(RationalNumber o) {
+        return numerator.multiply(o.denominator).compareTo(o.numerator.multiply(denominator));
     }
 }

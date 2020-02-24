@@ -1,11 +1,13 @@
 package nl.smith.mathematics.service;
 
+import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotEmpty;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,7 @@ import java.util.stream.Collectors;
     setNumberType((Class<? extends Number>) Class.forName(numberType));
   }
 
+
   public void setNumberType(Class<? extends Number> numberType) {
     this.numberType = numberType;
   }
@@ -60,5 +63,20 @@ import java.util.stream.Collectors;
   public Set<FunctionContainer<? extends Number>> getFunctionContainers() {
     return functionContainers;
   }
+
+  /** Protected for test purposes. */
+  protected void extractAnnotatedMethodNames(Class<? extends FunctionContainer> clazz, List<String> methodNames) {
+    methodNames.addAll(Arrays.stream(clazz.getDeclaredMethods())
+            .filter(m -> Modifier.isPublic(m.getModifiers()))
+            .filter(m -> !Modifier.isStatic(m.getModifiers()))
+            .filter(m -> m.getAnnotation(MathematicalFunction.class) != null)
+            .map(m -> m.getName())
+            .collect(Collectors.toList()));
+
+    if (clazz.getSuperclass() != FunctionContainer.class) {
+      extractAnnotatedMethodNames((Class<? extends FunctionContainer>) clazz.getSuperclass(), methodNames);
+    }
+  }
+
 }
 
