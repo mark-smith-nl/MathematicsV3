@@ -65,16 +65,16 @@ import java.util.stream.Collectors;
   }
 
   /** Protected for test purposes. */
-  protected void extractAnnotatedMethodNames(Class<? extends FunctionContainer> clazz, List<String> methodNames) {
-    methodNames.addAll(Arrays.stream(clazz.getDeclaredMethods())
+  protected void extractAnnotatedMethodNames(Class<? extends FunctionContainer> clazz, List<MethodSignature> methodSignatures) {
+    methodSignatures.addAll(Arrays.stream(clazz.getDeclaredMethods())
             .filter(m -> Modifier.isPublic(m.getModifiers()))
             .filter(m -> !Modifier.isStatic(m.getModifiers()))
             .filter(m -> m.getAnnotation(MathematicalFunction.class) != null)
-            .map(m -> m.getName())
+            .map(MethodSignature::new)
             .collect(Collectors.toList()));
 
     if (clazz.getSuperclass() != FunctionContainer.class) {
-      extractAnnotatedMethodNames((Class<? extends FunctionContainer>) clazz.getSuperclass(), methodNames);
+      extractAnnotatedMethodNames((Class<? extends FunctionContainer>) clazz.getSuperclass(), methodSignatures);
     }
   }
 

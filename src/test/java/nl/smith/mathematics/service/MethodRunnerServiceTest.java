@@ -22,10 +22,10 @@ public class MethodRunnerServiceTest {
 
     @Test
     public void getMethods() {
-        List<String> methodNames = new ArrayList<>();
-     methodRunnerService.extractAnnotatedMethodNames(BigDecimalTestFunctionContainer.class, methodNames);
-        methodNames.forEach(System.out::println);
-        assertEquals(3, methodNames.size());
+        List<MethodSignature> methodSignatures = new ArrayList<>();
+        methodRunnerService.extractAnnotatedMethodNames(BigDecimalTestFunctionContainer.class, methodSignatures);
+        methodSignatures.forEach(System.out::println);
+        assertEquals(3, methodSignatures.size());
 
     }
 }
