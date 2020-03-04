@@ -9,55 +9,55 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RationalNumberTest {
 
     @Test
-    public void constructorUsingInteger() {
+    void constructorUsingInteger() {
         assertEquals(new RationalNumber(2).getNumerator(), BigInteger.valueOf(2));
     }
 
     @Test
-    public void constructorUsingIntegers() {
+    void constructorUsingIntegers() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
         assertEquals(rationalNumber.getNumerator(), BigInteger.valueOf(2));
         assertEquals(rationalNumber.getDenominator(), BigInteger.valueOf(3));
     }
 
     @Test
-    public void constructorUsingZeroDenominatorInteger() {
+    void constructorUsingZeroDenominatorInteger() {
         Exception exception = assertThrows(ArithmeticException.class, () ->  new RationalNumber(2, 0));
         assertEquals(exception.getMessage(), "Division by zero");
     }
 
     @Test
-    public void constructorUsingBigInteger() {
+    void constructorUsingBigInteger() {
         assertEquals(new RationalNumber(BigInteger.valueOf(2)).getNumerator(), BigInteger.valueOf(2));
     }
 
     @Test
-    public void constructorUsingNullBigInteger() {
+    void constructorUsingNullBigInteger() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> new RationalNumber((BigInteger) null));
         assertEquals(exception.getMessage(), "Both numerator and denominator must be specified (not be null)");
     }
 
     @Test
-    public void constructorUsingBigIntegers() {
+    void constructorUsingBigIntegers() {
         RationalNumber rationalNumber = new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(6));
         assertEquals(rationalNumber.getNumerator(), BigInteger.valueOf(2));
         assertEquals(rationalNumber.getDenominator(), BigInteger.valueOf(6));
     }
 
     @Test
-    public void constructorUsingBigIntegersDenominatorZero() {
+    void constructorUsingBigIntegersDenominatorZero() {
         Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0)));
         assertEquals(exception.getMessage(), "Division by zero");
     }
 
     @Test
-    public void constructorUsingIllegalDenominator() {
+    void constructorUsingIllegalDenominator() {
         Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0)));
         assertEquals(exception.getMessage(), "Division by zero") ;
     }
 
     @Test
-    public void add() {
+    void add() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
         RationalNumber augend = new RationalNumber(3, 9);
         RationalNumber result = rationalNumber.add(augend);
@@ -67,7 +67,7 @@ public class RationalNumberTest {
     }
 
     @Test
-    public void subtract() {
+    void subtract() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
         RationalNumber subtrahend = new RationalNumber(3, 9);
         RationalNumber result = rationalNumber.subtract(subtrahend);
@@ -77,7 +77,7 @@ public class RationalNumberTest {
     }
 
     @Test
-    public void multiply() {
+    void multiply() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
         RationalNumber multiplicand = new RationalNumber(3, 9);
         RationalNumber result = rationalNumber.multiply(multiplicand);
@@ -87,7 +87,7 @@ public class RationalNumberTest {
     }
 
     @Test
-    public void divide() {
+    void divide() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
         RationalNumber divisor = new RationalNumber(3, 9);
         RationalNumber result = rationalNumber.divide(divisor);
@@ -97,7 +97,7 @@ public class RationalNumberTest {
     }
 
     @Test
-    public void divideByZero() {
+    void divideByZero() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
         RationalNumber divisor = new RationalNumber(0);
 
@@ -105,21 +105,21 @@ public class RationalNumberTest {
     }
 
     @Test
-    public void equalsCompareWithNull() {
+    void equalsCompareWithNull() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
 
         assertFalse(rationalNumber.equals(null));
     }
 
     @Test
-    public void equalsCompareWithString() {
+    void equalsCompareWithString() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
 
         assertFalse(rationalNumber.equals("String"));
     }
 
     @Test
-    public void equalsCompare() {
+    void equalsCompare() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
         RationalNumber otherRationalNumber = new RationalNumber(20, 30);
 

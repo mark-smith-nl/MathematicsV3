@@ -47,19 +47,19 @@ public class RationalNumberUtilTest {
     @DisplayName("Testing valid numbers as described by @MethodSource(\"numbers\"")
     @ParameterizedTest
     @MethodSource("numbers")
-    public void isNumber(String numberString) {
+    void isNumber(String numberString) {
         assertTrue(RationalNumberUtil.isNumber(numberString));
     }
 
     @DisplayName("Testing valid numbers as described by @MethodSource(\"notNumbers\"")
     @ParameterizedTest
     @MethodSource("notNumbers")
-    public void isNotNumber(String numberString) {
+    void isNotNumber(String numberString) {
         assertFalse(RationalNumberUtil.isNumber(numberString));
     }
 
     @Test
-    public void getRationalNumber() {
+    void getRationalNumber() {
     /*    Map<NumberUtil.NumberComponent, String> numberComponents =
                 NumberUtil.getNumberComponents("-23.123{456}RE[-47]");
         numberComponents.entrySet().stream().forEach(e -> System.out.println(String.format("%s ---> %s", e.getKey().name(), e.getValue())));
@@ -97,7 +97,7 @@ public class RationalNumberUtilTest {
     }
 
     @Test
-    public void doIt() {
+    void doIt() {
         Stack<AbstractMap.SimpleEntry<Integer, Integer>> stack = new Stack<>();
         String pattern = RationalNumberUtil.NUMBER_PATTERN.pattern();
         Character beginToken = new Character('(');

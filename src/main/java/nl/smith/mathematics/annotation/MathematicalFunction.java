@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
  * Annotation to mark a method as a mathematical function.
  */
 public @interface MathematicalFunction {
+
 	String name() default "";
+
 	String description();
 }
