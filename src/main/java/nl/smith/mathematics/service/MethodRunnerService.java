@@ -70,7 +70,7 @@ import java.util.stream.Collectors;
             .filter(m -> Modifier.isPublic(m.getModifiers()))
             .filter(m -> !Modifier.isStatic(m.getModifiers()))
             .filter(m -> m.getAnnotation(MathematicalFunction.class) != null)
-            .map(MethodSignature::new)
+            .map(MethodSignature::getMethodSignature)
             .collect(Collectors.toList()));
 
     if (clazz.getSuperclass() != FunctionContainer.class) {

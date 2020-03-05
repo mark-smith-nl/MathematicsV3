@@ -38,7 +38,11 @@ public class MethodSignature {
             while (superClazz != FunctionContainer.class || annotation != null) {
                 Object[] objects = Stream.of(method.getParameters()).map(Parameter::getType).collect(Collectors.toList()).toArray();
                 Class[] parameterClasses = Arrays.copyOf(objects, objects.length, Class[].class);
-                superClazz.getDeclaredMethod(name, parameterClasses);
+                try {
+                    superClazz.getDeclaredMethod(name, parameterClasses);
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
                 //System.out.println(declaredMethod.getAnnotations().length);
             }
             methodSignature = new MethodSignature(bridgedMethod, annotation);

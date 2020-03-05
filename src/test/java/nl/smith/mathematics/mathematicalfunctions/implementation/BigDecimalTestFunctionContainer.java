@@ -38,7 +38,7 @@ public class BigDecimalTestFunctionContainer extends AbstractTestFunctionContain
                 .filter(m -> !Modifier.isStatic(m.getModifiers()))
                 .filter(m -> !Modifier.isAbstract(m.getModifiers()))
                 .filter(m -> FunctionContainer.class.isAssignableFrom(m.getDeclaringClass()))
-                .map(MethodSignature::new)
+                .map(MethodSignature::getMethodSignature)
                 .collect(Collectors.toList());
 
         methods.forEach(System.out::println);
