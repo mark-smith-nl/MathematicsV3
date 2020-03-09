@@ -10,8 +10,11 @@ import javax.validation.constraints.NotEmpty;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.validation.annotation.Validated;
 
-@Service public class MethodRunnerService {
+@Service
+@Validated
+public class MethodRunnerService {
 
   private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
 

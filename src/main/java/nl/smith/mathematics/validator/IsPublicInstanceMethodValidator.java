@@ -6,7 +6,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import nl.smith.mathematics.annotation.IsPublicInstanceMethod;
 
-public class IsPublicStaticInstanceMethodValidator implements ConstraintValidator<IsPublicInstanceMethod, Method> {
+public class IsPublicInstanceMethodValidator implements ConstraintValidator<IsPublicInstanceMethod, Method> {
 
   @Override
   public void initialize(IsPublicInstanceMethod isPublicInstanceMethod) {

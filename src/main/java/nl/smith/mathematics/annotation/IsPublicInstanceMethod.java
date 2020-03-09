@@ -7,15 +7,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import nl.smith.mathematics.validator.IsPublicStaticInstanceMethodValidator;
+import nl.smith.mathematics.validator.IsPublicInstanceMethodValidator;
 
 @Documented
-@Constraint(validatedBy = IsPublicStaticInstanceMethodValidator.class)
+@Constraint(validatedBy = IsPublicInstanceMethodValidator.class)
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IsPublicStaticInstanceMethod {
+public @interface IsPublicInstanceMethod {
 
-  String message() default "Invalid phone number";
+  String message() default "Method ${validatedValue.getDeclaringClass().getCanonicalName()}.${validatedValue.getName()}(...) is not a public instance method";
 
   Class<?>[] groups() default {};
 
