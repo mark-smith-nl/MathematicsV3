@@ -1,6 +1,13 @@
 package nl.smith.mathematics.configuration;
 
-import nl.smith.mathematics.service.MethodAnnotationFinderService;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
+import nl.smith.mathematics.service.MethodRunnerService;
+import nl.smith.mathematics.service.RecursiveValidatedService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -9,31 +16,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class MathematicsApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
 
+  private final static Logger LOGGER = LoggerFactory.getLogger(MathematicsApplicationListener.class);
+
   @Override
   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
     ApplicationContext context = contextRefreshedEvent.getApplicationContext();
 
-    /*Map<String, Object> validatedBeans = context.getBeansWithAnnotation(
-        Validated.class);
-    System.out.println(validatedBeans.size());
-    Map<String, Object> recursiveMethodContainingBeans = context.getBeansWithAnnotation(
-        HasRecursiveValidatedMethods.class);
-    System.out.println(recursiveMethodContainingBeans.size());
+    wireRecursiveValidatedService(context);
+  }
 
-
-    Map<String, Object> v = context.getBeansWithAnnotation(
-        Scope.class);
-
-    Map<String, Object> beansWithAnnotation = context.getBeansWithAnnotation(
-        HasRecursiveValidatedMethods.class);
-    beansWithAnnotation.values().forEach(b -> {
-      System.out.println("===>" + b.getClass());
-      System.out.println("===>" + b.getClass().getAnnotation(Scope.class));
-    });*/
-    MethodAnnotationFinderService methodAnnotationFinderService = context.getBean(MethodAnnotationFinderService.class);
-    MethodAnnotationFinderService sibling = context.getBean("sibling", MethodAnnotationFinderService.class);
-    methodAnnotationFinderService.setSibling(sibling);
-    sibling.setSibling(methodAnnotationFinderService);
+  private void wireRecursiveValidatedService(ApplicationContext context) {
+     context.getBeansOfType(RecursiveValidatedService.class)
+        .entrySet()
+        .stream()
+        .filter(e -> !e.getKey().equals(e.getValue().getSiblingBeanName()))
+         .map(Entry::getValue)
+        .forEach(b -> {
+          RecursiveValidatedService sibling = (RecursiveValidatedService) context.getBean(b.getSiblingBeanName());
+          b.setSibling(sibling);
+          sibling.setSibling(b);
+          LOGGER.info("Wired recursive validated services of type {}.", b.getClass().getSuperclass().getCanonicalName());
+    });
   }
 
 }

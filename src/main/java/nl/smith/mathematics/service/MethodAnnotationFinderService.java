@@ -2,13 +2,16 @@ package nl.smith.mathematics.service;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import nl.smith.mathematics.annotation.HasRecursiveValidatedMethods;
 import nl.smith.mathematics.annotation.IsPublicInstanceMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,27 +20,15 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 /** Service that tries to receive a specified annotation from a method, its supermethod(s) or bridge method. */
-@Validated
 @Service
-@HasRecursiveValidatedMethods
 @Primary
-public class MethodAnnotationFinderService {
+public class MethodAnnotationFinderService extends
+    RecursiveValidatedService<MethodAnnotationFinderService> {
 
-  private final static Logger LOGGER = LoggerFactory.getLogger(MethodAnnotationFinderService.class);
+  private final static String SIBLING_BEAN_NAME = "METHODANNOTATIONFINDERSERVICE";
 
-  private MethodAnnotationFinderService sibling;
-
-  public MethodAnnotationFinderService getSibling() {
-    return sibling;
-  }
-
-  public void setSibling(MethodAnnotationFinderService sibling) {
-    this.sibling = sibling;
-  }
-  
   public <T extends Annotation> T getAnnotation(@NotNull @IsPublicInstanceMethod Method method, @NotNull Class<T> annotationClass) {
     T annotation = method.getAnnotation(annotationClass);
 
@@ -66,11 +57,11 @@ public class MethodAnnotationFinderService {
     Class<?> clazz = method.getDeclaringClass().getSuperclass();
     while (clazz != null) {
       try {
-        LOGGER.info("Retrieving method: {}.{} not found.", clazz.getCanonicalName(), methodSignature);
+        logger.info("Retrieving method: {}.{} not found.", clazz.getCanonicalName(), methodSignature);
         Method parentMethod = clazz.getDeclaredMethod(name, parameterTypes);
         parentMethods.add(parentMethod);
       } catch (NoSuchMethodException e) {
-        LOGGER.info("Method not found: {}.{} not found.", clazz.getCanonicalName(), methodSignature);
+        logger.info("Method not found: {}.{} not found.", clazz.getCanonicalName(), methodSignature);
       } finally {
         clazz = clazz.getSuperclass();
       }
@@ -88,9 +79,18 @@ public class MethodAnnotationFinderService {
         .findFirst().orElse(null);
   }
 
-  @Bean("sibling")
-  @Scope("prototype")
-  public MethodAnnotationFinderService getMethodAnnotationFinderService() {
+  @Override
+  public String getSiblingBeanName() {
+    return SIBLING_BEAN_NAME;
+  }
+
+  @Bean(SIBLING_BEAN_NAME)
+  public MethodAnnotationFinderService makeSibling() {
     return new MethodAnnotationFinderService();
+  }
+
+  public static void main(String[] args) {
+    List<String> list = Arrays.asList("Mark", "Tom");
+    list.f
   }
 }
