@@ -39,10 +39,6 @@ public class FacultyService extends RecursiveValidatedService<FacultyService> {
 
   }
 
-  public List<@NotBlank String> getNames(@NotEmpty String value) {
-    return Arrays.asList("Mark", "Tom", "Frank", "Petra", value);
-  }
-
   @Override
   public String getSiblingBeanName() {
     return SIBLING_BEAN_NAME;
