@@ -24,6 +24,5 @@ public abstract class RecursiveValidatedService<T> {
     this.sibling = sibling;
   }
 
-  @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
   public abstract T makeSibling();
 }

@@ -89,8 +89,4 @@ public class MethodAnnotationFinderService extends
     return new MethodAnnotationFinderService();
   }
 
-  public static void main(String[] args) {
-    List<String> list = Arrays.asList("Mark", "Tom");
-    list.f
-  }
 }

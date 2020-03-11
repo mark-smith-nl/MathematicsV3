@@ -47,9 +47,9 @@ public class MathematicsV3Application {
     FacultyService facultyService = context.getBean(FacultyService.class);
     System.out.println(context.getBeansOfType(FacultyService.class).size());
 
-    facultyService.getNames("       ");
 
-    //System.out.println(facultyService.faculty(BigInteger.valueOf(7)));
+
+    System.out.println(facultyService.faculty(BigInteger.valueOf(7)));
   }
 
 }
