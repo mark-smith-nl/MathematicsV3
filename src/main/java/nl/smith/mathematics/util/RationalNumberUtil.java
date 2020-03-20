@@ -23,37 +23,31 @@ public class RationalNumberUtil {
         POSITIVE_EXPONENTIAL_PART;
     }
 
-    ;
-
     protected static final Pattern NUMBER_PATTERN = Pattern.compile("((\\-)?([1-9]\\d*)(\\.(\\d*)(([1-9])|(\\{(\\d*[1-9]\\d*)\\}R)))?(E\\[(\\-)?(\\d{2})\\])?)" +
             "|(0)|((\\-)?0(\\.(\\d*)(([1-9])|(\\{(\\d*[1-9]\\d*)\\}R)))(E\\[(\\-)?(\\d{2})\\])?)");
 
-    private static void checkArgument(String numberString) {
-        if (numberString == null || numberString.isEmpty()) {
-            throw new IllegalArgumentException("Null or empty number string");
+    private RationalNumberUtil() {
+        throw new IllegalStateException(String.format("Can not instantiate %s", this.getClass().getCanonicalName()));
+    }
+
+    public static void assertIsNumber(String numberString) {
+        if (numberString == null || numberString.isEmpty() || !NUMBER_PATTERN.matcher(numberString).matches()) {
+            throw new IllegalArgumentException("Number string is null, empty or does not represent a number");
         }
     }
 
-    public static boolean isNumber(String numberString) {
-        checkArgument(numberString);
-
-        return NUMBER_PATTERN.matcher(numberString).matches();
-    }
-
     public static RationalNumber getRationalNumber(String numberString) {
-        checkArgument(numberString);
-
         Map<NumberComponent, String> numberComponents = getNumberComponents(numberString);
 
-        BigInteger numerator = (new BigInteger(numberComponents.get(NumberComponent.POSITIVE_INTEGER_PART)
-                .concat(numberComponents.get(NumberComponent.CONSTANT_FRACTIONAL_PART))
-                .concat(numberComponents.get(NumberComponent.REPEATING_FRACTIONAL_PART))))
-                .subtract(new BigInteger(numberComponents.get(NumberComponent.POSITIVE_INTEGER_PART)
-                        .concat(numberComponents.get(NumberComponent.CONSTANT_FRACTIONAL_PART))));
+        BigInteger numerator = (new BigInteger(numberComponents.getOrDefault(NumberComponent.POSITIVE_INTEGER_PART, "")
+                .concat(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, ""))
+                .concat(numberComponents.getOrDefault(NumberComponent.REPEATING_FRACTIONAL_PART, ""))))
+                .subtract(new BigInteger(numberComponents.getOrDefault(NumberComponent.POSITIVE_INTEGER_PART, "")
+                        .concat(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, ""))));
 
-        BigInteger denominator = BigInteger.TEN.pow(numberComponents.get(NumberComponent.CONSTANT_FRACTIONAL_PART).length()
-                + numberComponents.get(NumberComponent.REPEATING_FRACTIONAL_PART).length())
-                .subtract(BigInteger.TEN.pow(numberComponents.get(NumberComponent.CONSTANT_FRACTIONAL_PART).length()));
+        BigInteger denominator = BigInteger.TEN.pow(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, "").length()
+                + numberComponents.getOrDefault(NumberComponent.REPEATING_FRACTIONAL_PART, "").length())
+                .subtract(BigInteger.TEN.pow(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, "").length()));
 
         if (numberComponents.get(NumberComponent.POSITIVE_EXPONENTIAL_PART) != null) {
             BigInteger exponent = BigInteger.TEN.pow(Integer.valueOf(numberComponents.get(NumberComponent.POSITIVE_EXPONENTIAL_PART)));
@@ -72,7 +66,9 @@ public class RationalNumberUtil {
 
     }
 
-    private static Map<NumberComponent, String> getNumberComponents(String numberString) {
+    public static Map<NumberComponent, String> getNumberComponents(String numberString) {
+        assertIsNumber(numberString);
+
         Map<NumberComponent, String> numberComponents = new LinkedHashMap<>();
         Matcher matcher = NUMBER_PATTERN.matcher(numberString);
 

@@ -1,22 +1,6 @@
 package nl.smith.mathematics.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.sun.org.apache.xpath.internal.Arg;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.constraints.NotNull;
 import nl.smith.mathematics.annotation.MathematicalFunction;
-import nl.smith.mathematics.service.MethodAnnotationFinderService;
-import nl.smith.mathematics.util.RationalNumberUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,8 +8,18 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.NotNull;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class MethodAnnotationFinderServiceTest {
@@ -57,64 +51,71 @@ class MethodAnnotationFinderServiceTest {
     assertEquals("Annotation on doIt() in class AbstractSubTestImpl", annotation.description());
   }
 
-  @DisplayName("Retrieve annotation indirectly from parent method")
+  @DisplayName("Retrieve annotation indirectly from a method's hierarchy")
   @Test
-  void getAnnotation_fromParentMethod() throws NoSuchMethodException {
+  void getAnnotation_fromMethodHierarchy() throws NoSuchMethodException {
     MathematicalFunction annotation = methodAnnotationFinderService
-        .getAnnotation(AbstractSubTestImpl.class.getDeclaredMethod("doItFromAnnotatedNonAbstractSuperClass", new Class<?>[0]),
-            MathematicalFunction.class);
+            .getAnnotation(AbstractSubTestImpl.class.getDeclaredMethod("doItFromAnnotatedNonAbstractSuperClass", new Class<?>[0]),
+                    MathematicalFunction.class);
 
     assertNotNull(annotation);
     assertEquals("Annotation on doItFromAnnotatedNonAbstractSuperClass() in class AbstractTestImpl", annotation.description());
   }
 
-  @DisplayName("Testing null argument in trying to retrieve a method's parent methods")
+  @DisplayName("Testing null argument (no method specified) in trying to retrieve a method's hierarchy")
   @ParameterizedTest
   @NullSource
-  void getParentMethods_nullArgument(Method method) {
-    Exception exception = assertThrows(ConstraintViolationException.class, () -> methodAnnotationFinderService.getParentMethods(method));
+  void getMethodHierarchy_nullArgument(Method method) {
+    Exception exception = assertThrows(ConstraintViolationException.class, () -> methodAnnotationFinderService.getMethodHierarchy(method));
     Set<ConstraintViolation<?>> constraintViolations = ((ConstraintViolationException) exception).getConstraintViolations();
     assertEquals(1, constraintViolations.size());
     ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
     assertEquals("No method specified", constraintViolation.getMessage());
   }
 
-  @DisplayName("Testing retrieval of a private or static method's parent methods")
+  @DisplayName("Testing retrieval a method's hierarchy using a private or static method")
   @ParameterizedTest
   @MethodSource("nonePublicInstanceMethods")
-  void getParentMethods_using_none_publicInstanceMethods(Method method) {
-    Exception exception = assertThrows(ConstraintViolationException.class, () -> methodAnnotationFinderService.getParentMethods(method));
+  void getMethodHierarchy_using_none_publicInstanceMethods(Method method) {
+    Exception exception = assertThrows(ConstraintViolationException.class, () -> methodAnnotationFinderService.getMethodHierarchy(method));
     Set<ConstraintViolation<?>> constraintViolations = ((ConstraintViolationException) exception).getConstraintViolations();
     assertEquals(1, constraintViolations.size());
     ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
     assertEquals(String.format("Method %s.%s(...) is not a public instance method", method.getDeclaringClass().getCanonicalName(), method.getName()), constraintViolation.getMessage());
   }
 
+  @DisplayName("Testing retrieval a method's hierarchy using a public instance method - no parents")
   @Test
-  void getParentMethods_noParentMethods() throws NoSuchMethodException {
+  void getMethodHierarchy_noParentMethods() throws NoSuchMethodException {
     Method method = AbstractTestImpl.class.getMethod("concreteMethod", new Class[]{int.class});
 
-    assertEquals(0, methodAnnotationFinderService.getParentMethods(method).size());
+    assertEquals(0, methodAnnotationFinderService.getMethodHierarchy(method).size());
   }
 
+  @DisplayName("Testing retrieval of AbstractTestImpl.toString method's hierarchy - multiple parents")
   @Test
-  void getParentMethods_toString() throws NoSuchMethodException {
+  void getMethodHierarchy_toString() throws NoSuchMethodException {
     Method method = AbstractTestImpl.class.getMethod("toString", new Class[]{});
 
-    List<Method> parentMethods = methodAnnotationFinderService.getParentMethods(method);
+    List<Method> parentMethods = methodAnnotationFinderService.getMethodHierarchy(method);
 
     assertEquals(2, parentMethods.size());
     assertEquals(AbstractTest.class, parentMethods.get(0).getDeclaringClass());
     assertEquals(Object.class, parentMethods.get(1).getDeclaringClass());
   }
 
+  @DisplayName("Testing private method in superclass illegally overridden as public in subclasss")
   @Test
-  void getParentMethods_abstractGenericMethod() throws NoSuchMethodException {
-    //Method method = AbstractTestImpl.class.getMethod("abstractGenericMethod", new Class[]{int.class});
+  public void getParentmethods_privatemethodOverriddenasPublic() throws NoSuchMethodException {
+    Class<?> clazz = AbstractSubTestImpl.class;
+    Method method = clazz.getDeclaredMethod("overRiddenPrivateMethod", new Class<?>[]{int.class});
+    Exception exception = assertThrows(ConstraintViolationException.class, () -> methodAnnotationFinderService.getMethodHierarchy(method));
 
-    //List<Entry<Class, Method>> parentMethods = methodAnnotationFinderService.getParentMethods(method);
+    Set<ConstraintViolation<?>> constraintViolations = ((ConstraintViolationException) exception).getConstraintViolations();
+    assertEquals(1, constraintViolations.size());
+    ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+    assertEquals(String.format("Method %s.%s(...) is not a public instance method", AbstractTest.class.getCanonicalName(), method.getName()), constraintViolation.getMessage());
 
-    //assertEquals(20, parentMethods.size());
   }
 
   private static Stream<Arguments> methodAnnotationCombinationsWithNullValues() {
@@ -147,6 +148,11 @@ class MethodAnnotationFinderServiceTest {
     public abstract int abstractMethod(int i);
 
     public abstract T abstractGenericMethod(T arg);
+
+    /** Method with same signature is declared as public in AbstractSubTestImpl. */
+    private int overRiddenPrivateMethod(int i) {
+      return i;
+    }
 
     @MathematicalFunction(description = "Annotation on toString() in class AbstractTest")
     @Override
@@ -195,6 +201,11 @@ class MethodAnnotationFinderServiceTest {
     @Override
     public void doItFromAnnotatedNonAbstractSuperClass() {
       super.doItFromAnnotatedNonAbstractSuperClass();
+    }
+
+    /** Method with same signature is declared as private in AbstractTest. */
+    public int overRiddenPrivateMethod(int i) {
+      return i;
     }
 
   }

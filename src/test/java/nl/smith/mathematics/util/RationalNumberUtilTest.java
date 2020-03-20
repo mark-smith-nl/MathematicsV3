@@ -8,13 +8,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
-import java.util.AbstractMap;
-import java.util.Stack;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//@SpringBootTest
 public class RationalNumberUtilTest {
 
     private static String[] NUMBERS = {"0",
@@ -39,36 +37,33 @@ public class RationalNumberUtilTest {
     @DisplayName("Testing null and empty arguments")
     @ParameterizedTest
     @NullAndEmptySource
-    public void isNumberWithNullOrEmptyArgument(String numberString) {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> RationalNumberUtil.isNumber(numberString));
-        assertEquals(exception.getMessage(), "Null or empty number string");
+    public void assertIsNumber_usingNullOrEmptyArgument(String numberString) {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> RationalNumberUtil.assertIsNumber(numberString));
+        assertEquals(exception.getMessage(), "Number string is null, empty or does not represent a number");
     }
 
     @DisplayName("Testing valid numbers as described by @MethodSource(\"numbers\"")
     @ParameterizedTest
     @MethodSource("numbers")
-    void isNumber(String numberString) {
-        assertTrue(RationalNumberUtil.isNumber(numberString));
+    void assertIsNumber_legalNumbers(String numberString) {
+        RationalNumberUtil.assertIsNumber(numberString);
     }
 
     @DisplayName("Testing valid numbers as described by @MethodSource(\"notNumbers\"")
     @ParameterizedTest
     @MethodSource("notNumbers")
-    void isNotNumber(String numberString) {
-        assertFalse(RationalNumberUtil.isNumber(numberString));
+    void assertIsNumber_notNumbers(String numberString) {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> RationalNumberUtil.assertIsNumber(numberString));
+        assertEquals(exception.getMessage(), "Number string is null, empty or does not represent a number");
     }
 
-    @Test
-    void getRationalNumber() {
-    /*    Map<NumberUtil.NumberComponent, String> numberComponents =
-                NumberUtil.getNumberComponents("-23.123{456}RE[-47]");
-        numberComponents.entrySet().stream().forEach(e -> System.out.println(String.format("%s ---> %s", e.getKey().name(), e.getValue())));
-    */
+    @DisplayName("Testing retrieval of number components")
+    @ParameterizedTest
+    @MethodSource("numberComponents")
+    void getNumberComponents(String numberString, Map<RationalNumberUtil.NumberComponent, String> expectedComponents) {
+        Map<RationalNumberUtil.NumberComponent, String> numberComponents = RationalNumberUtil.getNumberComponents(numberString);
 
-        RationalNumber rationalNumber = RationalNumberUtil.getRationalNumber("0.{142857}R");
-        System.out.println(rationalNumber.getNumerator());
-        System.out.println(rationalNumber.getDenominator());
-
+        assertEquals(expectedComponents, numberComponents);
     }
 
     private static Stream<Arguments> numbers() {
@@ -96,28 +91,62 @@ public class RationalNumberUtilTest {
         return Stream.of(s0, s1, s2, s3, s4, s5, s6, s7).flatMap(i -> i);
     }
 
-    @Test
-    void doIt() {
-        Stack<AbstractMap.SimpleEntry<Integer, Integer>> stack = new Stack<>();
-        String pattern = RationalNumberUtil.NUMBER_PATTERN.pattern();
-        Character beginToken = new Character('(');
-        Character closeToken = new Character(')');
-        int groupIndex = 0;
-        for (int i = 0; i < pattern.length(); i++) {
-            Character character = pattern.charAt(i);
-
-            if (character.equals(beginToken)) {
-                stack.push(new AbstractMap.SimpleEntry<>(++groupIndex, i));
-            } else if (character.equals(closeToken)) {
-                int size = stack.size();
-                if (size == 0) {
-                    throw new IllegalArgumentException(String.format("Illegal closing brackes at position %d", i));
-                }
-                AbstractMap.SimpleEntry<Integer, Integer> beginGroup = stack.pop();
-                size = stack.size();
-                String leadingSpaces = beginGroup.getValue() == 0 ? "" : new String(new char[beginGroup.getValue()]).replace("\0", " ");
-                System.out.println(String.format("Size %d. Group %d\t%s", size, beginGroup.getKey(), leadingSpaces + pattern.substring(beginGroup.getValue(), i+1)));
-            }
-        }
+    private static Stream<Arguments> numberComponents() {
+        return Stream.of(
+                Arguments.of("1", Map.of(
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "1")),
+                Arguments.of("-1", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "1")),
+                Arguments.of("2432902008176640000", Map.of(
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "2432902008176640000")),
+                Arguments.of("-1.0{1}R", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "1",
+                        RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "0",
+                        RationalNumberUtil.NumberComponent.REPEATING_FRACTIONAL_PART, "1")),
+                Arguments.of("-123.456", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "123",
+                        RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "456")),
+                Arguments.of("-234.567{8901}R", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "234",
+                        RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "567",
+                        RationalNumberUtil.NumberComponent.REPEATING_FRACTIONAL_PART, "8901")),
+                Arguments.of("-1E[-13]", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "1",
+                        RationalNumberUtil.NumberComponent.SIGN_EXPONENTIAL_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_EXPONENTIAL_PART, "13")),
+                Arguments.of("-1E[-03]", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "1",
+                        RationalNumberUtil.NumberComponent.SIGN_EXPONENTIAL_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_EXPONENTIAL_PART, "03")),
+                Arguments.of("-1E[-00]", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "1",
+                        RationalNumberUtil.NumberComponent.SIGN_EXPONENTIAL_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_EXPONENTIAL_PART, "00")),
+                Arguments.of("-11E[-00]", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "11",
+                        RationalNumberUtil.NumberComponent.SIGN_EXPONENTIAL_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_EXPONENTIAL_PART, "00")),
+                Arguments.of("-11.234E[-00]", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "11",
+                        RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "234",
+                        RationalNumberUtil.NumberComponent.SIGN_EXPONENTIAL_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_EXPONENTIAL_PART, "00")),
+                Arguments.of("-11.234{765}RE[-00]", Map.of(
+                        RationalNumberUtil.NumberComponent.SIGN_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "11",
+                        RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "234",
+                        RationalNumberUtil.NumberComponent.REPEATING_FRACTIONAL_PART, "765",
+                        RationalNumberUtil.NumberComponent.SIGN_EXPONENTIAL_PART, "-",
+                        RationalNumberUtil.NumberComponent.POSITIVE_EXPONENTIAL_PART, "00")));
     }
+
 }

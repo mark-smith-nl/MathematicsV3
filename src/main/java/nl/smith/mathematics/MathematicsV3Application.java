@@ -1,18 +1,14 @@
 package nl.smith.mathematics;
 
-import java.math.BigInteger;
-import javax.validation.ConstraintViolationException;
 import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 import nl.smith.mathematics.service.FacultyService;
-import nl.smith.mathematics.service.MethodAnnotationFinderService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
-import org.springframework.context.annotation.Scope;
+import java.math.BigInteger;
 
 @SpringBootApplication
 @ComponentScan(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
@@ -22,26 +18,6 @@ public class MathematicsV3Application {
   public static void main(String[] args) {
     ConfigurableApplicationContext context = SpringApplication
         .run(MathematicsV3Application.class, args);
-    MethodAnnotationFinderService methodAnnotationFinderService = context
-        .getBean("methodAnnotationFinderService", MethodAnnotationFinderService.class);
-
-    try {
-      methodAnnotationFinderService.getParentMethods(null);
-    } catch (ConstraintViolationException e) {
-      System.out.println("Exception thrown 1");
-    }
-
-    try {
-      methodAnnotationFinderService.getSibling().getParentMethods(null);
-    } catch (ConstraintViolationException e) {
-      System.out.println("Exception thrown 2");
-    }
-
-    try {
-      methodAnnotationFinderService.getSibling().getSibling().getParentMethods(null);
-    } catch (ConstraintViolationException e) {
-      System.out.println("Exception thrown 3");
-    }
 
 
     FacultyService facultyService = context.getBean(FacultyService.class);

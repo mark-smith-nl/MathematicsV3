@@ -1,25 +1,19 @@
 package nl.smith.mathematics.service;
 
+import nl.smith.mathematics.annotation.IsPublicInstanceMethod;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.BridgeMethodResolver;
+import org.springframework.stereotype.Service;
+
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import nl.smith.mathematics.annotation.IsPublicInstanceMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
-import org.springframework.core.BridgeMethodResolver;
-import org.springframework.stereotype.Service;
 
 /** Service that tries to receive a specified annotation from a method, its supermethod(s) or bridge method. */
 @Service
@@ -35,7 +29,7 @@ public class MethodAnnotationFinderService extends
     if (annotation == null) {
       Method bridgeMethod = getBridgeMethod(method);
       if (bridgeMethod == null) {
-        return getParentMethods(method).stream()
+        return getMethodHierarchy(method).stream()
             .map(m -> m.getAnnotation(annotationClass))
             .filter(Objects::nonNull)
             .findFirst()
@@ -48,25 +42,38 @@ public class MethodAnnotationFinderService extends
     return annotation;
   }
 
-  /** Returns a list of methods declared in the specified methods superclasses with the same signature as the specified method. */
-  public List<Method> getParentMethods(@NotNull(message = "No method specified") @IsPublicInstanceMethod Method method) {
-    List<Method> parentMethods = new ArrayList<>();
-    String name = method.getName();
-    Class<?>[] parameterTypes = method.getParameterTypes();
-    String methodSignature = name + "(" + Stream.of(parameterTypes).map(Class::getCanonicalName).collect(Collectors.joining(",")) + ")";
-    Class<?> clazz = method.getDeclaringClass().getSuperclass();
-    while (clazz != null) {
-      try {
-        logger.info("Retrieving method: {}.{} not found.", clazz.getCanonicalName(), methodSignature);
-        Method parentMethod = clazz.getDeclaredMethod(name, parameterTypes);
-        parentMethods.add(parentMethod);
+  public void buildMethodHierarchy(@NotNull(message = "No class specified") Class<?> clazz,
+                                   @NotNull(message = "No method specified") @IsPublicInstanceMethod Method method,
+                                   @NotNull(message = "Please supply a not null parent method list to be filled") List<Method> methodHierarchy) {
+    String methodSignature = method.getName() + "(" + Stream.of(method.getParameterTypes()).map(Class::getCanonicalName).collect(Collectors.joining(",")) + ")";
+
+    try {
+        logger.info("Retrieving method: {}.{} ....", clazz.getCanonicalName(), methodSignature);
+        method = clazz.getDeclaredMethod(method.getName(), method.getParameterTypes());
+        logger.info("Retrieving method: {}.{} .... found", clazz.getCanonicalName(), methodSignature);
+        methodHierarchy.add(method);
       } catch (NoSuchMethodException e) {
-        logger.info("Method not found: {}.{} not found.", clazz.getCanonicalName(), methodSignature);
+        logger.info("Method not found: {}.{} ... not found.", clazz.getCanonicalName(), methodSignature);
       } finally {
         clazz = clazz.getSuperclass();
       }
+
+    if (clazz != null) {
+      sibling.buildMethodHierarchy(clazz, method, methodHierarchy);
     }
-    return parentMethods;
+  }
+
+  /** Returns a list of methods declared in the specified methods superclasses with the same signature as the specified method. */
+  public List<Method> getMethodHierarchy(@NotNull(message = "No method specified") Method method) {
+    Class<?> clazz = method.getDeclaringClass();
+    List<Method> methodHierarchy = new ArrayList<>();
+
+    buildMethodHierarchy(clazz, method, methodHierarchy);
+
+    // Remove the first element since only parent methods should be returned.
+    methodHierarchy.remove(0);
+
+    return methodHierarchy;
   }
 
   public Method getBridgeMethod(@NotNull Method method) {
