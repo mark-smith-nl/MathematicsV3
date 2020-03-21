@@ -3,7 +3,9 @@ package nl.smith.mathematics.mathematicalfunctions.implementation;
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 import nl.smith.mathematics.mathematicalfunctions.definition.AbstractTestFunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberStatisticalFunctions;
 import nl.smith.mathematics.service.MethodSignature;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.BridgeMethodResolver;
 
 import java.lang.reflect.Method;
@@ -14,7 +16,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BigDecimalTestFunctionContainer extends AbstractTestFunctionContainer<BigDecimal> {
+public class BigDecimalTestFunctionContainer extends AbstractTestFunctionContainer<BigDecimal, BigDecimalTestFunctionContainer> {
+
+    private final static String SIBLING_BEAN_NAME = "BIGDECIMALTESTFUNCTIONCONTAINER";
 
     @Override
     public BigDecimal four(BigDecimal numberrrrr) {
@@ -42,6 +46,16 @@ public class BigDecimalTestFunctionContainer extends AbstractTestFunctionContain
                 .collect(Collectors.toList());
 
         methods.forEach(System.out::println);
+    }
+
+    @Override
+    public String getSiblingBeanName() {
+        return SIBLING_BEAN_NAME;
+    }
+
+    @Bean(SIBLING_BEAN_NAME)
+    public BigDecimalTestFunctionContainer makeSibling() {
+        return new BigDecimalTestFunctionContainer();
     }
 
 }

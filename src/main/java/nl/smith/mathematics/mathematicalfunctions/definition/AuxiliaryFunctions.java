@@ -4,7 +4,7 @@ import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 
 import javax.validation.constraints.NotNull;
 
-public abstract class AuxiliaryFunctions<T extends Number> extends FunctionContainer<T> {
+public abstract class AuxiliaryFunctions<T extends Number, S extends AuxiliaryFunctions> extends FunctionContainer<T, S> {
 
     @Override
     public String getDescription() {

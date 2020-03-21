@@ -5,7 +5,7 @@ import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 
 import javax.validation.constraints.NotNull;
 
-public abstract class StatisticalFunctions<T extends Number> extends FunctionContainer<T> {
+public abstract class StatisticalFunctions<T extends Number, S extends StatisticalFunctions> extends FunctionContainer<T, S> {
 
     @Override
     public String getDescription() {

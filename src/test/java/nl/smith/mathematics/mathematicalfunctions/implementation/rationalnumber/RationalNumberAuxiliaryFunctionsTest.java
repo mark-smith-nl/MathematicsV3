@@ -41,6 +41,7 @@ class RationalNumberAuxiliaryFunctionsTest {
                 Arguments.of(new RationalNumber(3), new RationalNumber(6)),
                 Arguments.of(new RationalNumber(4), new RationalNumber(24)),
                 Arguments.of(new RationalNumber(10), new RationalNumber(3628800)),
-                Arguments.of(new RationalNumber(20), RationalNumber.valueOf("2432902008176640000")));
+                Arguments.of(new RationalNumber(20), new RationalNumber(2432902008176640000l)));
+        //  Arguments.of(new RationalNumber(20), RationalNumber.valueOf("2432902008176640000")));
     }
 }

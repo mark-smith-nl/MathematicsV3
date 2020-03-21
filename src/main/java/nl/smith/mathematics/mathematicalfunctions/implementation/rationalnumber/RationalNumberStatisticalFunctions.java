@@ -3,14 +3,19 @@ package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber
 import nl.smith.mathematics.mathematicalfunctions.definition.StatisticalFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import nl.smith.mathematics.util.ObjectWrapper;
+import org.springframework.context.annotation.Bean;
 
 import java.util.stream.Stream;
 
-public class RationalNumberStatisticalFunctions extends StatisticalFunctions<RationalNumber> {
+import static nl.smith.mathematics.numbertype.RationalNumber.*;
+
+public class RationalNumberStatisticalFunctions extends StatisticalFunctions<RationalNumber, RationalNumberStatisticalFunctions> {
+
+	private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERSTATISTICALFUNCTIONS";
 
 	@Override
 	public RationalNumber sum(RationalNumber... numbers) {
-		ObjectWrapper<RationalNumber> sum = new ObjectWrapper<>(RationalNumber.ZERO);
+		ObjectWrapper<RationalNumber> sum = new ObjectWrapper<>(ZERO);
 		Stream.of(numbers).forEach(n -> sum.setValue(sum.getValue().add(n)));
 
 		return sum.getValue();
@@ -18,7 +23,10 @@ public class RationalNumberStatisticalFunctions extends StatisticalFunctions<Rat
 
 	@Override
 	public RationalNumber prod(RationalNumber... numbers) {
-		return null;
+		ObjectWrapper<RationalNumber> prod = new ObjectWrapper<>(ONE);
+		Stream.of(numbers).forEach(n -> prod.setValue(prod.getValue().multiply(n)));
+
+		return prod.getValue();
 	}
 
 	@Override
@@ -30,4 +38,15 @@ public class RationalNumberStatisticalFunctions extends StatisticalFunctions<Rat
 	public RationalNumber mean(RationalNumber ... numbers) {
 		return null;
 	}
+
+	@Override
+	public String getSiblingBeanName() {
+		return SIBLING_BEAN_NAME;
+	}
+
+	@Bean(SIBLING_BEAN_NAME)
+	public RationalNumberStatisticalFunctions makeSibling() {
+		return new RationalNumberStatisticalFunctions();
+	}
+
 }

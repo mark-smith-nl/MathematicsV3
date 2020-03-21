@@ -1,6 +1,8 @@
 package nl.smith.mathematics.mathematicalfunctions;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
+import nl.smith.mathematics.service.MethodAnnotationFinderService;
+import nl.smith.mathematics.service.RecursiveValidatedService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
@@ -14,19 +16,18 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Validated
-public abstract class FunctionContainer<T extends Number> {
+public abstract class FunctionContainer<N extends Number, S extends FunctionContainer> extends RecursiveValidatedService<S> {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FunctionContainer.class);
 
-    private Class<T> numberType;
+    private Class<N> numberType;
 
     /**
      * Map of callable mathematical functions using the methods signature as key.
      */
     private Map<String, MathematicalMethod> mathematicalFunctions = new HashMap<>();
 
-    public Class<T> getNumberType() {
+    public Class<N> getNumberType() {
         return numberType;
     }
 
@@ -53,7 +54,7 @@ public abstract class FunctionContainer<T extends Number> {
 
         Type genericInterfaceClazz = functionContainerClazz.getGenericSuperclass();
 
-        numberType = (Class<T>) ((ParameterizedType) genericInterfaceClazz).getActualTypeArguments()[0];
+        numberType = (Class<N>) ((ParameterizedType) genericInterfaceClazz).getActualTypeArguments()[0];
     }
 
     /**

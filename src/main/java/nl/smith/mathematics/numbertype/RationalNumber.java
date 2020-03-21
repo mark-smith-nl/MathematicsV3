@@ -21,7 +21,7 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
 
     private final BigInteger denominator;
 
-    public RationalNumber(int numerator) {
+    public RationalNumber(long numerator) {
         this(BigInteger.valueOf(numerator));
     }
 

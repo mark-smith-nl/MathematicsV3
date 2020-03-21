@@ -8,21 +8,21 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-public abstract class RecursiveValidatedService<T> {
+public abstract class RecursiveValidatedService<S> {
 
   protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  protected T sibling;
+  protected S sibling;
 
   public abstract String getSiblingBeanName();
 
-  public T getSibling() {
+  public S getSibling() {
     return sibling;
   }
 
-  public void setSibling(T sibling) {
+  public void setSibling(S sibling) {
     this.sibling = sibling;
   }
 
-  public abstract T makeSibling();
+  public abstract S makeSibling();
 }

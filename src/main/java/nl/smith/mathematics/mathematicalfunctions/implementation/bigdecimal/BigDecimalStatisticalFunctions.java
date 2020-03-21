@@ -2,11 +2,14 @@ package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
 import nl.smith.mathematics.mathematicalfunctions.definition.StatisticalFunctions;
 import nl.smith.mathematics.util.ObjectWrapper;
+import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
 
-public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDecimal> {
+public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDecimal, BigDecimalStatisticalFunctions> {
+
+	private final static String SIBLING_BEAN_NAME = "BIGDECIMALSTATISTICALFUNCTIONS";
 
 	@Override
 	public BigDecimal sum(BigDecimal... numbers) {
@@ -38,4 +41,14 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 
 		return sum.getValue().divide(BigDecimal.valueOf(numbers.length), 1);
 	}
+	@Override
+	public String getSiblingBeanName() {
+		return SIBLING_BEAN_NAME;
+	}
+
+	@Bean(SIBLING_BEAN_NAME)
+	public BigDecimalStatisticalFunctions makeSibling() {
+		return new BigDecimalStatisticalFunctions();
+	}
+
 }

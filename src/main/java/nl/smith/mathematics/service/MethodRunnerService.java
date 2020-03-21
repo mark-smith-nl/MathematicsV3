@@ -18,16 +18,16 @@ public class MethodRunnerService {
 
   private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
 
-  private final Set<FunctionContainer<? extends Number>> functionContainers;
+  private final Set<FunctionContainer<? extends Number, ? extends FunctionContainer>> functionContainers;
 
-  private final Map<? extends Class<? extends Number>, List<FunctionContainer<? extends Number>>> functionContainersByNumberType;
+  private final Map<? extends Class<? extends Number>, List<FunctionContainer<? extends Number, ? extends FunctionContainer>>> functionContainersByNumberType;
 
   private final Set<Class<? extends Number>> numberTypes;
 
   /** The selected number type to work with */
   private Class<? extends Number> numberType;
 
-  public MethodRunnerService(@NotEmpty Set<FunctionContainer<? extends Number>> functionContainers) {
+  public MethodRunnerService(@NotEmpty Set<FunctionContainer<? extends Number, ? extends FunctionContainer>> functionContainers) {
     this.functionContainers = Collections.unmodifiableSet(functionContainers);
 
     functionContainersByNumberType = Collections.unmodifiableMap(functionContainers.stream()
@@ -59,11 +59,11 @@ public class MethodRunnerService {
     this.numberType = numberType;
   }
 
-  public List<FunctionContainer<? extends Number>> getAvailableFunctionContainers(){
+  public List<FunctionContainer<? extends Number, ? extends FunctionContainer>> getAvailableFunctionContainers(){
     return functionContainersByNumberType.get(numberType);
   }
 
-  public Set<FunctionContainer<? extends Number>> getFunctionContainers() {
+  public Set<FunctionContainer<? extends Number, ? extends FunctionContainer>> getFunctionContainers() {
     return functionContainers;
   }
 

@@ -1,8 +1,13 @@
 package nl.smith.mathematics.numbertype;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigInteger;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,6 +59,13 @@ public class RationalNumberTest {
     void constructorUsingIllegalDenominator() {
         Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0)));
         assertEquals(exception.getMessage(), "Division by zero") ;
+    }
+
+    @DisplayName("Testing the construction of a RationalNumber using its static public method valueOf()")
+    @ParameterizedTest
+    @MethodSource("numberString")
+    void valueOf(String numberString) {
+        RationalNumber.valueOf(numberString);
     }
 
     @Test
@@ -124,5 +136,16 @@ public class RationalNumberTest {
         RationalNumber otherRationalNumber = new RationalNumber(20, 30);
 
         assertTrue(rationalNumber.equals(otherRationalNumber));
+    }
+
+    private static Stream<Arguments> numberString() {
+        return Stream.of(
+                Arguments.of("1", new RationalNumber(1)),
+                Arguments.of("-1", new RationalNumber(-1)),
+                Arguments.of("12.345", new RationalNumber(12345, 1000)),
+                Arguments.of("-12.345", new RationalNumber(-12345, 1000)),
+                Arguments.of("345E[12]", new RationalNumber(345000000000000l)),
+                Arguments.of("0.{142857}R", new RationalNumber(1, 7)),
+                Arguments.of("0.12{345}R", new RationalNumber(12345345 - 12345, 1000000000 - 1000000)));
     }
 }

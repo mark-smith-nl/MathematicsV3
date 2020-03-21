@@ -5,7 +5,7 @@ import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 
 import java.math.BigDecimal;
 
-public abstract class AbstractTestFunctionContainer<T extends Number> extends FunctionContainer<T> {
+public abstract class AbstractTestFunctionContainer<T extends Number, S extends AbstractTestFunctionContainer> extends FunctionContainer<T, S> {
 
     @Override
     public String getDescription() {

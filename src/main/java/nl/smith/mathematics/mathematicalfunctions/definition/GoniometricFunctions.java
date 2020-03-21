@@ -3,7 +3,7 @@ package nl.smith.mathematics.mathematicalfunctions.definition;
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 
-public abstract class GoniometricFunctions<T extends Number> extends FunctionContainer<T> {
+public abstract class GoniometricFunctions<T extends Number, S extends GoniometricFunctions> extends FunctionContainer<T, S> {
 
   @Override
   public String getDescription() {
