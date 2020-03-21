@@ -14,7 +14,7 @@ public class BigDecimalAuxiliaryFunctions extends AuxiliaryFunctions<BigDecimal,
 	private final static String SIBLING_BEAN_NAME = "BIGDECIMALAUXILIARYFUNCTIONS";
 
 	@Override
-	public BigDecimal faculty(@NotNull BigDecimal number) {
+	public BigDecimal faculty(BigDecimal number) {
 		if (number.compareTo(ONE) < 1) {
 			return ONE;
 		}

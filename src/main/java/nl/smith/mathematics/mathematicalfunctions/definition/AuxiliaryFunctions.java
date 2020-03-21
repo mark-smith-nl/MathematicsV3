@@ -11,5 +11,5 @@ public abstract class AuxiliaryFunctions<T extends Number, S extends AuxiliaryFu
         return "Auxiliary methods: faculty";
     }
 
-    public abstract T faculty(@NotNull T number);
+    public abstract T faculty(@NotNull(message = "No argument specified for faculty method") T number);
 }

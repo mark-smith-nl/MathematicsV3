@@ -6,12 +6,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.NullString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.math.BigInteger;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class RationalNumberAuxiliaryFunctionsTest {
@@ -24,12 +31,21 @@ class RationalNumberAuxiliaryFunctionsTest {
         this.rationalNumberAuxiliaryFunctions = rationalNumberAuxiliaryFunctions;
     }
 
+    @DisplayName("Testing faculty using null argument")
+    @ParameterizedTest
+    @NullSource
+    void faculty_usingNullArgument(RationalNumber argument) {
+        Exception exception = assertThrows(ConstraintViolationException.class, () -> rationalNumberAuxiliaryFunctions.faculty(argument));
+        Set<ConstraintViolation<?>> constraintViolations = ((ConstraintViolationException) exception).getConstraintViolations();
+        assertEquals(1, constraintViolations.size());
+        ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+        assertEquals("No argument specified for faculty method", constraintViolation.getMessage());
+    }
+
     @DisplayName("Testing faculty using @MethodSource(\"facultyArguments\"")
     @ParameterizedTest
     @MethodSource("facultyArguments")
     void faculty(RationalNumber argument, RationalNumber result) {
-        RationalNumber faculty = rationalNumberAuxiliaryFunctions.faculty(new RationalNumber(3));
-
         assertEquals(result, rationalNumberAuxiliaryFunctions.faculty(argument));
     }
 

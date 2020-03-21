@@ -11,6 +11,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
+import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
+
 public class RationalNumberTest {
 
     @Test
@@ -138,6 +141,14 @@ public class RationalNumberTest {
         assertTrue(rationalNumber.equals(otherRationalNumber));
     }
 
+    @ParameterizedTest
+    @MethodSource("divideAndRemainder")
+    void divideAndRemainder(RationalNumber number, RationalNumber divisor, RationalNumber integerValue, RationalNumber remainder) {
+        RationalNumber[] divideAndRemainder = number.divideAndRemainder(divisor);
+        assertEquals(integerValue, divideAndRemainder[0]);
+        assertEquals(remainder, divideAndRemainder[1]);
+    }
+
     private static Stream<Arguments> numberString() {
         return Stream.of(
                 Arguments.of("1", new RationalNumber(1)),
@@ -148,4 +159,19 @@ public class RationalNumberTest {
                 Arguments.of("0.{142857}R", new RationalNumber(1, 7)),
                 Arguments.of("0.12{345}R", new RationalNumber(12345345 - 12345, 1000000000 - 1000000)));
     }
+
+    private static Stream<Arguments> divideAndRemainder() {
+        return Stream.of(
+                Arguments.of(new RationalNumber(8), new RationalNumber(1), new RationalNumber(8), ZERO),
+                Arguments.of(new RationalNumber(8), new RationalNumber(2), new RationalNumber(4), ZERO),
+                Arguments.of(new RationalNumber(8), new RationalNumber(3), new RationalNumber(2), new RationalNumber(2)),
+                Arguments.of(new RationalNumber(8), new RationalNumber(4), new RationalNumber(2), ZERO),
+                Arguments.of(new RationalNumber(8), new RationalNumber(5), ONE, new RationalNumber(3)),
+                Arguments.of(new RationalNumber(8), new RationalNumber(6), ONE, new RationalNumber(2)),
+                Arguments.of(new RationalNumber(8), new RationalNumber(7), ONE, ONE),
+                Arguments.of(new RationalNumber(8), new RationalNumber(8), ONE, ZERO)
+        );
+    }
+
+
 }

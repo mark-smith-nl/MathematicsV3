@@ -61,27 +61,33 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
         return new RationalNumber(numerator.divide(gcd), denominator.divide(gcd));
     }
 
-    public RationalNumber[] divideAndRemainder() {
-        BigInteger[] divideAndRemainder = numerator.divideAndRemainder(denominator);
-        return new RationalNumber[]{new RationalNumber(divideAndRemainder[0]), new RationalNumber(divideAndRemainder[1], denominator)};
+    public RationalNumber[] divideAndRemainder(RationalNumber divisor) {
+        RationalNumber division = this.divide(divisor);
+        BigInteger[] divideAndRemainder = division.numerator.divideAndRemainder(division.denominator);
+        return new RationalNumber[]{new RationalNumber(divideAndRemainder[0]),
+                new RationalNumber(divideAndRemainder[1], division.denominator)};
     }
 
+    //TODO Test intValue()
     @Override
     public int intValue() {
-        return divideAndRemainder()[0].numerator.intValue();
+        return numerator.divideAndRemainder(denominator)[0].intValue();
     }
 
+    //TODO Test longValue()
     @Override
     public long longValue() {
-        return divideAndRemainder()[0].numerator.longValue();
+        return numerator.divideAndRemainder(denominator)[0].longValue();
     }
 
+    //TODO Implement floatValue()
     @Override
     public float floatValue() {
         // TODO Auto-generated method stub
         return 0;
     }
 
+    //TODO Implement doubleValue()
     @Override
     public double doubleValue() {
         // TODO Auto-generated method stub

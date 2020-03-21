@@ -1,5 +1,7 @@
 package nl.smith.mathematics.numbertype;
 
+import java.math.BigInteger;
+
 public interface ArithmeticFunctions<T extends Number> {
 
     T add(T augend) ;
@@ -14,4 +16,5 @@ public interface ArithmeticFunctions<T extends Number> {
 
     T abs();
 
+    T[] divideAndRemainder(T divisor);
 }
