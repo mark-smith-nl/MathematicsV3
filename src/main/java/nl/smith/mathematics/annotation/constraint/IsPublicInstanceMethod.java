@@ -1,4 +1,4 @@
-package nl.smith.mathematics.annotation;
+package nl.smith.mathematics.annotation.constraint;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

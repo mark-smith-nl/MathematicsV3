@@ -2,6 +2,7 @@ package nl.smith.mathematics.numbertype;
 
 import nl.smith.mathematics.util.RationalNumberUtil;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
@@ -63,15 +64,25 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
 
     public RationalNumber[] divideAndRemainder(RationalNumber divisor) {
         RationalNumber division = this.divide(divisor);
-        BigInteger[] divideAndRemainder = division.numerator.divideAndRemainder(division.denominator);
-        return new RationalNumber[]{new RationalNumber(divideAndRemainder[0]),
-                new RationalNumber(divideAndRemainder[1], division.denominator)};
+        BigInteger integerPart = division.bigIntValue();
+        RationalNumber remainder = this.subtract(divisor.multiply(integerPart));
+
+        return new RationalNumber[]{new RationalNumber(integerPart), remainder};
+    }
+
+    @Override
+    public boolean isNaturalNumber() {
+        return numerator.divideAndRemainder(denominator)[1].equals(BigInteger.ZERO);
     }
 
     //TODO Test intValue()
     @Override
     public int intValue() {
         return numerator.divideAndRemainder(denominator)[0].intValue();
+    }
+
+    public BigInteger bigIntValue() {
+        return numerator.divideAndRemainder(denominator)[0];
     }
 
     //TODO Test longValue()
@@ -112,6 +123,12 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
     public RationalNumber multiply(RationalNumber multiplicand) {
         BigInteger numerator = this.numerator.multiply(multiplicand.numerator);
         BigInteger denominator = this.denominator.multiply(multiplicand.denominator);
+
+        return new RationalNumber(numerator, denominator);
+    }
+
+    public RationalNumber multiply(BigInteger multiplicand) {
+        BigInteger numerator = this.numerator.multiply(multiplicand);
 
         return new RationalNumber(numerator, denominator);
     }

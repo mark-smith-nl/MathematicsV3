@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import nl.smith.mathematics.annotation.IsPublicInstanceMethod;
+import nl.smith.mathematics.annotation.constraint.IsPublicInstanceMethod;
 
 public class IsPublicInstanceMethodValidator implements ConstraintValidator<IsPublicInstanceMethod, Method> {
 

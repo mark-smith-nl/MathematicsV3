@@ -17,4 +17,6 @@ public interface ArithmeticFunctions<T extends Number> {
     T abs();
 
     T[] divideAndRemainder(T divisor);
+
+    boolean isNaturalNumber();
 }

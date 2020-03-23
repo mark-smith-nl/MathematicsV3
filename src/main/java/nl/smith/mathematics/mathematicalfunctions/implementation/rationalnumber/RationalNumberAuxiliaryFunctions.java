@@ -1,8 +1,8 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
+import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNaturalNumber;
 import nl.smith.mathematics.mathematicalfunctions.definition.AuxiliaryFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
-import nl.smith.mathematics.service.MethodAnnotationFinderService;
 import org.springframework.context.annotation.Bean;
 
 import javax.validation.constraints.NotNull;

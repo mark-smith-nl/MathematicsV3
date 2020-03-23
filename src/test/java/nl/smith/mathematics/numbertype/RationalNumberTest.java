@@ -77,8 +77,7 @@ public class RationalNumberTest {
         RationalNumber augend = new RationalNumber(3, 9);
         RationalNumber result = rationalNumber.add(augend);
 
-        assertEquals(result.getNumerator(), BigInteger.valueOf(27));
-        assertEquals(result.getDenominator(), BigInteger.valueOf(27));
+        assertEquals(result, ONE);
     }
 
     @Test
@@ -87,8 +86,7 @@ public class RationalNumberTest {
         RationalNumber subtrahend = new RationalNumber(3, 9);
         RationalNumber result = rationalNumber.subtract(subtrahend);
 
-        assertEquals(result.getNumerator(), BigInteger.valueOf(9));
-        assertEquals(result.getDenominator(), BigInteger.valueOf(27));
+        assertEquals(result, new RationalNumber(1, 3));
     }
 
     @Test
@@ -97,8 +95,16 @@ public class RationalNumberTest {
         RationalNumber multiplicand = new RationalNumber(3, 9);
         RationalNumber result = rationalNumber.multiply(multiplicand);
 
-        assertEquals(result.getNumerator(), BigInteger.valueOf(6));
-        assertEquals(result.getDenominator(), BigInteger.valueOf(27));
+        assertEquals(result, new RationalNumber(6, 27));
+    }
+
+    @Test
+    void multiply_usingBigInteger() {
+        RationalNumber rationalNumber = new RationalNumber(2, 3);
+        BigInteger multiplicand = new BigInteger("2");
+        RationalNumber result = rationalNumber.multiply(multiplicand);
+
+        assertEquals(result, new RationalNumber(4, 3));
     }
 
     @Test
@@ -107,8 +113,7 @@ public class RationalNumberTest {
         RationalNumber divisor = new RationalNumber(3, 9);
         RationalNumber result = rationalNumber.divide(divisor);
 
-        assertEquals(result.getNumerator(), BigInteger.valueOf(18));
-        assertEquals(result.getDenominator(), BigInteger.valueOf(9));
+        assertEquals(result, new RationalNumber(2));
     }
 
     @Test
@@ -162,6 +167,7 @@ public class RationalNumberTest {
 
     private static Stream<Arguments> divideAndRemainder() {
         return Stream.of(
+                Arguments.of(new RationalNumber(52, 10), new RationalNumber(25, 10), new RationalNumber(2), new RationalNumber(2, 10)),
                 Arguments.of(new RationalNumber(8), new RationalNumber(1), new RationalNumber(8), ZERO),
                 Arguments.of(new RationalNumber(8), new RationalNumber(2), new RationalNumber(4), ZERO),
                 Arguments.of(new RationalNumber(8), new RationalNumber(3), new RationalNumber(2), new RationalNumber(2)),

@@ -1,7 +1,6 @@
-package nl.smith.mathematics.annotation;
+package nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument;
 
 import nl.smith.mathematics.validator.IsNaturalNumberValidator;
-import nl.smith.mathematics.validator.IsPublicInstanceMethodValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -13,9 +12,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsNaturalNumber {
 
-  String message() default "Change message: Method ${validatedValue.getDeclaringClass().getCanonicalName()}.${validatedValue.getName()}(...) is not a public instance method";
-
-  Class<?> numberClass();
+  String message() default "Value is not an integer number: '${validatedValue}'";
 
   Class<?>[] groups() default {};
 

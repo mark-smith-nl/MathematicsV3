@@ -1,6 +1,6 @@
 package nl.smith.mathematics.service;
 
-import nl.smith.mathematics.annotation.IsPublicInstanceMethod;
+import nl.smith.mathematics.annotation.constraint.IsPublicInstanceMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.BridgeMethodResolver;
