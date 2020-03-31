@@ -66,6 +66,34 @@ public class RationalNumberUtilTest {
         assertEquals(expectedComponents, numberComponents);
     }
 
+    @DisplayName("Creating rational number from string")
+    @ParameterizedTest
+    @MethodSource("numberStrings")
+    void getRationalNumber(String numberString, RationalNumber expectedRationalNumber, Exception expectedException) {
+        if (expectedException == null) {
+            RationalNumber rationalNumber = RationalNumberUtil.getRationalNumber(numberString);
+            assertEquals(expectedRationalNumber, rationalNumber);
+        } else{
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> RationalNumberUtil.getRationalNumber(numberString));
+            assertEquals(expectedException.getClass(), exception.getClass());
+            assertEquals(expectedException.getMessage(), exception.getMessage());
+        }
+    }
+
+    @DisplayName("Retrieving integer part of rational number")
+    @ParameterizedTest
+    @MethodSource("rationalNumbers")
+    void intValue(RationalNumber rationalNumber, int expectedIntValue) {
+        assertEquals(expectedIntValue, rationalNumber.intValue());
+    }
+
+    @DisplayName("Retrieving long part of rational number")
+    @ParameterizedTest
+    @MethodSource({"rationalNumbers", "rationalNumbers_long"})
+    void longValue(RationalNumber rationalNumber, long expectedIntValue) {
+        assertEquals(expectedIntValue, rationalNumber.longValue());
+    }
+
     private static Stream<Arguments> numbers() {
         Stream<Arguments> s0 = Stream.of(NUMBERS).map(Arguments::of);
         Stream<Arguments> s1 = Stream.of(NUMBERS).filter(n -> !"0".equals(n)).map(n -> n.concat("E[00]")).map(Arguments::of);
@@ -146,7 +174,45 @@ public class RationalNumberUtilTest {
                         RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "234",
                         RationalNumberUtil.NumberComponent.REPEATING_FRACTIONAL_PART, "765",
                         RationalNumberUtil.NumberComponent.SIGN_EXPONENTIAL_PART, "-",
-                        RationalNumberUtil.NumberComponent.POSITIVE_EXPONENTIAL_PART, "00")));
+                        RationalNumberUtil.NumberComponent.POSITIVE_EXPONENTIAL_PART, "00"))
+        );
     }
 
+    private static Stream<Arguments> numberStrings() {
+        return Stream.of(
+                Arguments.of(null, null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
+                Arguments.of("", null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
+                Arguments.of("Hello world", null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
+                Arguments.of(" 1", null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
+                Arguments.of("01", null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
+                Arguments.of("12.345{6789}R", new RationalNumber(10287037, 833250), null),
+                Arguments.of("-12.345{6789}R", new RationalNumber(-10287037, 833250), null),
+                Arguments.of("12.345{6789}RE[02]", new RationalNumber(1028703700, 833250), null),
+                Arguments.of("0.{142857}R", new RationalNumber(1, 7), null),
+                Arguments.of("0.23", new RationalNumber(23, 100), null),
+                Arguments.of("0.23E[01]", new RationalNumber(23, 10), null),
+                Arguments.of("0.23E[-01]", new RationalNumber(23, 1000), null),
+                Arguments.of("0", new RationalNumber(0), null)
+        );
+    }
+
+    private static Stream<Arguments> rationalNumbers() {
+        return Stream.of(
+                Arguments.of(RationalNumberUtil.getRationalNumber("2"), 2),
+                Arguments.of(RationalNumberUtil.getRationalNumber("2.1"), 2),
+                Arguments.of(RationalNumberUtil.getRationalNumber("2.5"), 2),
+                Arguments.of(RationalNumberUtil.getRationalNumber("2.6"), 2),
+                Arguments.of(RationalNumberUtil.getRationalNumber("2.6"), 2),
+                Arguments.of(RationalNumberUtil.getRationalNumber("2.6{1}R"), 2),
+                Arguments.of(RationalNumberUtil.getRationalNumber("-2.6"), -2),
+                Arguments.of(new RationalNumber(Integer.MAX_VALUE), Integer.MAX_VALUE),
+                Arguments.of(new RationalNumber(Integer.MIN_VALUE), Integer.MIN_VALUE)
+                );
+    }
+
+    private static Stream<Arguments> rationalNumbers_long() {
+            return Stream.of(
+                    Arguments.of(RationalNumberUtil.getRationalNumber("1E[18]"), 1000000000000000000l)
+                    );
+    }
 }

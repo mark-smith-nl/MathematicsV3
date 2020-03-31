@@ -75,7 +75,6 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
         return numerator.divideAndRemainder(denominator)[1].equals(BigInteger.ZERO);
     }
 
-    //TODO Test intValue()
     @Override
     public int intValue() {
         return numerator.divideAndRemainder(denominator)[0].intValue();
@@ -85,7 +84,6 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
         return numerator.divideAndRemainder(denominator)[0];
     }
 
-    //TODO Test longValue()
     @Override
     public long longValue() {
         return numerator.divideAndRemainder(denominator)[0].longValue();

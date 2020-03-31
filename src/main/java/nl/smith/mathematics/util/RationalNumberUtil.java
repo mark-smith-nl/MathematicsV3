@@ -10,6 +10,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/** Utility to inspect a string to determine if it could be transformed into a {@link nl.smith.mathematics.numbertype.RationalNumber}
+ *
+ * <pre>
+ *         ------     ------
+ *     ->-| SIGN |->-| 1...9 |----
+ *         ------   | ------   |
+ *                  ^          |
+ *                  |          |
+ *                   ----------
+ * </pre>
+ * */
+
 public class RationalNumberUtil {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RationalNumberUtil.class);
@@ -39,15 +51,24 @@ public class RationalNumberUtil {
     public static RationalNumber getRationalNumber(String numberString) {
         Map<NumberComponent, String> numberComponents = getNumberComponents(numberString);
 
-        BigInteger numerator = (new BigInteger(numberComponents.getOrDefault(NumberComponent.POSITIVE_INTEGER_PART, "")
-                .concat(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, ""))
-                .concat(numberComponents.getOrDefault(NumberComponent.REPEATING_FRACTIONAL_PART, ""))))
-                .subtract(new BigInteger(numberComponents.getOrDefault(NumberComponent.POSITIVE_INTEGER_PART, "")
-                        .concat(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, ""))));
+        BigInteger numerator;
+        BigInteger denominator;
 
-        BigInteger denominator = BigInteger.TEN.pow(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, "").length()
-                + numberComponents.getOrDefault(NumberComponent.REPEATING_FRACTIONAL_PART, "").length())
-                .subtract(BigInteger.TEN.pow(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, "").length()));
+        if (numberComponents.get(NumberComponent.REPEATING_FRACTIONAL_PART) == null) {
+            numerator = new BigInteger(numberComponents.getOrDefault(NumberComponent.POSITIVE_INTEGER_PART, "")
+                    .concat(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, "")));
+            denominator = BigInteger.TEN.pow(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, "").length());
+        } else {
+            numerator = (new BigInteger(numberComponents.getOrDefault(NumberComponent.POSITIVE_INTEGER_PART, "")
+                    .concat(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, ""))
+                    .concat(numberComponents.getOrDefault(NumberComponent.REPEATING_FRACTIONAL_PART, ""))))
+                    .subtract(new BigInteger(numberComponents.getOrDefault(NumberComponent.POSITIVE_INTEGER_PART, "")
+                            .concat(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, ""))));
+
+            denominator = BigInteger.TEN.pow(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, "").length()
+                    + numberComponents.getOrDefault(NumberComponent.REPEATING_FRACTIONAL_PART, "").length())
+                    .subtract(BigInteger.TEN.pow(numberComponents.getOrDefault(NumberComponent.CONSTANT_FRACTIONAL_PART, "").length()));
+        }
 
         if (numberComponents.get(NumberComponent.POSITIVE_EXPONENTIAL_PART) != null) {
             BigInteger exponent = BigInteger.TEN.pow(Integer.valueOf(numberComponents.get(NumberComponent.POSITIVE_EXPONENTIAL_PART)));
