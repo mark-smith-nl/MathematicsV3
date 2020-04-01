@@ -11,21 +11,33 @@ import java.math.BigInteger;
 
 public class IsLargerThanValidator implements ConstraintValidator<IsLargerThan, Object> {
 
+    private String floor;
+
+    private boolean includingFloor;
+
+    @Override
+    public void initialize(IsLargerThan constraintAnnotation) {
+        floor = constraintAnnotation.floor();
+        includingFloor = constraintAnnotation.includingFloor();
+    }
+
     @Override
     public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
 
         boolean isValid = true;
 
-        //TODO implement
         if (o != null) {
-            IsNumberValidator isNumberValidator = new IsNumberValidator();
-            if (isNumberValidator.isValid(o, null)) {
+            if (IsNumberValidator.isValid(o)) {
+                Object floor = null;
                 if (o.getClass() == BigInteger.class) {
+                    floor = new BigInteger(this.floor);
                 } else if (o.getClass() == BigDecimal.class) {
-                    isValid = ((BigDecimal) o).divideAndRemainder(BigDecimal.ONE)[1].compareTo(BigDecimal.ZERO) == 0;
+                    floor = new BigDecimal(this.floor);
                 } else if (ArithmeticFunctions.class.isAssignableFrom(o.getClass())) {
-                    isValid = ((ArithmeticFunctions) o).isNaturalNumber();
+                    floor = IsNumberValidator.valueOf(this.floor, o.getClass());
                 }
+
+                isValid = includingFloor ? ((Comparable) o).compareTo(floor) >= 0 :  ((Comparable) o).compareTo(floor) > 0;
             } else {
                 isValid = false;
             }

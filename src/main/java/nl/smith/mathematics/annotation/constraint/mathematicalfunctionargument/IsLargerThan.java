@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsLargerThan {
 
-  String message() default "Value is not a number that ....: '${validatedValue}'";
+  String message() default "Value ${validatedValue}${validatedValue == null ? '' : '('.concat(validatedValue.getClass().getCanonicalName()).concat(')')} is not a number or the assumption {floor} <${includingFloor ? '=' : ''} ${'('.concat(validatedValue).concat(')')} is not true";
 
   String floor();
 

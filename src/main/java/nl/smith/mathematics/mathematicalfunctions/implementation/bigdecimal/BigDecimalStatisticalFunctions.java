@@ -5,6 +5,7 @@ import nl.smith.mathematics.util.ObjectWrapper;
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.stream.Stream;
 
 public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDecimal, BigDecimalStatisticalFunctions> {
@@ -36,11 +37,11 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 
 	@Override
 	public BigDecimal mean(BigDecimal ... numbers) {
-		ObjectWrapper<BigDecimal> sum = new ObjectWrapper<>(BigDecimal.ZERO);
-		Stream.of(numbers).forEach(n -> sum.setValue(sum.getValue().add(n)));
+		BigDecimal sum = sibling.sum(numbers);
 
-		return sum.getValue().divide(BigDecimal.valueOf(numbers.length), 1);
+		return sum.divide(BigDecimal.valueOf(numbers.length), 10, RoundingMode.HALF_DOWN);
 	}
+
 	@Override
 	public String getSiblingBeanName() {
 		return SIBLING_BEAN_NAME;

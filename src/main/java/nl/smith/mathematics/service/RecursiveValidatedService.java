@@ -14,6 +14,7 @@ public abstract class RecursiveValidatedService<S> {
 
   protected S sibling;
 
+  /** The sibling's bean name of the service */
   public abstract String getSiblingBeanName();
 
   public S getSibling() {

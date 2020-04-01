@@ -15,10 +15,8 @@ public class IsNaturalNumberValidator implements ConstraintValidator<IsNaturalNu
 
         boolean isValid = true;
 
-
         if (o != null) {
-            IsNumberValidator isNumberValidator = new IsNumberValidator();
-            if (isNumberValidator.isValid(o, null)) {
+            if (IsNumberValidator.isValid(o)) {
                 if (o.getClass() == BigInteger.class) {
                 } else if (o.getClass() == BigDecimal.class) {
                     isValid = ((BigDecimal) o).divideAndRemainder(BigDecimal.ONE)[1].compareTo(BigDecimal.ZERO) == 0;
