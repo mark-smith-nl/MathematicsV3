@@ -11,14 +11,14 @@ import java.math.BigInteger;
 
 public class IsLargerThanValidator implements ConstraintValidator<IsLargerThan, Object> {
 
-    private String floor;
+    private String value;
 
-    private boolean includingFloor;
+    private boolean includingBoundary;
 
     @Override
     public void initialize(IsLargerThan constraintAnnotation) {
-        floor = constraintAnnotation.floor();
-        includingFloor = constraintAnnotation.includingFloor();
+        value = constraintAnnotation.value();
+        includingBoundary = constraintAnnotation.includingBoundary();
     }
 
     @Override
@@ -28,16 +28,18 @@ public class IsLargerThanValidator implements ConstraintValidator<IsLargerThan, 
 
         if (o != null) {
             if (IsNumberValidator.isValid(o)) {
-                Object floor = null;
+                Object value;
                 if (o.getClass() == BigInteger.class) {
-                    floor = new BigInteger(this.floor);
+                    value = new BigInteger(this.value);
                 } else if (o.getClass() == BigDecimal.class) {
-                    floor = new BigDecimal(this.floor);
+                    value = new BigDecimal(this.value);
                 } else if (ArithmeticFunctions.class.isAssignableFrom(o.getClass())) {
-                    floor = IsNumberValidator.valueOf(this.floor, o.getClass());
+                    value = IsNumberValidator.valueOf(this.value, o.getClass());
+                } else {
+                    throw new IllegalStateException("Could not determine minimum value");
                 }
 
-                isValid = includingFloor ? ((Comparable) o).compareTo(floor) >= 0 :  ((Comparable) o).compareTo(floor) > 0;
+                isValid = includingBoundary ? ((Comparable) o).compareTo(value) >= 0 :  ((Comparable) o).compareTo(value) > 0;
             } else {
                 isValid = false;
             }

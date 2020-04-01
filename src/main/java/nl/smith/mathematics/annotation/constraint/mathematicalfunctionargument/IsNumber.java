@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsNumber {
 
-  String message() default "Value is not a number: '${validatedValue}'";
+  String message() default "${isNumber.not.true}";
 
   Class<?>[] groups() default {};
 

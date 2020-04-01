@@ -13,7 +13,7 @@ public abstract class AuxiliaryFunctions<T extends Number, S extends AuxiliaryFu
         return "Auxiliary methods: faculty";
     }
 
-    public abstract T faculty(@NotNull(message = "The number '${validatedValue}' should be a natural number")
+    public abstract T faculty(@NotNull
                               @IsNaturalNumber
-                              @IsBetween(floor = "0", ceiling = "100.4") T number);
+                              @IsBetween(floor = "0", includingFloor = true, ceiling = "100", includingCeiling = true) T number);
 }

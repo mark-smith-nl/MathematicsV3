@@ -54,7 +54,7 @@ class IsNaturalNumberValidatorTest {
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
         ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
-        assertEquals("Value is not an integer number: 'a string'", constraintViolation.getMessage());
+        assertEquals("Value is not a natural number: 'a string'", constraintViolation.getMessage());
     }
 
     @DisplayName("Checking if rational number is a natural number")
@@ -67,12 +67,12 @@ class IsNaturalNumberValidatorTest {
     @DisplayName("Checking if number is not a natural number")
     @ParameterizedTest
     @MethodSource({"notNaturalNumbers"})
-    void isNaturalNumber_BigDecimalArgument_notANaturalNumber(Object notNaturalNumber, String expectedMessage) {
+    void isNaturalNumber_BigDecimalArgument_notANaturalNumber(Object notNaturalNumber, String expectedConstraintMessage) {
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethod(notNaturalNumber));
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
         ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
-        assertEquals(expectedMessage, constraintViolation.getMessage());
+        assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
     }
 
     private static Stream<Arguments> naturalNumbers() {
@@ -88,8 +88,8 @@ class IsNaturalNumberValidatorTest {
 
     private static Stream<Arguments> notNaturalNumbers() {
         return Stream.of(
-                Arguments.of(new BigDecimal("44.5"), "Value is not an integer number: '44.5'"),
-                Arguments.of(new RationalNumber(445, 10), "Value is not an integer number: '445/10'")
+                Arguments.of(new BigDecimal("44.5"), "Value is not a natural number: '44.5'"),
+                Arguments.of(new RationalNumber(445, 10), "Value is not a natural number: '445/10'")
         );
     }
 

@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsNaturalNumber {
 
-  String message() default "Value is not an integer number: '${validatedValue}'";
+  String message() default "{isNaturalNumber.not.true}";
 
   Class<?>[] groups() default {};
 

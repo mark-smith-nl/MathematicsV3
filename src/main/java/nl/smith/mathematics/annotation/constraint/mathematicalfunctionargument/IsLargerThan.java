@@ -13,11 +13,12 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsLargerThan {
 
-  String message() default "Value ${validatedValue}${validatedValue == null ? '' : '('.concat(validatedValue.getClass().getCanonicalName()).concat(')')} is not a number or the assumption {floor} <${includingFloor ? '=' : ''} ${'('.concat(validatedValue).concat(')')} is not true";
+  String message() default "{isLargerThan.not.true}";
 
-  String floor();
+  /** Value is not an int since it is not bound to the domain {@link java.lang.Integer#MIN_VALUE} {@link java.lang.Integer#MAX_VALUE} */
+  String value();
 
-  boolean includingFloor() default false;
+  boolean includingBoundary() default false;
 
   Class<?>[] groups() default {};
 

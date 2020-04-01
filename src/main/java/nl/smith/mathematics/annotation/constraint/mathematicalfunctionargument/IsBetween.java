@@ -12,15 +12,17 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsBetween {
 
-  String message() default "Value is not a number that ....: '${validatedValue}'";
+  String message() default "{isBetween.not.true}";
 
-  String ceiling();
-
+   /** Value is not an int since it is not bound to the domain {@link java.lang.Integer#MIN_VALUE} {@link java.lang.Integer#MAX_VALUE} */
   String floor();
 
-  boolean includingCeiling() default false;
-
   boolean includingFloor() default false;
+
+  /** Value is not an int since it is not bound to the domain {@link java.lang.Integer#MIN_VALUE} {@link java.lang.Integer#MAX_VALUE} */
+  String ceiling();
+
+  boolean includingCeiling() default false;
 
   Class<?>[] groups() default {};
 

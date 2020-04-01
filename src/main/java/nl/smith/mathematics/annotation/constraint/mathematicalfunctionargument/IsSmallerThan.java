@@ -13,11 +13,12 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsSmallerThan {
 
-  String message() default "Value is not a number that ....: '${validatedValue}'";
+  String message() default "{isSmallerThan.not.true}";
 
-  String ceiling();
+  /** Value is not an int since it is not bound to the domain {@link java.lang.Integer#MIN_VALUE} {@link java.lang.Integer#MAX_VALUE} */
+  String value();
 
-  boolean includingCeiling() default false;
+  boolean includingBoundary() default false;
 
   Class<?>[] groups() default {};
 

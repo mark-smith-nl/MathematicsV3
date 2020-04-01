@@ -32,51 +32,68 @@ class IsLargerThanValidatorTest {
         this.methodContainer = methodContainer;
     }
 
-    @DisplayName("Checking if a number service method argument is larger than a specified value")
+    @DisplayName("Checking if a validated number service method argument is larger than a specified value")
     @ParameterizedTest
-    @MethodSource({"numbers"})
-    void isLargerThan(Object number, ConstraintViolationException expectedConstraintException) {
-        if (expectedConstraintException != null) {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingLargerThan(number));
+    @MethodSource({"numbers_isLargerThan"})
+    void isLargerThan(Object number, String expectedConstraintMessage) {
+        if (expectedConstraintMessage != null) {
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingLargerThanAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
-            assertEquals(expectedConstraintException.getMessage(), constraintViolation.getMessage());
+            assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         } else {
-            methodContainer.validatedMethodUsingLargerThan(number);
+            methodContainer.validatedMethodUsingLargerThanAnnotation(number);
         }
     }
 
-    //TODO Repair test
-    @DisplayName("Checking if a number service method argument is larger than or equal to a specified value")
+    @DisplayName("Checking if a validated number service method argument is larger than or equal to a specified value")
     @ParameterizedTest
-    @MethodSource({"numbers"})
-    void isLargerThanOrEqualsTo(Object number, ConstraintViolationException expectedConstraintException) {
-        if (expectedConstraintException != null) {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingLargerThanOrEqualsTo(number));
+    @MethodSource({"numbers_isLargerThanOrEqualsTo"})
+    void isLargerThanOrEqualsTo(Object number, String expectedConstraintMessage) {
+        if (expectedConstraintMessage != null) {
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingLargerThanOrEqualsToAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
-            assertEquals(expectedConstraintException.getMessage(), constraintViolation.getMessage());
+            assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         } else {
-            methodContainer.validatedMethodUsingLargerThanOrEqualsTo(number);
+            methodContainer.validatedMethodUsingLargerThanOrEqualsToAnnotation(number);
         }
     }
 
-    private static Stream<Arguments> numbers() {
+    private static Stream<Arguments> numbers_isLargerThan() {
         return Stream.of(
-                Arguments.of("44", new ConstraintViolationException("Value 44(java.lang.String) is not a number or the assumption 4 < (44) is not true", null)),
-                Arguments.of(new BigInteger("4"), new ConstraintViolationException("Value 4(java.math.BigInteger) is not a number or the assumption 4 < (4) is not true", null)),
-                Arguments.of(new BigDecimal("4"), new ConstraintViolationException("Value 4(java.math.BigDecimal) is not a number or the assumption 4 < (4) is not true", null)),
-                Arguments.of(RationalNumber.valueOf("4"), new ConstraintViolationException("Value 4/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption 4 < (4/1) is not true", null)),
-                Arguments.of(new BigInteger("3"), new ConstraintViolationException("Value 3(java.math.BigInteger) is not a number or the assumption 4 < (3) is not true", null)),
-                Arguments.of(new BigDecimal("3"), new ConstraintViolationException("Value 3(java.math.BigDecimal) is not a number or the assumption 4 < (3) is not true", null)),
-                Arguments.of(RationalNumber.valueOf("3"), new ConstraintViolationException("Value 3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption 4 < (3/1) is not true", null)),
-                Arguments.of(new BigInteger("-3"), new ConstraintViolationException("Value -3(java.math.BigInteger) is not a number or the assumption 4 < (-3) is not true", null)),
-                Arguments.of(new BigDecimal("-3"), new ConstraintViolationException("Value -3(java.math.BigDecimal) is not a number or the assumption 4 < (-3) is not true", null)),
-                Arguments.of(RationalNumber.valueOf("-3"), new ConstraintViolationException("Value -3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption 4 < (-3/1) is not true", null)),
+                Arguments.of("44", "Value 44(java.lang.String) is not a number or the assumption (44) > 4 is not true"),
+                Arguments.of(new BigInteger("4"), "Value 4(java.math.BigInteger) is not a number or the assumption (4) > 4 is not true"),
+                Arguments.of(new BigDecimal("4"), "Value 4(java.math.BigDecimal) is not a number or the assumption (4) > 4 is not true"),
+                Arguments.of(RationalNumber.valueOf("4"), "Value 4/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (4/1) > 4 is not true"),
+                Arguments.of(new BigInteger("3"), "Value 3(java.math.BigInteger) is not a number or the assumption (3) > 4 is not true"),
+                Arguments.of(new BigDecimal("3"), "Value 3(java.math.BigDecimal) is not a number or the assumption (3) > 4 is not true"),
+                Arguments.of(RationalNumber.valueOf("3"), "Value 3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (3/1) > 4 is not true"),
+                Arguments.of(new BigInteger("-3"), "Value -3(java.math.BigInteger) is not a number or the assumption (-3) > 4 is not true"),
+                Arguments.of(new BigDecimal("-3"), "Value -3(java.math.BigDecimal) is not a number or the assumption (-3) > 4 is not true"),
+                Arguments.of(RationalNumber.valueOf("-3"), "Value -3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (-3/1) > 4 is not true"),
+                Arguments.of(new BigInteger("44"), null),
+                Arguments.of(new BigDecimal("44"), null),
+                Arguments.of(RationalNumber.valueOf("44"), null)
+        );
+    }
+
+    private static Stream<Arguments> numbers_isLargerThanOrEqualsTo() {
+        return Stream.of(
+                Arguments.of("44", "Value 44(java.lang.String) is not a number or the assumption (44) >= 4 is not true"),
+                Arguments.of(new BigInteger("4"), null),
+                Arguments.of(new BigDecimal("4"), null),
+                Arguments.of(RationalNumber.valueOf("4"), null),
+                Arguments.of(new BigInteger("3"), "Value 3(java.math.BigInteger) is not a number or the assumption (3) >= 4 is not true"),
+                Arguments.of(new BigDecimal("3"), "Value 3(java.math.BigDecimal) is not a number or the assumption (3) >= 4 is not true"),
+                Arguments.of(RationalNumber.valueOf("3"), "Value 3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (3/1) >= 4 is not true"),
+                Arguments.of(new BigInteger("-3"), "Value -3(java.math.BigInteger) is not a number or the assumption (-3) >= 4 is not true"),
+                Arguments.of(new BigDecimal("-3"), "Value -3(java.math.BigDecimal) is not a number or the assumption (-3) >= 4 is not true"),
+                Arguments.of(RationalNumber.valueOf("-3"), "Value -3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (-3/1) >= 4 is not true"),
                 Arguments.of(new BigInteger("44"), null),
                 Arguments.of(new BigDecimal("44"), null),
                 Arguments.of(RationalNumber.valueOf("44"), null)
@@ -87,9 +104,9 @@ class IsLargerThanValidatorTest {
     @Validated
     public static class MethodContainer {
 
-        public void validatedMethodUsingLargerThan(@IsLargerThan(floor = "4") Object argument) {}
+        public void validatedMethodUsingLargerThanAnnotation(@IsLargerThan("4") Object argument) {}
 
-        public void validatedMethodUsingLargerThanOrEqualsTo(@IsLargerThan(floor = "4", includingFloor = true) Object argument) {}
+        public void validatedMethodUsingLargerThanOrEqualsToAnnotation(@IsLargerThan(value = "4", includingBoundary = true) Object argument) {}
 
     }
 }
