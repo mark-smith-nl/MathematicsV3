@@ -18,6 +18,13 @@ public abstract class StatisticalFunctions<T extends Number, S extends Statistic
     @MathematicalFunction(description = "Product of a set of numbers")
     public abstract T prod(@NotNull T ... numbers);
 
+    /**
+     * The standard deviation is defined as:
+     *
+     * 
+     * @param numbers
+     * @return
+     */
     @MathematicalFunction(description = "Standard deviation of a set of numbers")
     public abstract T deviation(T ... numbers);
 

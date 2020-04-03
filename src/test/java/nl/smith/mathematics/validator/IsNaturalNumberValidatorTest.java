@@ -40,7 +40,7 @@ class IsNaturalNumberValidatorTest {
     @ParameterizedTest
     @NullSource
     void isNaturalNumber_nullArgument(Object number) {
-        ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethod(null));
+        ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingNotNullAndIsNaturalNumberAnnotation(null));
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
         ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
@@ -50,7 +50,7 @@ class IsNaturalNumberValidatorTest {
     @DisplayName("Checking if annotated parameter is not a number type")
     @Test
     void isNaturalNumber_stringArgument() {
-        ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethod("a string"));
+        ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingNotNullAndIsNaturalNumberAnnotation("a string"));
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
         ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
@@ -61,14 +61,14 @@ class IsNaturalNumberValidatorTest {
     @ParameterizedTest
     @MethodSource({"naturalNumbers"})
     void isNaturalNumber_BigIntegerArgument(Object naturalNumber) {
-        methodContainer.validatedMethod(naturalNumber);
+        methodContainer.validatedMethodUsingNotNullAndIsNaturalNumberAnnotation(naturalNumber);
     }
 
     @DisplayName("Checking if number is not a natural number")
     @ParameterizedTest
     @MethodSource({"notNaturalNumbers"})
     void isNaturalNumber_BigDecimalArgument_notANaturalNumber(Object notNaturalNumber, String expectedConstraintMessage) {
-        ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethod(notNaturalNumber));
+        ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingNotNullAndIsNaturalNumberAnnotation(notNaturalNumber));
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
         ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
@@ -97,6 +97,6 @@ class IsNaturalNumberValidatorTest {
     @Validated
     public static class MethodContainer {
 
-        public void validatedMethod(@NotNull(message = "No argument specified") @IsNaturalNumber Object argument) {}
+        public void validatedMethodUsingNotNullAndIsNaturalNumberAnnotation(@NotNull(message = "No argument specified") @IsNaturalNumber Object argument) {}
    }
 }

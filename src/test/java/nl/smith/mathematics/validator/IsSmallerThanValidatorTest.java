@@ -87,15 +87,19 @@ class IsSmallerThanValidatorTest {
     private static Stream<Arguments> numbers_isSmallerThanOrEqualsTo() {
         return Stream.of(
                 Arguments.of("44", "Value 44(java.lang.String) is not a number or the assumption (44) <= 4 is not true"),
+
                 Arguments.of(new BigInteger("4"), null),
                 Arguments.of(new BigDecimal("4"), null),
                 Arguments.of(RationalNumber.valueOf("4"), null),
+
                 Arguments.of(new BigInteger("3"), null),
                 Arguments.of(new BigDecimal("3"), null),
                 Arguments.of(RationalNumber.valueOf("3"), null),
+
                 Arguments.of(new BigInteger("-3"), null),
                 Arguments.of(new BigDecimal("-3"), null),
                 Arguments.of(RationalNumber.valueOf("-3"), null),
+
                 Arguments.of(new BigInteger("44"), "Value 44(java.math.BigInteger) is not a number or the assumption (44) <= 4 is not true"),
                 Arguments.of(new BigDecimal("44"), "Value 44(java.math.BigDecimal) is not a number or the assumption (44) <= 4 is not true"),
                 Arguments.of(RationalNumber.valueOf("44"), "Value 44/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (44/1) <= 4 is not true")

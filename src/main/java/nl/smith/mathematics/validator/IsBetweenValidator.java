@@ -43,7 +43,7 @@ public class IsBetweenValidator implements ConstraintValidator<IsBetween, Object
             if (IsNumberValidator.isValid(o)) {
                 if (o.getClass() == BigInteger.class) {
                     floor = new BigInteger(this.floor);
-                    ceiling = new BigInteger(this.floor);
+                    ceiling = new BigInteger(this.ceiling);
                 } else if (o.getClass() == BigDecimal.class) {
                     floor = new BigDecimal(this.floor);
                     ceiling = new BigDecimal(this.ceiling);

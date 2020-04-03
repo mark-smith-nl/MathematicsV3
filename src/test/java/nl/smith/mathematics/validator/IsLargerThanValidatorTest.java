@@ -67,36 +67,48 @@ class IsLargerThanValidatorTest {
     private static Stream<Arguments> numbers_isLargerThan() {
         return Stream.of(
                 Arguments.of("44", "Value 44(java.lang.String) is not a number or the assumption (44) > 4 is not true"),
+
                 Arguments.of(new BigInteger("4"), "Value 4(java.math.BigInteger) is not a number or the assumption (4) > 4 is not true"),
                 Arguments.of(new BigDecimal("4"), "Value 4(java.math.BigDecimal) is not a number or the assumption (4) > 4 is not true"),
                 Arguments.of(RationalNumber.valueOf("4"), "Value 4/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (4/1) > 4 is not true"),
+
                 Arguments.of(new BigInteger("3"), "Value 3(java.math.BigInteger) is not a number or the assumption (3) > 4 is not true"),
                 Arguments.of(new BigDecimal("3"), "Value 3(java.math.BigDecimal) is not a number or the assumption (3) > 4 is not true"),
                 Arguments.of(RationalNumber.valueOf("3"), "Value 3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (3/1) > 4 is not true"),
+
                 Arguments.of(new BigInteger("-3"), "Value -3(java.math.BigInteger) is not a number or the assumption (-3) > 4 is not true"),
                 Arguments.of(new BigDecimal("-3"), "Value -3(java.math.BigDecimal) is not a number or the assumption (-3) > 4 is not true"),
                 Arguments.of(RationalNumber.valueOf("-3"), "Value -3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (-3/1) > 4 is not true"),
+
                 Arguments.of(new BigInteger("44"), null),
                 Arguments.of(new BigDecimal("44"), null),
-                Arguments.of(RationalNumber.valueOf("44"), null)
+                Arguments.of(RationalNumber.valueOf("44"), null),
+
+                Arguments.of(null, null)
         );
     }
 
     private static Stream<Arguments> numbers_isLargerThanOrEqualsTo() {
         return Stream.of(
                 Arguments.of("44", "Value 44(java.lang.String) is not a number or the assumption (44) >= 4 is not true"),
+
                 Arguments.of(new BigInteger("4"), null),
                 Arguments.of(new BigDecimal("4"), null),
                 Arguments.of(RationalNumber.valueOf("4"), null),
+
                 Arguments.of(new BigInteger("3"), "Value 3(java.math.BigInteger) is not a number or the assumption (3) >= 4 is not true"),
                 Arguments.of(new BigDecimal("3"), "Value 3(java.math.BigDecimal) is not a number or the assumption (3) >= 4 is not true"),
                 Arguments.of(RationalNumber.valueOf("3"), "Value 3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (3/1) >= 4 is not true"),
+
                 Arguments.of(new BigInteger("-3"), "Value -3(java.math.BigInteger) is not a number or the assumption (-3) >= 4 is not true"),
                 Arguments.of(new BigDecimal("-3"), "Value -3(java.math.BigDecimal) is not a number or the assumption (-3) >= 4 is not true"),
                 Arguments.of(RationalNumber.valueOf("-3"), "Value -3/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption (-3/1) >= 4 is not true"),
+
                 Arguments.of(new BigInteger("44"), null),
                 Arguments.of(new BigDecimal("44"), null),
-                Arguments.of(RationalNumber.valueOf("44"), null)
+                Arguments.of(RationalNumber.valueOf("44"), null),
+
+                Arguments.of(null, null)
         );
     }
 
