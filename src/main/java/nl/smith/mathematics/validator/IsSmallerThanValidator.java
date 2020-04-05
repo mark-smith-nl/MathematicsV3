@@ -1,9 +1,8 @@
 package nl.smith.mathematics.validator;
 
-import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsLargerThan;
-import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNaturalNumber;
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsSmallerThan;
 import nl.smith.mathematics.numbertype.ArithmeticFunctions;
+import nl.smith.mathematics.util.NumberUtil;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -28,14 +27,15 @@ public class IsSmallerThanValidator implements ConstraintValidator<IsSmallerThan
         boolean isValid = true;
 
         if (o != null) {
-            if (IsNumberValidator.isValid(o)) {
+            if (NumberUtil.isNumber(o)) {
+                Class<Number> clazz = (Class<Number>) o.getClass();
                 Object value;
-                if (o.getClass() == BigInteger.class) {
+                if (clazz.equals(BigInteger.class)) {
                     value = new BigInteger(this.value);
-                } else if (o.getClass() == BigDecimal.class) {
+                } else if (clazz.equals(BigDecimal.class)) {
                     value = new BigDecimal(this.value);
                 } else if (ArithmeticFunctions.class.isAssignableFrom(o.getClass())) {
-                    value = IsNumberValidator.valueOf(this.value, o.getClass());
+                    value = NumberUtil.valueOf(this.value, clazz);
                 }else {
                     throw new IllegalStateException("Could not determine maximum value");
                 }

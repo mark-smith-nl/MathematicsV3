@@ -10,7 +10,7 @@ import java.math.BigInteger;
  * numerator ∊ ℤ
  * denominator ℤ+
  */
-public class RationalNumber extends Number implements ArithmeticFunctions<RationalNumber>, Comparable<RationalNumber> {
+public class RationalNumber extends ArithmeticFunctions<RationalNumber> implements Comparable<RationalNumber> {
 
     public static final RationalNumber ZERO = new RationalNumber(BigInteger.ZERO, BigInteger.ONE);
 
@@ -89,11 +89,10 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
         return numerator.divideAndRemainder(denominator)[0].longValue();
     }
 
-    //TODO Implement floatValue()
+    //TODO Specify scale
     @Override
     public float floatValue() {
-        // TODO Auto-generated method stub
-        return 0;
+        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator)).floatValue();
     }
 
     //TODO Implement doubleValue()
@@ -184,4 +183,5 @@ public class RationalNumber extends Number implements ArithmeticFunctions<Ration
     public int compareTo(RationalNumber o) {
         return numerator.multiply(o.denominator).compareTo(o.numerator.multiply(denominator));
     }
+
 }

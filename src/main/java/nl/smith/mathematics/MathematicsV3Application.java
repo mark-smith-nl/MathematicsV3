@@ -38,4 +38,5 @@ public class MathematicsV3Application {
     bean.setValidationMessageSource(messageSource());
     return bean;
   }
+
 }

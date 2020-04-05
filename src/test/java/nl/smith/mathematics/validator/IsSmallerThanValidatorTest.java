@@ -1,6 +1,5 @@
 package nl.smith.mathematics.validator;
 
-import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsLargerThan;
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsSmallerThan;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
@@ -38,15 +36,15 @@ class IsSmallerThanValidatorTest {
     @ParameterizedTest
     @MethodSource({"numbers_isSmallerThan"})
     void isSmallerThan(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage != null) {
+        if (expectedConstraintMessage == null) {
+            methodContainer.validatedMethodUsingSmallerThanAnnotation(number);
+        } else {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingSmallerThanAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
-        } else {
-            methodContainer.validatedMethodUsingSmallerThanAnnotation(number);
         }
     }
 
@@ -54,15 +52,15 @@ class IsSmallerThanValidatorTest {
     @ParameterizedTest
     @MethodSource({"numbers_isSmallerThanOrEqualsTo"})
     void isSmallerThanOrEqualsTo(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage != null) {
+        if (expectedConstraintMessage == null) {
+            methodContainer.validatedMethodUsingSmallerThanOrEqualsToAnnotation(number);
+        } else {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingSmallerThanOrEqualsToAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
-        } else {
-            methodContainer.validatedMethodUsingSmallerThanOrEqualsToAnnotation(number);
         }
     }
 

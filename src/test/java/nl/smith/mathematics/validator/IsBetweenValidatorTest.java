@@ -1,7 +1,6 @@
 package nl.smith.mathematics.validator;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsBetween;
-import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNaturalNumber;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,16 +13,17 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.constraints.NotNull;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** Tests the {@link nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsBetween} constraint used on a validated service method argument */
+/**
+ * Tests the {@link nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsBetween} constraint used on a validated service method argument
+ */
 @SpringBootTest
 class IsBetweenValidatorTest {
 
@@ -38,15 +38,15 @@ class IsBetweenValidatorTest {
     @ParameterizedTest
     @MethodSource({"numbers_isBetweenIncludingBoundaries"})
     void isBetweenIncludingBoundaries(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage != null) {
+        if (expectedConstraintMessage == null) {
+            methodContainer.validatedMethodUsingisBetweenAnnotationIncludingBoundaries(number);
+        } else {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingisBetweenAnnotationIncludingBoundaries(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
-        } else {
-            methodContainer.validatedMethodUsingisBetweenAnnotationIncludingBoundaries(number);
         }
     }
 
@@ -54,15 +54,15 @@ class IsBetweenValidatorTest {
     @ParameterizedTest
     @MethodSource({"numbers_isBetweenExcludingBoundaries"})
     void isBetweenExcludingBoundaries(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage != null) {
+        if (expectedConstraintMessage == null) {
+            methodContainer.validatedMethodUsingisBetweenAnnotationExcludingBoundaries(number);
+        } else {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingisBetweenAnnotationExcludingBoundaries(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
-        } else {
-            methodContainer.validatedMethodUsingisBetweenAnnotationExcludingBoundaries(number);
         }
     }
 
@@ -70,15 +70,15 @@ class IsBetweenValidatorTest {
     @ParameterizedTest
     @MethodSource({"numbers_isBetweenIncludingLowerBoundary"})
     void isBetweenIncludingLowerBoundary(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage != null) {
+        if (expectedConstraintMessage == null) {
+            methodContainer.validatedMethodUsingisBetweenAnnotationIncludingLowerBoundary(number);
+        } else {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingisBetweenAnnotationIncludingLowerBoundary(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
-        } else {
-            methodContainer.validatedMethodUsingisBetweenAnnotationIncludingLowerBoundary(number);
         }
     }
 
@@ -86,15 +86,14 @@ class IsBetweenValidatorTest {
     @ParameterizedTest
     @MethodSource({"numbers_isBetweenIncludingUpperBoundary"})
     void isBetweenIncludingUpperBoundary(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage != null) {
+        if (expectedConstraintMessage == null) {methodContainer.validatedMethodUsingisBetweenAnnotationIncludingUpperBoundary(number);
+        } else {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingisBetweenAnnotationIncludingUpperBoundary(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
-        } else {
-            methodContainer.validatedMethodUsingisBetweenAnnotationIncludingUpperBoundary(number);
         }
     }
 
@@ -214,12 +213,16 @@ class IsBetweenValidatorTest {
     @Validated
     public static class MethodContainer {
 
-        public void validatedMethodUsingisBetweenAnnotationIncludingBoundaries(@IsBetween(floor = "0", includingFloor = true, ceiling = "100", includingCeiling = true) Object argument) {}
+        public void validatedMethodUsingisBetweenAnnotationIncludingBoundaries(@IsBetween(floor = "0", includingFloor = true, ceiling = "100", includingCeiling = true) Object argument) {
+        }
 
-        public void validatedMethodUsingisBetweenAnnotationExcludingBoundaries(@IsBetween(floor = "0", ceiling = "100") Object argument) {}
+        public void validatedMethodUsingisBetweenAnnotationExcludingBoundaries(@IsBetween(floor = "0", ceiling = "100") Object argument) {
+        }
 
-        public void validatedMethodUsingisBetweenAnnotationIncludingLowerBoundary(@IsBetween(floor = "0", includingFloor = true, ceiling = "100") Object argument) {}
+        public void validatedMethodUsingisBetweenAnnotationIncludingLowerBoundary(@IsBetween(floor = "0", includingFloor = true, ceiling = "100") Object argument) {
+        }
 
-        public void validatedMethodUsingisBetweenAnnotationIncludingUpperBoundary(@IsBetween(floor = "0", ceiling = "100", includingCeiling = true) Object argument) {}
+        public void validatedMethodUsingisBetweenAnnotationIncludingUpperBoundary(@IsBetween(floor = "0", ceiling = "100", includingCeiling = true) Object argument) {
+        }
     }
 }

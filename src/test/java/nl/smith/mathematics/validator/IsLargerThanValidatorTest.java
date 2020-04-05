@@ -36,31 +36,30 @@ class IsLargerThanValidatorTest {
     @ParameterizedTest
     @MethodSource({"numbers_isLargerThan"})
     void isLargerThan(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage != null) {
+        if (expectedConstraintMessage == null) {
+            methodContainer.validatedMethodUsingLargerThanAnnotation(number);
+        } else {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingLargerThanAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
-        } else {
-            methodContainer.validatedMethodUsingLargerThanAnnotation(number);
-        }
-    }
+        } }
 
     @DisplayName("Checking if a validated number service method argument is larger than or equal to a specified value")
     @ParameterizedTest
     @MethodSource({"numbers_isLargerThanOrEqualsTo"})
     void isLargerThanOrEqualsTo(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage != null) {
+        if (expectedConstraintMessage == null) {
+            methodContainer.validatedMethodUsingLargerThanOrEqualsToAnnotation(number);
+        } else {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingLargerThanOrEqualsToAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
-        } else {
-            methodContainer.validatedMethodUsingLargerThanOrEqualsToAnnotation(number);
         }
     }
 

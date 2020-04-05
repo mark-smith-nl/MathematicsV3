@@ -1,15 +1,10 @@
 package nl.smith.mathematics.validator;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsBetween;
-import nl.smith.mathematics.numbertype.ArithmeticFunctions;
-import nl.smith.mathematics.numbertype.RationalNumber;
+import nl.smith.mathematics.util.NumberUtil;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class IsBetweenValidator implements ConstraintValidator<IsBetween, Object> {
 
@@ -23,7 +18,6 @@ public class IsBetweenValidator implements ConstraintValidator<IsBetween, Object
 
     private boolean includingCeiling;
 
-
     @Override
     public void initialize(IsBetween constraintAnnotation) {
         this.floor = constraintAnnotation.floor();
@@ -36,23 +30,12 @@ public class IsBetweenValidator implements ConstraintValidator<IsBetween, Object
     public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
         boolean isValid = true;
 
-        Object floor;
-        Object ceiling;
-
         if (o != null) {
-            if (IsNumberValidator.isValid(o)) {
-                if (o.getClass() == BigInteger.class) {
-                    floor = new BigInteger(this.floor);
-                    ceiling = new BigInteger(this.ceiling);
-                } else if (o.getClass() == BigDecimal.class) {
-                    floor = new BigDecimal(this.floor);
-                    ceiling = new BigDecimal(this.ceiling);
-                } else if (ArithmeticFunctions.class.isAssignableFrom(o.getClass())) {
-                    floor = IsNumberValidator.valueOf(this.floor, o.getClass());
-                    ceiling = IsNumberValidator.valueOf(this.ceiling, o.getClass());
-                } else {
-                    throw new IllegalStateException("Could not determine floor and ceiling values");
-                }
+            if (NumberUtil.isNumber(o)) {
+                Class<Number> clazz = (Class<Number>) o.getClass();
+                Number floor = NumberUtil.valueOf(this.floor, clazz);
+                Number ceiling = NumberUtil.valueOf(this.ceiling, clazz);
+
                 isValid = (includingFloor ? ((Comparable) o).compareTo(floor) >= 0 :  ((Comparable) o).compareTo(floor) > 0) &&
                 (includingCeiling ? ((Comparable) o).compareTo(ceiling) <= 0 :  ((Comparable) o).compareTo(ceiling) < 0);
             } else {
