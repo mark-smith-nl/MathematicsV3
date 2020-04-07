@@ -11,8 +11,6 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import java.math.BigInteger;
-
 @SpringBootApplication
 @ComponentScan(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
     classes = FunctionContainer.class))

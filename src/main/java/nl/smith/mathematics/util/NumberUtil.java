@@ -60,6 +60,10 @@ public class NumberUtil {
             throw new IllegalArgumentException(String.format("Can not determine number value.\nNo string value specified to be turned into an instance of %s.", clazz.getCanonicalName()));
         }
 
+        if (clazz.isPrimitive()) {
+            clazz = (Class<T>) getPrimitiveClassToWrapperClass(clazz);
+        }
+
         if (!Number.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException(String.format("Can not determine number value.\nSpecified class %s does not extend %s", clazz.getCanonicalName(), Number.class.getCanonicalName()));
         }
@@ -91,5 +95,34 @@ public class NumberUtil {
         }
 
         throw new IllegalStateException(String.format("The conversion from a string into an instance of %s is not supported.", clazz.getCanonicalName()));
+    }
+
+    /** Method returns the corrsponding wrapper class of a primitive class
+     * or null if no class is specified or if the class is not a primitive class. */
+    public static Class<?> getPrimitiveClassToWrapperClass(Class<?> clazz) {
+        if (clazz == null || !clazz.isPrimitive()) {
+            return null;
+        }
+
+        if (clazz == byte.class) {
+            return Byte.class;
+        } else if (clazz == short.class) {
+            return Short.class;
+        } else if (clazz == int.class) {
+            return Integer.class;
+        } else if (clazz == long.class) {
+            return Long.class;
+        } else if (clazz == double.class) {
+            return Double.class;
+        } else if (clazz == float.class) {
+            return Float.class;
+        } else if (clazz == char.class) {
+            return Character.class;
+        }else if (clazz == boolean.class) {
+            return Boolean.class;
+        }
+
+        return Void.class;
+
     }
 }

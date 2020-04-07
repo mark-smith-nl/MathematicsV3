@@ -139,8 +139,8 @@ public class RationalNumberUtil {
                 }
             }
 
-            LOGGER.info("Inspected number {}", numberString);
-            numberComponents.entrySet().stream().forEach(e -> LOGGER.info(String.format("%s ---> %s", e.getKey().name(), e.getValue())));
+            LOGGER.debug("Inspected number {}", numberString);
+            numberComponents.entrySet().stream().forEach(e -> LOGGER.debug(String.format("%s ---> %s", e.getKey().name(), e.getValue())));
             return numberComponents;
         }
 
