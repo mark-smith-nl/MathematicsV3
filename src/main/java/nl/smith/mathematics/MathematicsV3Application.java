@@ -19,6 +19,8 @@ public class MathematicsV3Application {
   public static void main(String[] args) {
     ConfigurableApplicationContext context = SpringApplication
         .run(MathematicsV3Application.class, args);
+
+    System.out.println("Started application 'MathematicsV3'");
   }
 
   @Bean

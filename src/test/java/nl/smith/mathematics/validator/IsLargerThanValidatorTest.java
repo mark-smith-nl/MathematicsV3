@@ -3,6 +3,7 @@ package nl.smith.mathematics.validator;
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsLargerThan;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -63,6 +64,11 @@ class IsLargerThanValidatorTest {
         }
     }
 
+    @Test
+    void doIt() {
+        methodContainer.validatedMethodUsingLargerThanAnnotationOnPrimitiveParameter(5);
+    }
+
     private static Stream<Arguments> numbers_isLargerThan() {
         return Stream.of(
                 Arguments.of("44", "Value 44(java.lang.String) is not a number or the assumption (44) > 4 is not true"),
@@ -116,6 +122,8 @@ class IsLargerThanValidatorTest {
     public static class MethodContainer {
 
         public void validatedMethodUsingLargerThanAnnotation(@IsLargerThan("4") Object argument) {}
+
+        public void validatedMethodUsingLargerThanAnnotationOnPrimitiveParameter(@IsLargerThan("4") int argument) {}
 
         public void validatedMethodUsingLargerThanOrEqualsToAnnotation(@IsLargerThan(value = "4", includingBoundary = true) Object argument) {}
 

@@ -2,6 +2,7 @@ package nl.smith.mathematics.util;
 
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -10,8 +11,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class NumberUtilTest {
 
@@ -32,6 +32,19 @@ class NumberUtilTest {
     @MethodSource("classes")
     void getPrimitiveClassToWrapperClass(Class clazz, Class expectedClass) {
         assertEquals(expectedClass, NumberUtil.getPrimitiveClassToWrapperClass(clazz));
+    }
+
+    @DisplayName("Determine if a parameter is a number")
+    @Test
+    void isNumber() {
+        assertTrue(NumberUtil.isNumber((byte) 4));
+        assertTrue(NumberUtil.isNumber((short) 4));
+        assertTrue(NumberUtil.isNumber(4));
+        assertTrue(NumberUtil.isNumber((long)4));
+        assertTrue(NumberUtil.isNumber((double) 4));
+        assertTrue(NumberUtil.isNumber((float) 4));
+        assertFalse(NumberUtil.isNumber((char) 4));
+        assertFalse(NumberUtil.isNumber(true));
     }
 
     private static Stream<Arguments> numberStrings() {
@@ -70,4 +83,5 @@ class NumberUtilTest {
                 Arguments.of(String.class, null)
         );
     }
+
 }
