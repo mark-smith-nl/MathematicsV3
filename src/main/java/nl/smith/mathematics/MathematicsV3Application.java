@@ -1,6 +1,7 @@
 package nl.smith.mathematics;
 
 import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
+import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -21,6 +22,9 @@ public class MathematicsV3Application {
         .run(MathematicsV3Application.class, args);
 
     System.out.println("Started application 'MathematicsV3'");
+    RationalNumber rationalNumber = new RationalNumber(1, 7);
+    System.out.println("Example: " + rationalNumber);
+
   }
 
   @Bean
