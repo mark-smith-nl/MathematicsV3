@@ -24,7 +24,7 @@ public class MathematicsV3Application {
     System.out.println("Started application 'MathematicsV3'");
     RationalNumber rationalNumber = new RationalNumber(1, 7);
     System.out.println("Example: " + rationalNumber);
-
+    System.out.println("Have fun!");
   }
 
   @Bean
