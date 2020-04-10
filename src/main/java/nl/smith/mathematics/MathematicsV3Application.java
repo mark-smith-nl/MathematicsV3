@@ -22,6 +22,7 @@ public class MathematicsV3Application {
         .run(MathematicsV3Application.class, args);
 
     System.out.println("Started application 'MathematicsV3'");
+    System.out.println("Code is available at: https://github.com/mark-smith-nl/MathematicsV3");
     RationalNumber rationalNumber = new RationalNumber(1, 7);
     System.out.println("Example: " + rationalNumber);
     System.out.println("Have fun!");
