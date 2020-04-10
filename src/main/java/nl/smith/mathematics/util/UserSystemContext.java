@@ -6,9 +6,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** Utility to store thread specific key values in a map and associate then with a specific thread.
- * This class is intended to store user specific properties which can be retrieved in anywhere in the thread.
- * Null values are not stored. Adding a property with a null valuee results in the removal of the property. */
+/** Utility to store thread specific key value pairs in a map and associate then with a specific thread.
+ * This class is intended to store user specific properties which can be retrieved anywhere in the thread.
+ * Null values are not stored. Adding a property with a null value results in the removal of the property. */
 public class UserSystemContext {
 
     private static ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
@@ -80,7 +80,6 @@ public class UserSystemContext {
 
     /** Retrieves the property map associated with a thread.
      * Map can be empty but does not contain null values.
-     * @return
      */
     private static Map<String, Object> getMap() {
         Map<String, Object> map = threadLocal.get();

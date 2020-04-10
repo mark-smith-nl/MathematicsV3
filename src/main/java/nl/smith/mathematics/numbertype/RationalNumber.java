@@ -5,6 +5,8 @@ import nl.smith.mathematics.util.UserSystemContext;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Immutable class to store rational numbers
@@ -13,10 +15,14 @@ import java.math.BigInteger;
  */
 public class RationalNumber extends ArithmeticFunctions<RationalNumber> implements Comparable<RationalNumber> {
 
+    public static OutputType DEFAULT_OUTPUT_TYPE = OutputType.COMPONENTS_AND_EXACT;
+    public static int DEFAULT_SCALE = 100;
+
     public enum OutputType {
-        DEFAULT("Gives a representation of number as <numerator>/<denominator>"),
-        STRING_EXACT("Gives an exact decimal string representation of a number. For instance 2.1{23}R"),
-        STRING_ROUNDED("Gives a rounded decimal string representation of a number. For instance 2.1 for rational number 1051/495");
+        COMPONENTS("Gives a representation of number as <numerator>/<denominator>"),
+        EXACT("Gives an exact decimal string representation of a number. For instance 2.1{23}R"),
+        COMPONENTS_AND_EXACT("Gives the numerator and denominator as well as an exact decimal string representation of a number. For instance 2.1{23}R"),
+        TRUNCATED("Gives a rounded decimal string representation of a number. For instance 2.1 for rational number 1051/495");
 
         private final String description;
 
@@ -189,20 +195,72 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
 
     @Override
     public String toString() {
-        return toString(UserSystemContext.getSingleValueOfType(OutputType.class).orElse(OutputType.DEFAULT));
+        return toString(UserSystemContext.getSingleValueOfType(OutputType.class).orElse(DEFAULT_OUTPUT_TYPE));
     }
 
-    public String toString(OutputType outputType) {
-        switch (outputType) {
-            case DEFAULT:
-                return numerator.toString() + "/" + denominator.toString();
-            case STRING_EXACT:
-                return "To be implemented - STRING_EXACT";
-            case STRING_ROUNDED:
-                return "To be implemented - STRING_ROUNDED";
-            default:
-                return "To be implemented - DEFAULT";
+    private String toStringComponents() {
+        return numerator.toString() + "/" + denominator.toString();
+    }
+
+    private String toStringExact() {
+        BigInteger[] bigIntegers = numerator.divideAndRemainder(denominator);
+
+        StringBuilder result = new StringBuilder(bigIntegers[0].toString());
+
+        BigInteger remainder = bigIntegers[1];
+        StringBuilder fractionalPart = new StringBuilder();
+        Map<BigInteger, Integer> resultDivisionAtPosition = new HashMap<>();
+        int position = 0;
+
+        while (!remainder.equals(BigInteger.ZERO)) {
+            remainder = remainder.multiply(BigInteger.TEN);
+            Integer positionStartRepetition = resultDivisionAtPosition.get(remainder);
+            if (positionStartRepetition != null) {
+                fractionalPart.insert(positionStartRepetition, "{");
+                fractionalPart.append("}R");
+                remainder = BigInteger.ZERO;
+            } else {
+                resultDivisionAtPosition.put(remainder, position++);
+                bigIntegers = remainder.divideAndRemainder(denominator);
+                fractionalPart.append(bigIntegers[0].toString());
+                remainder = bigIntegers[1];
+            }
         }
+
+        if (fractionalPart.length() > 0) {
+            result.append(".");
+            result.append(fractionalPart);
+        }
+
+        return result.toString();
+    }
+
+    private String toStringTruncated(int scale) {
+        UserSystemContext.getValue("RationalNumberScale").orElse(DEFAULT_SCALE);
+        return "" + scale;
+    }
+
+    private String toString(OutputType outputType) {
+        String result;
+        switch (outputType) {
+            case COMPONENTS:
+                result = toStringComponents();
+                break;
+            case EXACT:
+                result = toStringExact();
+                break;
+            case COMPONENTS_AND_EXACT:
+                result = toStringComponents() + " ---> " + toStringExact();
+                break;
+            case TRUNCATED:
+                int scale = (Integer) UserSystemContext.getValue("RationalNumberScale").orElse(DEFAULT_SCALE);
+                result = toStringTruncated(scale);
+                break;
+            default:
+                result = String.format("toString(%s) is not implemented", outputType.name());
+        }
+
+        return result;
     }
 
     @Override
