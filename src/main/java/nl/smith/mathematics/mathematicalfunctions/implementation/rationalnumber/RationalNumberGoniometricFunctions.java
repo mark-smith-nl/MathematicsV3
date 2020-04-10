@@ -1,13 +1,12 @@
-package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
+package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
 import nl.smith.mathematics.annotation.MathematicalFunctionConfiguration;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.definition.TaylorSeries;
+import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.context.annotation.Bean;
 
-import java.math.BigDecimal;
-
-public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDecimal, BigDecimalGoniometricFunctions> implements TaylorSeries {
+public class RationalNumberGoniometricFunctions extends GoniometricFunctions<RationalNumber, RationalNumberGoniometricFunctions> implements TaylorSeries {
 
 	public enum AngleType {
 		DEG,
@@ -15,7 +14,7 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
 		RAD
 	}
 
-	private final static String SIBLING_BEAN_NAME = "BIGDECIMALGONIOMETRICFUNCTIONS";
+	private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERGONIOMETRICFUNCTIONS";
 
 	protected int degreeOfPolynomial = 5;
 
@@ -36,26 +35,26 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
 	 *
 	 */
 	@Override
-	public BigDecimal sin(BigDecimal angle) {
-		BigDecimal two = new BigDecimal(2);
-		BigDecimal four = new BigDecimal(4);
-		BigDecimal six = new BigDecimal(6);
+	public RationalNumber sin(RationalNumber angle) {
+		RationalNumber two = new RationalNumber(2);
+		RationalNumber four = new RationalNumber(4);
+		RationalNumber six = new RationalNumber(6);
 
-		BigDecimal T = angle;
-		BigDecimal sum = T;
+		RationalNumber T = angle;
+		RationalNumber sum = T;
 
-		for (int i=1; i<=10; i++) {
-			BigDecimal bdi = new BigDecimal(i);
-			T = angle.pow(2).divide(four.multiply(bdi.pow(2)).min(six.multiply(bdi)).add(two)).multiply(T).negate();
+		for (int i=2; i<=10; i++) {
+			RationalNumber bdi = new RationalNumber(i);
+			T = angle.multiply(angle).divide(four.multiply(bdi.multiply(bdi)).subtract(six.multiply(bdi)).add(two)).multiply(T).negate();
 			sum = sum.add(T);
 			System.out.println(T);
 		}
-		return new BigDecimal(456);
+		return sum;
 	}
 
 	@Override
-	public BigDecimal cos(BigDecimal angle) {
-		return new BigDecimal(456);
+	public RationalNumber cos(RationalNumber angle) {
+		return new RationalNumber(456);
 	}
 
 	@Override
@@ -64,8 +63,8 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
 	}
 
 	@Bean(SIBLING_BEAN_NAME)
-	public BigDecimalGoniometricFunctions makeSibling() {
-		return new BigDecimalGoniometricFunctions();
+	public RationalNumberGoniometricFunctions makeSibling() {
+		return new RationalNumberGoniometricFunctions();
 	}
 
 	@Override

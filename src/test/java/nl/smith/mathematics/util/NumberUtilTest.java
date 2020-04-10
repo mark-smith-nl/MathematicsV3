@@ -27,13 +27,6 @@ class NumberUtilTest {
         }
     }
 
-    @DisplayName("Trying to retrieve a corresponding wrapper class for a primitve class")
-    @ParameterizedTest
-    @MethodSource("classes")
-    void getPrimitiveClassToWrapperClass(Class clazz, Class expectedClass) {
-        assertEquals(expectedClass, NumberUtil.getPrimitiveClassToWrapperClass(clazz));
-    }
-
     @DisplayName("Determine if a parameter is a number")
     @Test
     void isNumber() {
@@ -65,22 +58,6 @@ class NumberUtilTest {
                 Arguments.of("1", BigDecimal.class, new BigDecimal("1"), null),
                 Arguments.of("1", RationalNumber.class, RationalNumber.valueOf("1"), null),
                 Arguments.of("1", String.class, null , "Can not determine number value.\nSpecified class java.lang.String does not extend java.lang.Number")
-        );
-    }
-
-    private static Stream<Arguments> classes() {
-        return Stream.of(
-                Arguments.of(byte.class, Byte.class),
-                Arguments.of(short.class, Short.class),
-                Arguments.of(int.class, Integer.class),
-                Arguments.of(long.class, Long.class),
-                Arguments.of(double.class, Double.class),
-                Arguments.of(float.class, Float.class),
-                Arguments.of(char.class, Character.class),
-                Arguments.of(boolean.class, Boolean.class),
-                Arguments.of(null, null),
-                Arguments.of(void.class, Void.class),
-                Arguments.of(String.class, null)
         );
     }
 

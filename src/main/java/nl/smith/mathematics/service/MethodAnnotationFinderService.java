@@ -23,6 +23,13 @@ public class MethodAnnotationFinderService extends
 
   private final static String SIBLING_BEAN_NAME = "METHODANNOTATIONFINDERSERVICE";
 
+  /**
+   *
+   * @param method The method to inspect if an annotation is available
+   * @param annotationClass The annotation class
+   * @param <T>
+   * @return
+   */
   public <T extends Annotation> T getAnnotation(@NotNull @IsPublicInstanceMethod Method method, @NotNull Class<T> annotationClass) {
     T annotation = method.getAnnotation(annotationClass);
 

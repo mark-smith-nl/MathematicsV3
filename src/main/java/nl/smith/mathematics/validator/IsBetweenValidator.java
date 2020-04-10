@@ -8,8 +8,6 @@ import javax.validation.ConstraintValidatorContext;
 
 public class IsBetweenValidator implements ConstraintValidator<IsBetween, Object> {
 
-    private static final String FACTORY_METHOD_NAME = "valueOf";
-
     private String floor;
 
     private boolean includingFloor;

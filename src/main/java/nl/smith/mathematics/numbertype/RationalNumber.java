@@ -1,6 +1,7 @@
 package nl.smith.mathematics.numbertype;
 
 import nl.smith.mathematics.util.RationalNumberUtil;
+import nl.smith.mathematics.util.UserSystemContext;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -11,6 +12,18 @@ import java.math.BigInteger;
  * denominator ℤ+
  */
 public class RationalNumber extends ArithmeticFunctions<RationalNumber> implements Comparable<RationalNumber> {
+
+    public enum OutputType {
+        DEFAULT("Gives a representation of number as <numerator>/<denominator>"),
+        STRING_EXACT("Gives an exact decimal string representation of a number. For instance 2.1{23}R"),
+        STRING_ROUNDED("Gives a rounded decimal string representation of a number. For instance 2.1 for rational number 1051/495");
+
+        private final String description;
+
+        OutputType(String description) {
+            this.description = description;
+        }
+    }
 
     public static final RationalNumber ZERO = new RationalNumber(BigInteger.ZERO, BigInteger.ONE);
 
@@ -176,7 +189,20 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
 
     @Override
     public String toString() {
-        return numerator.toString() + "/" + denominator.toString();
+        return toString(UserSystemContext.getSingleValueOfType(OutputType.class).orElse(OutputType.DEFAULT));
+    }
+
+    public String toString(OutputType outputType) {
+        switch (outputType) {
+            case DEFAULT:
+                return numerator.toString() + "/" + denominator.toString();
+            case STRING_EXACT:
+                return "To be implemented - STRING_EXACT";
+            case STRING_ROUNDED:
+                return "To be implemented - STRING_ROUNDED";
+            default:
+                return "To be implemented - DEFAULT";
+        }
     }
 
     @Override
