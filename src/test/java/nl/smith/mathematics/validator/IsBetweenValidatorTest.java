@@ -2,10 +2,14 @@ package nl.smith.mathematics.validator;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsBetween;
 import nl.smith.mathematics.numbertype.RationalNumber;
+import nl.smith.mathematics.util.UserSystemContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Service;
@@ -27,11 +31,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 class IsBetweenValidatorTest {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(IsBetweenValidatorTest.class);
+
     private final MethodContainer methodContainer;
 
     @Autowired
     public IsBetweenValidatorTest(MethodContainer methodContainer) {
         this.methodContainer = methodContainer;
+    }
+
+    @BeforeEach
+    public void init() {
+        RationalNumber.OutputType outputType = RationalNumber.OutputType.COMPONENTS;
+        LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
+        UserSystemContext.setValue("outputType", outputType);
     }
 
     @DisplayName("Checking if a validated number service method argument is between two a specified values including boundaries")

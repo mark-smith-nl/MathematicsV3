@@ -1,19 +1,20 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
 import nl.smith.mathematics.numbertype.RationalNumber;
+import nl.smith.mathematics.util.UserSystemContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.NullString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.math.BigInteger;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -23,12 +24,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 class RationalNumberAuxiliaryFunctionsTest {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(RationalNumberAuxiliaryFunctionsTest.class);
+
     // SUT
     private final RationalNumberAuxiliaryFunctions rationalNumberAuxiliaryFunctions;
 
     @Autowired
     public RationalNumberAuxiliaryFunctionsTest(RationalNumberAuxiliaryFunctions rationalNumberAuxiliaryFunctions) {
         this.rationalNumberAuxiliaryFunctions = rationalNumberAuxiliaryFunctions;
+    }
+
+    @BeforeEach
+    public void init() {
+        RationalNumber.OutputType outputType = RationalNumber.OutputType.COMPONENTS;
+        LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
+        UserSystemContext.setValue("outputType", outputType);
     }
 
     @DisplayName("Testing faculty using null argument")

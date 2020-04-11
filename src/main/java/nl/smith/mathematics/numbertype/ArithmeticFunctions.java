@@ -1,7 +1,5 @@
 package nl.smith.mathematics.numbertype;
 
-import java.math.BigInteger;
-
 public abstract class ArithmeticFunctions<T extends Number> extends Number {
 
     public abstract T add(T augend) ;
@@ -19,4 +17,12 @@ public abstract class ArithmeticFunctions<T extends Number> extends Number {
     public abstract T[] divideAndRemainder(T divisor);
 
     public abstract boolean isNaturalNumber();
+
+    /**
+     * Returns the signum function of this {@code BigDecimal}.
+     *
+     * @return -1, 0, or 1 as the value of this {@code BigDecimal}
+     *         is negative, zero, or positive.
+     */
+    public abstract int signum();
 }

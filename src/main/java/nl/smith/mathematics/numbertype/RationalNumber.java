@@ -10,24 +10,55 @@ import java.util.Map;
 
 /**
  * Immutable class to store rational numbers
+ * <p>
  * numerator ∊ ℤ
  * denominator ℤ+
+ * <p>
+ * Note: Numbers are not normalized by default i.e. 2/10 will not be converted to 1/5.
  */
 public class RationalNumber extends ArithmeticFunctions<RationalNumber> implements Comparable<RationalNumber> {
 
-    public static OutputType DEFAULT_OUTPUT_TYPE = OutputType.COMPONENTS_AND_EXACT;
-    public static int DEFAULT_SCALE = 100;
+    public static final OutputType DEFAULT_OUTPUT_TYPE = OutputType.ALL;
+
+    public static final int DEFAULT_SCALE = 100;
+
+    private static final String SCALE_PROPERTY_NAME = "RationalNumberScale";
+
+    public static void setOutputType(OutputType outputType) {
+        UserSystemContext.setValue(OutputType.class.getCanonicalName(), outputType);;
+    }
+
+    public static OutputType getOutputType() {
+        return UserSystemContext.getSingleValueOfType(OutputType.class).orElse(DEFAULT_OUTPUT_TYPE);
+    }
+
+    public static void setScale(int scale) {
+        UserSystemContext.setValue(SCALE_PROPERTY_NAME, scale);;
+    }
+
+    public static int getScale() {
+        return (Integer) UserSystemContext.getValue(SCALE_PROPERTY_NAME).orElse(DEFAULT_SCALE);
+    }
 
     public enum OutputType {
-        COMPONENTS("Gives a representation of number as <numerator>/<denominator>"),
-        EXACT("Gives an exact decimal string representation of a number. For instance 2.1{23}R"),
-        COMPONENTS_AND_EXACT("Gives the numerator and denominator as well as an exact decimal string representation of a number. For instance 2.1{23}R"),
-        TRUNCATED("Gives a rounded decimal string representation of a number. For instance 2.1 for rational number 1051/495");
-
+        COMPONENTS("Represent exactly a rational number as <numerator>/<denominator>. " +
+                "For instance 1051/495 for rational number 1051/495."),
+        EXACT("Represents exactly a rational a number using different string components. " +
+                "For instance 2.1{23}R for rational number 1051/495."),
+        COMPONENTS_AND_EXACT("Represent a rational number using " + COMPONENTS + " and " + EXACT +
+                "For instance: 1051/495 ---> 2.1{23}R for rational number 1051/495."),
+        TRUNCATED("Representation of a rational number truncated using the specified scale." +
+                "For instance 2.1 for rational number 1051/495 using scale 1."),
+        ALL("Represent a rational number using " + COMPONENTS + ", " + EXACT + " and " + TRUNCATED +
+                "For instance 1051/495 ---> 2.1{23}R ~ 2.1 for rational number 1051/495 using scale 1.");
         private final String description;
 
         OutputType(String description) {
             this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
         }
     }
 
@@ -92,6 +123,11 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
     @Override
     public boolean isNaturalNumber() {
         return numerator.divideAndRemainder(denominator)[1].equals(BigInteger.ZERO);
+    }
+
+    @Override
+    public int signum() {
+        return numerator.signum();
     }
 
     @Override
@@ -195,7 +231,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
 
     @Override
     public String toString() {
-        return toString(UserSystemContext.getSingleValueOfType(OutputType.class).orElse(DEFAULT_OUTPUT_TYPE));
+        return toString(getOutputType());
     }
 
     private String toStringComponents() {
@@ -203,58 +239,110 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
     }
 
     private String toStringExact() {
-        BigInteger[] bigIntegers = numerator.divideAndRemainder(denominator);
+        if (signum() >= 0) {
+            BigInteger[] bigIntegers = numerator.divideAndRemainder(denominator);
 
-        StringBuilder result = new StringBuilder(bigIntegers[0].toString());
+            StringBuilder result = new StringBuilder(bigIntegers[0].toString());
 
-        BigInteger remainder = bigIntegers[1];
-        StringBuilder fractionalPart = new StringBuilder();
-        Map<BigInteger, Integer> resultDivisionAtPosition = new HashMap<>();
-        int position = 0;
+            BigInteger remainder = bigIntegers[1];
+            StringBuilder fractionalPart = new StringBuilder();
+            Map<BigInteger, Integer> resultDivisionAtPosition = new HashMap<>();
+            int position = 0;
 
-        while (!remainder.equals(BigInteger.ZERO)) {
-            remainder = remainder.multiply(BigInteger.TEN);
-            Integer positionStartRepetition = resultDivisionAtPosition.get(remainder);
-            if (positionStartRepetition != null) {
-                fractionalPart.insert(positionStartRepetition, "{");
-                fractionalPart.append("}R");
-                remainder = BigInteger.ZERO;
-            } else {
-                resultDivisionAtPosition.put(remainder, position++);
-                bigIntegers = remainder.divideAndRemainder(denominator);
-                fractionalPart.append(bigIntegers[0].toString());
-                remainder = bigIntegers[1];
+            while (!remainder.equals(BigInteger.ZERO)) {
+                remainder = remainder.multiply(BigInteger.TEN);
+                Integer positionStartRepetition = resultDivisionAtPosition.get(remainder);
+                if (positionStartRepetition != null) {
+                    fractionalPart.insert(positionStartRepetition, "{");
+                    fractionalPart.append("}R");
+                    remainder = BigInteger.ZERO;
+                } else {
+                    resultDivisionAtPosition.put(remainder, position);
+                    bigIntegers = remainder.divideAndRemainder(denominator);
+                    fractionalPart.append(bigIntegers[0].toString());
+                    remainder = bigIntegers[1];
+                    ++position;
+                }
             }
-        }
 
-        if (fractionalPart.length() > 0) {
-            result.append(".");
-            result.append(fractionalPart);
-        }
+            if (fractionalPart.length() > 0) {
+                result.append(".");
+                result.append(fractionalPart);
+            }
 
-        return result.toString();
+            return result.toString();
+        } else {
+            return "-" + abs().toStringExact();
+        }
     }
 
     private String toStringTruncated(int scale) {
-        UserSystemContext.getValue("RationalNumberScale").orElse(DEFAULT_SCALE);
-        return "" + scale;
+        if (signum() >= 0) {
+            BigInteger[] bigIntegers = numerator.divideAndRemainder(denominator);
+
+            StringBuilder result = new StringBuilder(bigIntegers[0].toString());
+
+            BigInteger remainder = bigIntegers[1];
+            StringBuilder fractionalPart = new StringBuilder();
+            Map<BigInteger, Integer> resultDivisionAtPosition = new HashMap<>();
+            int position = 0;
+
+            while (!remainder.equals(BigInteger.ZERO) && position < scale) {
+                remainder = remainder.multiply(BigInteger.TEN);
+                Integer positionStartRepetition = resultDivisionAtPosition.get(remainder);
+                if (positionStartRepetition != null) {
+                    int totalDecimalsToAppend = scale - fractionalPart.length();
+                    String repeatingFractionalPart = fractionalPart.substring(positionStartRepetition);
+                    for (int i = 0; i < totalDecimalsToAppend / repeatingFractionalPart.length(); i++) {
+                        fractionalPart.append(repeatingFractionalPart);
+                    }
+
+                    fractionalPart.append(repeatingFractionalPart.substring(0, totalDecimalsToAppend % repeatingFractionalPart.length()));
+                    remainder = BigInteger.ZERO;
+                } else {
+                    resultDivisionAtPosition.put(remainder, position);
+                    bigIntegers = remainder.divideAndRemainder(denominator);
+                    fractionalPart.append(bigIntegers[0].toString());
+                    remainder = bigIntegers[1];
+                    ++position;
+                }
+            }
+
+            if (fractionalPart.length() > 0) {
+                result.append(".");
+                result.append(fractionalPart);
+            }
+
+            return result.toString();
+        } else {
+            return "-" + abs().toStringTruncated(scale);
+        }
     }
 
     private String toString(OutputType outputType) {
+        int scale = getScale();
+
         String result;
         switch (outputType) {
             case COMPONENTS:
                 result = toStringComponents();
                 break;
             case EXACT:
-                result = toStringExact();
+                result = toStringExact() + " (scale = "+ scale + ")";
                 break;
             case COMPONENTS_AND_EXACT:
                 result = toStringComponents() + " ---> " + toStringExact();
                 break;
             case TRUNCATED:
-                int scale = (Integer) UserSystemContext.getValue("RationalNumberScale").orElse(DEFAULT_SCALE);
                 result = toStringTruncated(scale);
+                break;
+            case ALL:
+                String stringExact = toStringExact();
+                result = toStringComponents() + " ---> " + toStringExact();
+                String stringTruncated = toStringTruncated(scale);
+                if (!stringExact.equals(stringTruncated)) {
+                    result = result + " ~ " + stringTruncated + " (scale = "+ scale + ")";;
+                }
                 break;
             default:
                 result = String.format("toString(%s) is not implemented", outputType.name());
@@ -268,4 +356,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         return numerator.multiply(o.denominator).compareTo(o.numerator.multiply(denominator));
     }
 
+    public static void main(String[] args) {
+        System.out.println(new RationalNumber(20, 4));
+    }
 }

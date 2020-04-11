@@ -42,12 +42,13 @@ public class RationalNumberGoniometricFunctions extends GoniometricFunctions<Rat
 
 		RationalNumber T = angle;
 		RationalNumber sum = T;
+		RationalNumber squareAngle = angle.multiply(angle);
 
-		for (int i=2; i<=10; i++) {
+		for (int i=2; i<=20; i++) {
 			RationalNumber bdi = new RationalNumber(i);
-			T = angle.multiply(angle).divide(four.multiply(bdi.multiply(bdi)).subtract(six.multiply(bdi)).add(two)).multiply(T).negate();
+			T = squareAngle.divide(four.multiply(bdi).multiply(bdi).subtract(six.multiply(bdi)).add(two)).multiply(T).negate();
 			sum = sum.add(T);
-			System.out.println(T);
+			System.out.println("Taylor p(" + i + "): " + sum);
 		}
 		return sum;
 	}

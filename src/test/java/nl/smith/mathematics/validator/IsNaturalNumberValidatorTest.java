@@ -2,13 +2,16 @@ package nl.smith.mathematics.validator;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNaturalNumber;
 import nl.smith.mathematics.numbertype.RationalNumber;
-import nl.smith.mathematics.util.RationalNumberUtil;
+import nl.smith.mathematics.util.UserSystemContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Service;
@@ -16,24 +19,32 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class IsNaturalNumberValidatorTest {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(IsNaturalNumberValidatorTest.class);
 
     private final MethodContainer methodContainer;
 
     @Autowired
     public IsNaturalNumberValidatorTest(MethodContainer methodContainer) {
         this.methodContainer = methodContainer;
+    }
+
+    @BeforeEach
+    public void init() {
+        RationalNumber.OutputType outputType = RationalNumber.OutputType.COMPONENTS;
+        LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
+        UserSystemContext.setValue("outputType", outputType);
     }
 
     @DisplayName("Checking if annotated parameter is null")
