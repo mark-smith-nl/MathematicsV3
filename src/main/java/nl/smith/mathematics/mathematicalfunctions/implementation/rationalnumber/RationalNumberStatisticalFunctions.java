@@ -14,6 +14,17 @@ public class RationalNumberStatisticalFunctions extends StatisticalFunctions<Rat
 	private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERSTATISTICALFUNCTIONS";
 
 	@Override
+	public String getSiblingBeanName() {
+		return SIBLING_BEAN_NAME;
+	}
+
+	@Bean(SIBLING_BEAN_NAME)
+	@Override
+	public RationalNumberStatisticalFunctions makeSibling() {
+		return new RationalNumberStatisticalFunctions();
+	}
+
+	@Override
 	public RationalNumber sum(RationalNumber... numbers) {
 		ObjectWrapper<RationalNumber> sum = new ObjectWrapper<>(ZERO);
 		Stream.of(numbers).forEach(n -> sum.setValue(sum.getValue().add(n)));
@@ -37,16 +48,6 @@ public class RationalNumberStatisticalFunctions extends StatisticalFunctions<Rat
 	@Override
 	public RationalNumber mean(RationalNumber ... numbers) {
 		return null;
-	}
-
-	@Override
-	public String getSiblingBeanName() {
-		return SIBLING_BEAN_NAME;
-	}
-
-	@Bean(SIBLING_BEAN_NAME)
-	public RationalNumberStatisticalFunctions makeSibling() {
-		return new RationalNumberStatisticalFunctions();
 	}
 
 }

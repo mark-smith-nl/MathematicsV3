@@ -11,22 +11,23 @@ public class BigDecimalAuxiliaryFunctions extends AuxiliaryFunctions<BigDecimal,
 
 	private final static String SIBLING_BEAN_NAME = "BIGDECIMALAUXILIARYFUNCTIONS";
 
-	/** Non recursive method to calculate n!
-	 * The method is not recursive to prevent a stack overflow
-	 */
-	@Override
-	public BigDecimal faculty(BigDecimal number) {
-		 return number.compareTo(ONE) < 1 ? ONE : number.multiply(number.subtract(ONE));
-	}
-
 	@Override
 	public String getSiblingBeanName() {
 		return SIBLING_BEAN_NAME;
 	}
 
 	@Bean(SIBLING_BEAN_NAME)
+	@Override
 	public BigDecimalAuxiliaryFunctions makeSibling() {
 		return new BigDecimalAuxiliaryFunctions();
+	}
+
+	/** Non recursive method to calculate n!
+	 * The method is not recursive to prevent a stack overflow.
+	 */
+	@Override
+	public BigDecimal faculty(BigDecimal number) {
+		 return number.compareTo(ONE) < 1 ? ONE : number.multiply(number.subtract(ONE));
 	}
 
 }

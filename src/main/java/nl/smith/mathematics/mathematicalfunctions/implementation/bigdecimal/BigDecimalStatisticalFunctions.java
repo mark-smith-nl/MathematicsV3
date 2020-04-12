@@ -13,6 +13,17 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 	private final static String SIBLING_BEAN_NAME = "BIGDECIMALSTATISTICALFUNCTIONS";
 
 	@Override
+	public String getSiblingBeanName() {
+		return SIBLING_BEAN_NAME;
+	}
+
+	@Bean(SIBLING_BEAN_NAME)
+	@Override
+	public BigDecimalStatisticalFunctions makeSibling() {
+		return new BigDecimalStatisticalFunctions();
+	}
+
+	@Override
 	public BigDecimal sum(BigDecimal... numbers) {
 		ObjectWrapper<BigDecimal> sum = new ObjectWrapper<>(BigDecimal.ZERO);
 		Stream.of(numbers).forEach(n -> sum.setValue(sum.getValue().add(n)));
@@ -40,16 +51,6 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 		BigDecimal sum = sibling.sum(numbers);
 
 		return sum.divide(BigDecimal.valueOf(numbers.length), 10, RoundingMode.HALF_DOWN);
-	}
-
-	@Override
-	public String getSiblingBeanName() {
-		return SIBLING_BEAN_NAME;
-	}
-
-	@Bean(SIBLING_BEAN_NAME)
-	public BigDecimalStatisticalFunctions makeSibling() {
-		return new BigDecimalStatisticalFunctions();
 	}
 
 }

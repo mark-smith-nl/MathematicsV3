@@ -8,13 +8,24 @@ import org.springframework.context.annotation.Bean;
 
 public class RationalNumberGoniometricFunctions extends GoniometricFunctions<RationalNumber, RationalNumberGoniometricFunctions> implements TaylorSeries {
 
+	private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERGONIOMETRICFUNCTIONS";
+
+	@Override
+	public String getSiblingBeanName() {
+		return SIBLING_BEAN_NAME;
+	}
+
+	@Bean(SIBLING_BEAN_NAME)
+	@Override
+	public RationalNumberGoniometricFunctions makeSibling() {
+		return new RationalNumberGoniometricFunctions();
+	}
+
 	public enum AngleType {
 		DEG,
 		GRAD,
 		RAD
 	}
-
-	private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERGONIOMETRICFUNCTIONS";
 
 	protected int degreeOfPolynomial = 5;
 
@@ -58,17 +69,7 @@ public class RationalNumberGoniometricFunctions extends GoniometricFunctions<Rat
 		return new RationalNumber(456);
 	}
 
-	@Override
-	public String getSiblingBeanName() {
-		return SIBLING_BEAN_NAME;
-	}
-
-	@Bean(SIBLING_BEAN_NAME)
-	public RationalNumberGoniometricFunctions makeSibling() {
-		return new RationalNumberGoniometricFunctions();
-	}
-
-	@Override
+		@Override
 	public int getDegreeOfPolynomial() {
 		return degreeOfPolynomial;
 	}

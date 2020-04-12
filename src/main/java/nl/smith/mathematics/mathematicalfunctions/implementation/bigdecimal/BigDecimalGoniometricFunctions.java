@@ -9,13 +9,23 @@ import java.math.BigDecimal;
 
 public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDecimal, BigDecimalGoniometricFunctions> implements TaylorSeries {
 
+	private final static String SIBLING_BEAN_NAME = "BIGDECIMALGONIOMETRICFUNCTIONS";
+
+	@Override
+	public String getSiblingBeanName() {
+		return SIBLING_BEAN_NAME;
+	}
+
+	@Bean(SIBLING_BEAN_NAME)
+	public BigDecimalGoniometricFunctions makeSibling() {
+		return new BigDecimalGoniometricFunctions();
+	}
+
 	public enum AngleType {
 		DEG,
 		GRAD,
 		RAD
 	}
-
-	private final static String SIBLING_BEAN_NAME = "BIGDECIMALGONIOMETRICFUNCTIONS";
 
 	protected int degreeOfPolynomial = 5;
 
@@ -56,16 +66,6 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
 	@Override
 	public BigDecimal cos(BigDecimal angle) {
 		return new BigDecimal(456);
-	}
-
-	@Override
-	public String getSiblingBeanName() {
-		return SIBLING_BEAN_NAME;
-	}
-
-	@Bean(SIBLING_BEAN_NAME)
-	public BigDecimalGoniometricFunctions makeSibling() {
-		return new BigDecimalGoniometricFunctions();
 	}
 
 	@Override

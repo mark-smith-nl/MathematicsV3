@@ -32,7 +32,7 @@ public class MathematicsV3Application {
     RationalNumber.setScale(10);
     System.out.println("Example: " + new RationalNumber(2, 14));
     RationalNumber.setOutputType(RationalNumber.OutputType.COMPONENTS_AND_EXACT);
-    System.out.println("Example 2/14 + 1/3: " + (new RationalNumber(2, 14)).multiply(new RationalNumber(1, 3)));
+    System.out.println("Example 2/14 * 1/3: " + (new RationalNumber(2, 14)).multiply(new RationalNumber(1, 3)));
     System.out.println("Example create number from string literal 12.345{6789}R: " + RationalNumber.valueOf("12.345{6789}R"));
     System.out.println();
     System.out.println("Calculate sin(𝝅/4) using taylor:");

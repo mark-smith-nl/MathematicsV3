@@ -1,11 +1,8 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
-import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNaturalNumber;
 import nl.smith.mathematics.mathematicalfunctions.definition.AuxiliaryFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.context.annotation.Bean;
-
-import javax.validation.constraints.NotNull;
 
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 
@@ -14,18 +11,19 @@ public class RationalNumberAuxiliaryFunctions extends AuxiliaryFunctions<Rationa
     private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERAUXILIARYFUNCTIONS";
 
     @Override
-    public RationalNumber faculty(RationalNumber number) {
-        return number.compareTo(ONE) < 1 ? ONE : number.multiply(faculty(number.subtract(ONE)));
-    }
-
-    @Override
     public String getSiblingBeanName() {
         return SIBLING_BEAN_NAME;
     }
 
     @Bean(SIBLING_BEAN_NAME)
+    @Override
     public RationalNumberAuxiliaryFunctions makeSibling() {
         return new RationalNumberAuxiliaryFunctions();
+    }
+
+    @Override
+    public RationalNumber faculty(RationalNumber number) {
+        return number.compareTo(ONE) < 1 ? ONE : number.multiply(faculty(number.subtract(ONE)));
     }
 
 }
