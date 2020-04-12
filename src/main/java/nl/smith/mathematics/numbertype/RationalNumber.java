@@ -22,7 +22,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
 
     public static final int DEFAULT_SCALE = 100;
 
-    private static final String SCALE_PROPERTY_NAME = "RationalNumberScale";
+    private static final String SCALE_PROPERTY_NAME = "rationalNumberScale";
 
     public static void setOutputType(OutputType outputType) {
         UserSystemContext.setValue(OutputType.class.getCanonicalName(), outputType);;
