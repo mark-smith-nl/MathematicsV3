@@ -319,7 +319,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         }
     }
 
-    private String toString(OutputType outputType) {
+    public String toString(OutputType outputType) {
         int scale = getScale();
 
         String result;
@@ -328,7 +328,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
                 result = toStringComponents();
                 break;
             case EXACT:
-                result = toStringExact() + " (scale = "+ scale + ")";
+                result = toStringExact();
                 break;
             case COMPONENTS_AND_EXACT:
                 result = toStringComponents() + " ---> " + toStringExact();
@@ -341,7 +341,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
                 result = toStringComponents() + " ---> " + toStringExact();
                 String stringTruncated = toStringTruncated(scale);
                 if (!stringExact.equals(stringTruncated)) {
-                    result = result + " ~ " + stringTruncated + " (scale = "+ scale + ")";;
+                    result = result + " ~ " + stringTruncated + " (scale = "+ scale + ")";
                 }
                 break;
             default:

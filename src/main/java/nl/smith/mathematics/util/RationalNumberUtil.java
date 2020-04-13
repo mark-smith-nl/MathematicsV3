@@ -35,7 +35,7 @@ public class RationalNumberUtil {
         POSITIVE_EXPONENTIAL_PART;
     }
 
-    protected static final Pattern NUMBER_PATTERN = Pattern.compile("((\\-)?([1-9]\\d*)(\\.(\\d*)(([1-9])|(\\{(\\d*[1-9]\\d*)\\}R)))?(E\\[(\\-)?(\\d{2})\\])?)" +
+    public static final Pattern NUMBER_PATTERN = Pattern.compile("((\\-)?([1-9]\\d*)(\\.(\\d*)(([1-9])|(\\{(\\d*[1-9]\\d*)\\}R)))?(E\\[(\\-)?(\\d{2})\\])?)" +
             "|(0)|((\\-)?0(\\.(\\d*)(([1-9])|(\\{(\\d*[1-9]\\d*)\\}R)))(E\\[(\\-)?(\\d{2})\\])?)");
 
     private RationalNumberUtil() {

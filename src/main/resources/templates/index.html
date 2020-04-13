@@ -2,9 +2,30 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head></head>
 <body>
-<div th:replace="fragments.html
-      :: formField(field='Name', value='John Doe',size='40')">
-</div>aaa
+<div>
+    <form method="get" action="sin">
+        <input name="rationalNumber" title="RationalNumber as string" value="0.785398163397448">
+        <input name="outputType" title="The format of the output" th:value="${T(nl.smith.mathematics.numbertype.RationalNumber.OutputType).TRUNCATED}" READONLY>
+        <input name="scale" title="Scale. Number of decimals after the decimal point" value="150" maxlength="3" size="3">
+        <input name="maximumDegreeOfPolynomial" title="Calculate value using polynom value of degree 0...specified degree." value="50">
+        <input type="submit" value="Calculate sinus using Taylor series">
+    </form>
+    <br>
+    <form method="get" action="valueOfUsingNumeratorDenominator">
+        <input name="numerator" title="Numerator" value="1" maxlength="10" size="10"> /
+        <input name="denominator" title="Denominator" value="7"maxlength="10" size="10">
+        <input name="scale" title="Scale. Number of decimals after the decimal point" value="150" maxlength="3" size="3">
+        <input type="submit" value="Output RationalNumber in different forms">
+    </form>
+    <br>
+    <form method="get" action="valueOfUsingString">
+        <input name="rationalNumber" title="Rationalnumber using string format" value="12.345{6789}RE[02]" maxlength="20" size="20">
+        <input name="scale" title="Scale. Number of decimals after the decimal point" value="150" maxlength="3" size="3">
+        <input type="submit" value="Output RationalNumber in different forms">
+    </form>
+    <br>
+</div>
+Rationalnumber string format pattern: <div th:text="${T(nl.smith.mathematics.util.RationalNumberUtil).NUMBER_PATTERN.toString()}"></div>
 </body>
 
 </html>
