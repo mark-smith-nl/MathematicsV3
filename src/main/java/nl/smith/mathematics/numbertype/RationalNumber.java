@@ -1,7 +1,8 @@
 package nl.smith.mathematics.numbertype;
 
+import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.Scale;
 import nl.smith.mathematics.util.RationalNumberUtil;
-import nl.smith.mathematics.util.UserSystemContext;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,50 +18,6 @@ import java.util.Map;
  * Note: Numbers are not normalized by default i.e. 2/10 will not be converted to 1/5.
  */
 public class RationalNumber extends ArithmeticFunctions<RationalNumber> implements Comparable<RationalNumber> {
-
-    public static final OutputType DEFAULT_OUTPUT_TYPE = OutputType.ALL;
-
-    public static final int DEFAULT_SCALE = 100;
-
-    private static final String SCALE_PROPERTY_NAME = "rationalNumberScale";
-
-    public static void setOutputType(OutputType outputType) {
-        UserSystemContext.setValue(OutputType.class.getCanonicalName(), outputType);;
-    }
-
-    public static OutputType getOutputType() {
-        return UserSystemContext.getSingleValueOfType(OutputType.class).orElse(DEFAULT_OUTPUT_TYPE);
-    }
-
-    public static void setScale(int scale) {
-        UserSystemContext.setValue(SCALE_PROPERTY_NAME, scale);;
-    }
-
-    public static int getScale() {
-        return (Integer) UserSystemContext.getValue(SCALE_PROPERTY_NAME).orElse(DEFAULT_SCALE);
-    }
-
-    public enum OutputType {
-        COMPONENTS("Represent exactly a rational number as <numerator>/<denominator>. " +
-                "For instance 1051/495 for rational number 1051/495."),
-        EXACT("Represents exactly a rational a number using different string components. " +
-                "For instance 2.1{23}R for rational number 1051/495."),
-        COMPONENTS_AND_EXACT("Represent a rational number using " + COMPONENTS + " and " + EXACT +
-                "For instance: 1051/495 ---> 2.1{23}R for rational number 1051/495."),
-        TRUNCATED("Representation of a rational number truncated using the specified scale." +
-                "For instance 2.1 for rational number 1051/495 using scale 1."),
-        ALL("Represent a rational number using " + COMPONENTS + ", " + EXACT + " and " + TRUNCATED +
-                "For instance 1051/495 ---> 2.1{23}R ~ 2.1 for rational number 1051/495 using scale 1.");
-        private final String description;
-
-        OutputType(String description) {
-            this.description = description;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
 
     public static final RationalNumber ZERO = new RationalNumber(BigInteger.ZERO, BigInteger.ONE);
 
@@ -192,6 +149,10 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         return new RationalNumber(numerator, denominator);
     }
 
+    public RationalNumber divide(long divisor) {
+        return divide(new RationalNumber(divisor));
+    }
+
     @Override
     public RationalNumber negate() {
         return new RationalNumber(numerator.negate(), denominator);
@@ -231,14 +192,14 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
 
     @Override
     public String toString() {
-        return toString(getOutputType());
+        return toString(RationalNumberOutputType.get());
     }
 
-    private String toStringComponents() {
+    public String toStringComponents() {
         return numerator.toString() + "/" + denominator.toString();
     }
 
-    private String toStringExact() {
+    public String toStringExact() {
         if (signum() >= 0) {
             BigInteger[] bigIntegers = numerator.divideAndRemainder(denominator);
 
@@ -276,7 +237,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         }
     }
 
-    private String toStringTruncated(int scale) {
+    public String toStringTruncated(int scale) {
         if (signum() >= 0) {
             BigInteger[] bigIntegers = numerator.divideAndRemainder(denominator);
 
@@ -319,8 +280,8 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         }
     }
 
-    public String toString(OutputType outputType) {
-        int scale = getScale();
+    public String toString(RationalNumberOutputType.Type outputType) {
+        int scale = Scale.get();
 
         String result;
         switch (outputType) {

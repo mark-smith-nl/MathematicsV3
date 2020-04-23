@@ -1,9 +1,12 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
-import nl.smith.mathematics.mathematicalfunctions.TaylorSeries;
+import nl.smith.mathematics.configuration.constant.TaylorDegreeOfPolynom;
+import nl.smith.mathematics.configuration.constant.rationalnumber.Pi;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.context.annotation.Bean;
+
+import static nl.smith.mathematics.numbertype.RationalNumber.*;
 
 public class RationalNumberGoniometricFunctions extends GoniometricFunctions<RationalNumber, RationalNumberGoniometricFunctions> {
 
@@ -20,45 +23,37 @@ public class RationalNumberGoniometricFunctions extends GoniometricFunctions<Rat
         return new RationalNumberGoniometricFunctions();
     }
 
-
-    protected int degreeOfPolynomial = 5;
-
     /**
      * {@inheritDoc}
      */
     @Override
     public RationalNumber sin(RationalNumber angle) {
-        if (TaylorSeries.getDegreeOfPolynomial() == 0) {
-            return RationalNumber.ZERO;
-        } else if (TaylorSeries.getDegreeOfPolynomial() == 1) {
-            return angle;
-        } else {
-            RationalNumber two = new RationalNumber(2);
-            RationalNumber four = new RationalNumber(4);
-            RationalNumber six = new RationalNumber(6);
+        RationalNumber sum = ZERO;
 
+        Integer iMax = TaylorDegreeOfPolynom.get();
+        System.out.println(iMax);
+        if (iMax > 0) {
             RationalNumber T = angle;
-            RationalNumber sum = T;
+            sum = sum.add(T);
             RationalNumber squareAngle = angle.multiply(angle);
-
-            for (int i = 2; i <= TaylorSeries.getDegreeOfPolynomial(); i++) {
-                RationalNumber bdi = new RationalNumber(i);
-                T = squareAngle.divide(four.multiply(bdi).multiply(bdi).subtract(six.multiply(bdi)).add(two)).multiply(T).negate();
+            for (int i = 3; i <= iMax; i = i + 2) {
+                T = T.multiply(squareAngle).divide(i).divide(i - 1).negate();
                 sum = sum.add(T);
             }
-            return sum;
         }
+
+        return sum;
     }
 
     @Override
     public RationalNumber cos(RationalNumber angle) {
-        return new RationalNumber(456);
+        return sin(Pi.get().divide(new RationalNumber(2)).subtract(angle));
     }
 
-    @Override
+   /* @Override
     public RationalNumber getPi() {
         // Number of Metius (https://nl.wikipedia.org/wiki/Pi_(wiskunde))
         return new RationalNumber(355, 113);
-    }
+    }*/
 
 }

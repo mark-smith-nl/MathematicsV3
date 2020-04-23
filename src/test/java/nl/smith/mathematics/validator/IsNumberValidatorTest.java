@@ -1,8 +1,8 @@
 package nl.smith.mathematics.validator;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNumber;
+import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.numbertype.RationalNumber;
-import nl.smith.mathematics.util.UserSystemContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,9 +41,9 @@ class IsNumberValidatorTest {
 
     @BeforeEach
     public void init() {
-        RationalNumber.OutputType outputType = RationalNumber.OutputType.COMPONENTS;
+        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
         LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
-        UserSystemContext.setValue("outputType", outputType);
+        RationalNumberOutputType.set(outputType);
     }
 
     @DisplayName("Checking if a method's argument is a number")

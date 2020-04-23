@@ -1,6 +1,8 @@
 package nl.smith.mathematics.controller;
 
-import nl.smith.mathematics.mathematicalfunctions.TaylorSeries;
+import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.Scale;
+import nl.smith.mathematics.configuration.constant.TaylorDegreeOfPolynom;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberGoniometricFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,14 +28,14 @@ public class DefaultController {
 
 
     @GetMapping("sin")
-    public @ResponseBody Map<Integer, String> sin(@RequestParam("rationalNumber") String rationalNumberAsString, RationalNumber.OutputType outputType, int scale, int maximumDegreeOfPolynomial) {
+    public @ResponseBody Map<Integer, String> sin(@RequestParam("rationalNumber") String rationalNumberAsString, RationalNumberOutputType.Type outputType, int scale, int maximumDegreeOfPolynomial) {
         Map<Integer, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        RationalNumber.setOutputType(outputType);
-        RationalNumber.setScale(scale);
+        RationalNumberOutputType.set(outputType);
+        Scale.set(scale);
         for (int i = 0; i < maximumDegreeOfPolynomial; i++) {
-            TaylorSeries.setDegreeOfPolynomial(i);
+            TaylorDegreeOfPolynom.set(i);
             result.put(i, goniometricFunctions.sin(rationalNumber).toString());
         }
 
@@ -41,34 +43,34 @@ public class DefaultController {
     }
 
     @GetMapping("valueOfUsingNumeratorDenominator")
-    public @ResponseBody Map<RationalNumber.OutputType, String> valueOf(int numerator, int denominator, int scale) {
-        Map<RationalNumber.OutputType, String> result = new HashMap<>();
+    public @ResponseBody Map<RationalNumberOutputType.Type, String> valueOf(int numerator, int denominator, int scale) {
+        Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = new RationalNumber(numerator, denominator);
-        RationalNumber.setScale(scale);
+        Scale.set(scale);
 
-        RationalNumber.OutputType outputType = RationalNumber.OutputType.COMPONENTS;
+        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
         result.put(outputType, rationalNumber.toString(outputType));
-        outputType = RationalNumber.OutputType.EXACT;
+        outputType = RationalNumberOutputType.Type.EXACT;
         result.put(outputType, rationalNumber.toString(outputType));
-        outputType = RationalNumber.OutputType.TRUNCATED;
+        outputType = RationalNumberOutputType.Type.TRUNCATED;
         result.put(outputType, rationalNumber.toString(outputType));
 
         return result;
     }
 
     @GetMapping("valueOfUsingString")
-    public @ResponseBody Map<RationalNumber.OutputType, String> valueOf(@RequestParam("rationalNumber") String rationalNumberAsString, int scale) {
-        Map<RationalNumber.OutputType, String> result = new HashMap<>();
+    public @ResponseBody Map<RationalNumberOutputType.Type, String> valueOf(@RequestParam("rationalNumber") String rationalNumberAsString, int scale) {
+        Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        RationalNumber.setScale(scale);
+        Scale.set(scale);
 
-        RationalNumber.OutputType outputType = RationalNumber.OutputType.COMPONENTS;
+        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
         result.put(outputType, rationalNumber.toString(outputType));
-        outputType = RationalNumber.OutputType.EXACT;
+        outputType = RationalNumberOutputType.Type.EXACT;
         result.put(outputType, rationalNumber.toString(outputType));
-        outputType = RationalNumber.OutputType.TRUNCATED;
+        outputType = RationalNumberOutputType.Type.TRUNCATED;
         result.put(outputType, rationalNumber.toString(outputType));
 
         return result;

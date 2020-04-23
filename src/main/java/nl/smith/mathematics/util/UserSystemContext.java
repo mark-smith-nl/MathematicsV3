@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** Utility to store thread specific key value pairs in a map and associate then with a specific thread.
+/** Utility to store thread specific key value pairs in a map and associate them with a specific thread.
  * This class is intended to store user specific properties which can be retrieved anywhere in the thread.
  * Null values are not stored. Adding a property with a null value results in the removal of the property. */
 public class UserSystemContext {

@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  web:
+    build: .
+    ports:
+      - "1234:8080" # Mapping the internal container ports to the external ones.
+      - "8010:8000"
+    command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar app.jar
