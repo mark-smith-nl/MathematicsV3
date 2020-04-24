@@ -1,11 +1,9 @@
 package nl.smith.mathematics.mathematicalfunctions;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
-import nl.smith.mathematics.service.MethodAnnotationFinderService;
 import nl.smith.mathematics.service.RecursiveValidatedService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.ParameterizedType;
@@ -42,8 +40,8 @@ public abstract class FunctionContainer<N extends Number, S extends FunctionCont
      */
     @PostConstruct
     private void postConstruct() {
-       initializeNumberType();
-      //  initializeMathematicalFunctions();
+        initializeNumberType();
+        //  initializeMathematicalFunctions();
     }
 
     /**
@@ -58,9 +56,9 @@ public abstract class FunctionContainer<N extends Number, S extends FunctionCont
     }
 
     /**
-     *  Check if the MathematicalFunction annotation is present on the concrete class.
-     *  If not present is bridge than check parent class
-     *  Check return type
+     * Check if the MathematicalFunction annotation is present on the concrete class.
+     * If not present is bridge than check parent class
+     * Check return type
      */
     private void initializeMathematicalFunctions() {
         Class<?> functionContainerClazz = this.getClass();

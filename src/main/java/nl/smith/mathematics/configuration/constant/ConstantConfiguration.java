@@ -8,6 +8,10 @@ import org.springframework.util.StringUtils;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+/**
+ * Default values for all implementing classes are specified in {@link ConstantConfiguration#PROPERTY_FILE_NAME}.
+ * @param <T>
+ */
 public abstract class ConstantConfiguration<T> {
 
     private static final String PROPERTY_FILE_NAME = "classpath:application.properties";

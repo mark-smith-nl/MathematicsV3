@@ -1,13 +1,15 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
+import nl.smith.mathematics.configuration.constant.RoundingMode;
+import nl.smith.mathematics.configuration.constant.Scale;
 import nl.smith.mathematics.configuration.constant.TaylorDegreeOfPolynom;
-import nl.smith.mathematics.configuration.constant.bigdecimal.Pi;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
 
 import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
 
 public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDecimal, BigDecimalGoniometricFunctions> {
 
@@ -28,26 +30,43 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
      */
     @Override
     public BigDecimal sin(BigDecimal angle) {
-        BigDecimal T = angle;
-        BigDecimal sum = T;
+        BigDecimal sum = ZERO;
 
         Integer iMax = TaylorDegreeOfPolynom.get();
-        System.out.println(iMax);
         if (iMax > 0) {
+            Integer scale = Scale.get();
+            java.math.RoundingMode roundingMode = RoundingMode.get();
+
+            BigDecimal T = angle;
+            sum = sum.add(T);
             BigDecimal squareAngle = angle.multiply(angle);
-            for (int i = 1; i <= iMax; i++) {
-                BigDecimal rationalNumberI = new BigDecimal(i);
-                BigDecimal twoTimesI = rationalNumberI.add(rationalNumberI);
-                T = T.multiply(squareAngle).divide(twoTimesI.add(ONE)).divide(twoTimesI).negate();
+            for (int i = 3; i <= iMax; i = i + 2) {
+                T = T.multiply(squareAngle).divide(new BigDecimal(i), scale, roundingMode).divide(new BigDecimal(i - 1), scale, roundingMode).negate();
                 sum = sum.add(T);
             }
         }
+
         return sum;
     }
 
     @Override
     public BigDecimal cos(BigDecimal angle) {
-        return sin(Pi.get().divide(new BigDecimal(2)).subtract(angle));
+        BigDecimal sum = ONE;
+
+        Integer iMax = TaylorDegreeOfPolynom.get();
+        if (iMax > 0) {
+            Integer scale = Scale.get();
+            java.math.RoundingMode roundingMode = RoundingMode.get();
+
+            BigDecimal T = ONE;
+            BigDecimal squareAngle = angle.multiply(angle);
+            for (int i = 2; i <= iMax; i = i + 2) {
+                T = T.multiply(squareAngle).divide(new BigDecimal(i), scale, roundingMode).divide(new BigDecimal(i - 1), scale, roundingMode).negate();
+                sum = sum.add(T);
+            }
+        }
+
+        return sum;
     }
 
 }

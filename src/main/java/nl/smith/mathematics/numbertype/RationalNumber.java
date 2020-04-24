@@ -317,7 +317,4 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         return numerator.multiply(o.denominator).compareTo(o.numerator.multiply(denominator));
     }
 
-    public static void main(String[] args) {
-        System.out.println(new RationalNumber(20, 4));
-    }
 }

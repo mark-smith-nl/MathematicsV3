@@ -42,7 +42,6 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 	@Override
 	public BigDecimal deviation(BigDecimal ... numbers) {
 		// TODO Auto-generated method stub
-		System.out.println("===>" + numbers);
 		return new BigDecimal(456);
 	}
 
