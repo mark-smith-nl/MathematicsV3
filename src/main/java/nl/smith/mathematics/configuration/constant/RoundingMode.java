@@ -1,5 +1,8 @@
 package nl.smith.mathematics.configuration.constant;
 
+/**
+ * Utility class to specify how a division of two numbers ({@link Number}) should be rounded.
+  */
 public class RoundingMode extends ConstantConfiguration<java.math.RoundingMode> {
 
     private static final RoundingMode instance = new RoundingMode();

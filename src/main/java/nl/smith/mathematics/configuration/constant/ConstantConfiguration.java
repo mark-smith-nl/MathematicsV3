@@ -10,6 +10,8 @@ import java.util.Properties;
 
 /**
  * Default values for all implementing classes are specified in {@link ConstantConfiguration#PROPERTY_FILE_NAME}.
+ * The specified values are associated with the thread in which the value is set.
+ * Setting and retrieval of a value can be done using static methods in the implementing class.
  * @param <T>
  */
 public abstract class ConstantConfiguration<T> {

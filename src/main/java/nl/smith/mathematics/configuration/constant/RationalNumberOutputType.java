@@ -1,5 +1,9 @@
 package nl.smith.mathematics.configuration.constant;
 
+/**
+ * Utility class to specify how an instance of a {@link nl.smith.mathematics.numbertype.RationalNumber} should be presented.
+ * See {@link nl.smith.mathematics.numbertype.RationalNumber#toString()}.
+*/
 public class RationalNumberOutputType extends ConstantConfiguration<RationalNumberOutputType.Type> {
 
     public enum Type {
