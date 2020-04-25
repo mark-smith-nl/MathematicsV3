@@ -83,7 +83,7 @@ public class RationalNumberUtil {
             numerator = numerator.negate();
         }
 
-        return new RationalNumber(numerator, denominator).normalized();
+        return new RationalNumber(numerator, denominator);
 
     }
 

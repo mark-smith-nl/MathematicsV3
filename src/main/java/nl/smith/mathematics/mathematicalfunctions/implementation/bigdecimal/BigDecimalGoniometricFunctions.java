@@ -32,7 +32,7 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
     public BigDecimal sin(BigDecimal angle) {
         BigDecimal sum = ZERO;
 
-        Integer iMax = TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
             Integer scale = Scale.get();
             java.math.RoundingMode roundingMode = RoundingMode.get();
@@ -40,7 +40,7 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
             BigDecimal T = angle;
             sum = sum.add(T);
             BigDecimal squareAngle = angle.multiply(angle);
-            for (int i = 3; i <= iMax; i = i + 2) {
+            for (long i = 3; i <= iMax; i = i + 2) {
                 T = T.multiply(squareAngle).divide(new BigDecimal(i), scale, roundingMode).divide(new BigDecimal(i - 1), scale, roundingMode).negate();
                 sum = sum.add(T);
             }
@@ -53,14 +53,14 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
     public BigDecimal cos(BigDecimal angle) {
         BigDecimal sum = ONE;
 
-        Integer iMax = TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
             Integer scale = Scale.get();
             java.math.RoundingMode roundingMode = RoundingMode.get();
 
             BigDecimal T = ONE;
             BigDecimal squareAngle = angle.multiply(angle);
-            for (int i = 2; i <= iMax; i = i + 2) {
+            for (long i = 2; i <= iMax; i = i + 2) {
                 T = T.multiply(squareAngle).divide(new BigDecimal(i), scale, roundingMode).divide(new BigDecimal(i - 1), scale, roundingMode).negate();
                 sum = sum.add(T);
             }
@@ -69,4 +69,8 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
         return sum;
     }
 
+    @Override
+    public BigDecimal tan(BigDecimal angle) {
+        return sin(angle).divide(cos(angle), Scale.get(), RoundingMode.get());
+    }
 }

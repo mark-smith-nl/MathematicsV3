@@ -100,7 +100,7 @@ class IsNaturalNumberValidatorTest {
     private static Stream<Arguments> notNaturalNumbers() {
         return Stream.of(
                 Arguments.of(new BigDecimal("44.5"), "Value is not a natural number: '44.5'"),
-                Arguments.of(new RationalNumber(445, 10), "Value is not a natural number: '445/10'")
+                Arguments.of(new RationalNumber(445, 10), "Value is not a natural number: '445/10'") // Note: Rational numbers are normalized.
         );
     }
 

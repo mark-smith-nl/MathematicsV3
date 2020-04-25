@@ -9,6 +9,7 @@ import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigDecimalGoniometricFunctions;
+import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigDecimalStatisticalFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberGoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
@@ -87,6 +88,11 @@ public class MathematicsV3Application {
 
         System.out.println("Have fun!");
 
+        BigDecimalStatisticalFunctions bigDecimalStatisticalFunctions = context.getBean("bigDecimalStatisticalFunctions", BigDecimalStatisticalFunctions.class);
+        BigDecimal[] numbers = new BigDecimal[]{new BigDecimal(2), new BigDecimal(4), new BigDecimal(5), new BigDecimal(5), new BigDecimal(6), new BigDecimal(7), new BigDecimal(9), new BigDecimal(10)};
+        System.out.println("Sum: " + bigDecimalStatisticalFunctions.sum(numbers));
+        System.out.println("Average: " + bigDecimalStatisticalFunctions.average(numbers));
+        System.out.println("Deviation: " + bigDecimalStatisticalFunctions.deviation(numbers));
         Scale.set(3);
         RoundingMode.set(java.math.RoundingMode.CEILING);
         System.out.println(new BigDecimal(16).divide(new BigDecimal(3), Scale.get(), RoundingMode.get()));

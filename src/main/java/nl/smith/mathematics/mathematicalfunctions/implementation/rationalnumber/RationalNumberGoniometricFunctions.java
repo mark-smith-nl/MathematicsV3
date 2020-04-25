@@ -30,12 +30,12 @@ public class RationalNumberGoniometricFunctions extends GoniometricFunctions<Rat
     public RationalNumber sin(RationalNumber angle) {
         RationalNumber sum = ZERO;
 
-        Integer iMax = TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
             RationalNumber T = angle;
             sum = sum.add(T);
             RationalNumber squareAngle = angle.multiply(angle);
-            for (int i = 3; i <= iMax; i = i + 2) {
+            for (long i = 3; i <= iMax; i = i + 2) {
                 T = T.multiply(squareAngle).divide(i).divide(i - 1).negate();
                 sum = sum.add(T);
             }
@@ -45,14 +45,19 @@ public class RationalNumberGoniometricFunctions extends GoniometricFunctions<Rat
     }
 
     @Override
+    public RationalNumber tan(RationalNumber angle) {
+        return sin(angle).divide(cos(angle));
+    }
+
+    @Override
     public RationalNumber cos(RationalNumber angle) {
         RationalNumber sum = ONE;
 
-        Integer iMax = TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
             RationalNumber T = ONE;
             RationalNumber squareAngle = angle.multiply(angle);
-            for (int i = 2; i <= iMax; i = i + 2) {
+            for (long i = 2; i <= iMax; i = i + 2) {
                 T = T.multiply(squareAngle).divide(i).divide(i - 1).negate();
                 sum = sum.add(T);
             }

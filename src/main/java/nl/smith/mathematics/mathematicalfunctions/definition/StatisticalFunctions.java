@@ -13,22 +13,23 @@ public abstract class StatisticalFunctions<T extends Number, S extends Statistic
     }
 
     @MathematicalFunction(description = "Sum of a set of numbers")
+    //TODO Add constraint
+    //TODO Test omplementations
     public abstract T sum(T ... numbers);
 
     @MathematicalFunction(description = "Product of a set of numbers")
+    //TODO Add constraint
+    //TODO Test omplementations
     public abstract T prod(@NotNull T ... numbers);
 
-    /**
-     * The standard deviation is defined as:
-     *
-     * 
-     * @param numbers
-     * @return
-     */
-    @MathematicalFunction(description = "Standard deviation of a set of numbers")
-    public abstract T deviation(T ... numbers);
+    @MathematicalFunction(description = "Average of a set of numbers")
+    //TODO Add constraint
+    //TODO Test omplementations
+    public abstract T average(T ... numbers);
 
-    @MathematicalFunction(description = "The mean value of a set of numbers")
-    public abstract T mean(T ... numbers);
+    @MathematicalFunction(description = "Standard deviation of a set of numbers")
+    //TODO Add constraint
+    //TODO Test omplementations
+    public abstract T deviation(T ... numbers);
 
 }

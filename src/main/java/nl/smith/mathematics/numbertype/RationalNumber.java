@@ -1,6 +1,8 @@
 package nl.smith.mathematics.numbertype;
 
+import nl.smith.mathematics.configuration.constant.RationalNumberNormalize;
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.RoundingMode;
 import nl.smith.mathematics.configuration.constant.Scale;
 import nl.smith.mathematics.util.RationalNumberUtil;
 
@@ -59,6 +61,13 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
             denominator = denominator.abs();
         }
 
+        if (RationalNumberNormalize.get()) {
+            BigInteger gcd = numerator.gcd(denominator);
+
+            numerator = numerator.divide(gcd);
+            denominator = denominator.divide(gcd);
+        }
+
         this.numerator = numerator;
         this.denominator = denominator;
     }
@@ -101,17 +110,16 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         return numerator.divideAndRemainder(denominator)[0].longValue();
     }
 
-    //TODO Specify scale
+    //TODO Test
     @Override
     public float floatValue() {
-        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator)).floatValue();
+        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), Scale.get(), RoundingMode.get()).floatValue();
     }
 
-    //TODO Implement doubleValue()
+    //TODO Test
     @Override
     public double doubleValue() {
-        // TODO Auto-generated method stub
-        return 0;
+        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), Scale.get(), RoundingMode.get()).doubleValue();
     }
 
     public RationalNumber add(RationalNumber augend) {

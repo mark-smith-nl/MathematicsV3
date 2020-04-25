@@ -3,6 +3,8 @@ package nl.smith.mathematics.mathematicalfunctions.definition;
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 
+import javax.validation.constraints.NotNull;
+
 public abstract class GoniometricFunctions<T extends Number, S extends GoniometricFunctions> extends FunctionContainer<T, S> {
 
   @Override
@@ -20,9 +22,20 @@ public abstract class GoniometricFunctions<T extends Number, S extends Goniometr
    *
    */
   @MathematicalFunction (description = "The sinus of an angle")
-  public abstract T sin(T angle);
+  //TODO Test omplementations
+  //TODO Implement Modulo
+  public abstract T sin(@NotNull T angle);
 
   @MathematicalFunction (description = "The cosinus of an angle")
-  public abstract T cos(T angle);
+  //TODO Test omplementations
+  //TODO Implement Modulo
+  //TODO Change implementation cos(x) = f(sin(x))
+  public abstract T cos(@NotNull T angle);
+
+
+  @MathematicalFunction (description = "The tangent of an angle")
+  //TODO Test omplementations
+  public abstract T tan(@NotNull T angle);
+
 
 }

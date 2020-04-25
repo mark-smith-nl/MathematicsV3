@@ -1,12 +1,16 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
+import nl.smith.mathematics.configuration.constant.RoundingMode;
+import nl.smith.mathematics.configuration.constant.Scale;
 import nl.smith.mathematics.mathematicalfunctions.definition.StatisticalFunctions;
 import nl.smith.mathematics.util.ObjectWrapper;
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.stream.Stream;
+
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
 
 public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDecimal, BigDecimalStatisticalFunctions> {
 
@@ -25,7 +29,7 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 
 	@Override
 	public BigDecimal sum(BigDecimal... numbers) {
-		ObjectWrapper<BigDecimal> sum = new ObjectWrapper<>(BigDecimal.ZERO);
+		ObjectWrapper<BigDecimal> sum = new ObjectWrapper<>(ZERO);
 		Stream.of(numbers).forEach(n -> sum.setValue(sum.getValue().add(n)));
 
 		return sum.getValue();
@@ -33,23 +37,28 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 
 	@Override
 	public BigDecimal prod(BigDecimal... numbers) {
-		ObjectWrapper<BigDecimal> prod = new ObjectWrapper<>(BigDecimal.ONE);
+		ObjectWrapper<BigDecimal> prod = new ObjectWrapper<>(ONE);
 		Stream.of(numbers).forEach(n -> prod.setValue(prod.getValue().multiply(n)));
 
 		return prod.getValue();
 	}
 
 	@Override
-	public BigDecimal deviation(BigDecimal ... numbers) {
-		// TODO Auto-generated method stub
-		return new BigDecimal(456);
+	public BigDecimal average(BigDecimal... numbers) {
+		return sibling.sum(numbers).divide(new BigDecimal(numbers.length), Scale.get(), RoundingMode.get());
 	}
 
 	@Override
-	public BigDecimal mean(BigDecimal ... numbers) {
-		BigDecimal sum = sibling.sum(numbers);
+	public BigDecimal deviation(BigDecimal ... numbers) {
+		BigDecimal average = sibling.average(numbers);
 
-		return sum.divide(BigDecimal.valueOf(numbers.length), 10, RoundingMode.HALF_DOWN);
+		ObjectWrapper<BigDecimal> sum = new ObjectWrapper<>(ZERO);
+		Stream.of(numbers).forEach(number -> {
+			BigDecimal difference = number.subtract(average);
+			sum.setValue(difference.multiply(difference).add(sum.getValue()));
+		});
+
+		return sum.getValue().divide(new BigDecimal(numbers.length), Scale.get(), RoundingMode.get());
 	}
 
 }

@@ -7,7 +7,8 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.stream.Stream;
 
-import static nl.smith.mathematics.numbertype.RationalNumber.*;
+import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
+import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 
 public class RationalNumberStatisticalFunctions extends StatisticalFunctions<RationalNumber, RationalNumberStatisticalFunctions> {
 
@@ -41,13 +42,21 @@ public class RationalNumberStatisticalFunctions extends StatisticalFunctions<Rat
 	}
 
 	@Override
-	public RationalNumber deviation(RationalNumber ... numbers) {
-		return null;
+	public RationalNumber average(RationalNumber... numbers) {
+		return sibling.sum(numbers).divide(numbers.length);
 	}
 
 	@Override
-	public RationalNumber mean(RationalNumber ... numbers) {
-		return null;
+	public RationalNumber deviation(RationalNumber ... numbers) {
+		RationalNumber average = sibling.average(numbers);
+
+		ObjectWrapper<RationalNumber> sum = new ObjectWrapper<>(ZERO);
+		Stream.of(numbers).forEach(number -> {
+			RationalNumber difference = number.subtract(average);
+			sum.setValue(difference.multiply(difference).add(sum.getValue()));
+		});
+
+		return sum.getValue().divide(numbers.length);
 	}
 
 }
