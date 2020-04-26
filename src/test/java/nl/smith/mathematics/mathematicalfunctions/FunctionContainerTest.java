@@ -12,21 +12,20 @@ import java.util.Map;
 @SpringBootTest
 public class FunctionContainerTest<S extends FunctionContainer<?, ?>> {
 
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private Map<String, S> functionContainerAndSibling;
+    private Map<String, S> functionContainerAndSiblingBeans;
 
     // System under test (SUT)
     protected S functionContainer() {
-        System.out.println(functionContainerAndSibling);
-        return functionContainerAndSibling.values().stream().findFirst().get();
+        return functionContainerAndSiblingBeans.values().stream().findFirst().get();
     }
 
     @BeforeEach
     public void init() {
         RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
-        LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
+        logger.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
         RationalNumberOutputType.set(outputType);
     }
 }
