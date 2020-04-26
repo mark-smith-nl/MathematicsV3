@@ -122,6 +122,17 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), Scale.get(), RoundingMode.get()).doubleValue();
     }
 
+    @Override
+    public RationalNumber add(long augend) {
+        return add(BigInteger.valueOf(augend));
+    }
+
+    @Override
+    public RationalNumber add(BigInteger augend) {
+        return add(new RationalNumber(augend));
+    }
+
+    @Override
     public RationalNumber add(RationalNumber augend) {
         BigInteger numerator = this.numerator.multiply(augend.denominator).add(augend.numerator.multiply(this.denominator));
         BigInteger denominator = this.denominator.multiply(augend.denominator);
@@ -130,6 +141,15 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
     }
 
     @Override
+    public RationalNumber subtract(long subtrahend) {
+        return subtract(BigInteger.valueOf(subtrahend));
+    }
+
+    @Override
+    public RationalNumber subtract(BigInteger subtrahend) {
+        return add(new RationalNumber(subtrahend));
+    }
+    @Override
     public RationalNumber subtract(RationalNumber subtrahend) {
         BigInteger numerator = this.numerator.multiply(subtrahend.denominator).subtract(subtrahend.numerator.multiply(this.denominator));
         BigInteger denominator = this.denominator.multiply(subtrahend.denominator);
@@ -137,6 +157,17 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         return new RationalNumber(numerator, denominator);
     }
 
+    @Override
+    public RationalNumber multiply(long multiplicand) {
+        return multiply(BigInteger.valueOf(multiplicand));
+    }
+
+    @Override
+    public RationalNumber multiply(BigInteger multiplicand) {
+        return multiply(new RationalNumber(multiplicand));
+    }
+
+    @Override
     public RationalNumber multiply(RationalNumber multiplicand) {
         BigInteger numerator = this.numerator.multiply(multiplicand.numerator);
         BigInteger denominator = this.denominator.multiply(multiplicand.denominator);
@@ -144,21 +175,22 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         return new RationalNumber(numerator, denominator);
     }
 
-    public RationalNumber multiply(BigInteger multiplicand) {
-        BigInteger numerator = this.numerator.multiply(multiplicand);
-
-        return new RationalNumber(numerator, denominator);
+    @Override
+    public RationalNumber divide(long divisor) {
+        return divide(BigInteger.valueOf(divisor));
     }
 
+    @Override
+    public RationalNumber divide(BigInteger divisor) {
+        return divide(new RationalNumber(divisor));
+    }
+
+    @Override
     public RationalNumber divide(RationalNumber divisor) {
         BigInteger numerator = this.numerator.multiply(divisor.denominator);
         BigInteger denominator = this.denominator.multiply(divisor.numerator);
 
         return new RationalNumber(numerator, denominator);
-    }
-
-    public RationalNumber divide(long divisor) {
-        return divide(new RationalNumber(divisor));
     }
 
     @Override

@@ -28,6 +28,7 @@ public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDeci
         return new BigDecimalLogarithmicFunctions();
     }
 
+    //TODO Tests
     @Override
     public BigDecimal exp(BigDecimal number) {
         BigDecimal T = ONE;
@@ -40,6 +41,7 @@ public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDeci
         return sum;
     }
 
+    //TODO Tests
     @Override
     public BigDecimal ln(BigDecimal number) {
         BigDecimal sum = ZERO;
@@ -47,12 +49,14 @@ public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDeci
         BigDecimal euler = Euler.get();
         while (number.compareTo(ONE) > 0) {
             sum = sum.add(ONE);
-            number = number.divide(euler);
+            number = number.divide(euler, Scale.get(), RoundingMode.get());
         }
 
         BigDecimal delta = ONE.subtract(number);
+
+
         int iMax = TaylorDegreeOfPolynom.get();
-        if (iMax > 0) {
+        if (!delta.equals(ZERO) && iMax > 0) {
             sum = sum.subtract(delta);
             BigDecimal deltaRaiseToPowI = delta;
             for (int i = 2; i <= iMax; i++) {
@@ -64,6 +68,7 @@ public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDeci
         return sum;
     }
 
+    //TODO Tests
     @Override
     public BigDecimal power(BigDecimal number, BigDecimal power) {
         if (power.signum() == -1) {
@@ -81,6 +86,7 @@ public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDeci
         return power.equals(ZERO) ? result : result.multiply(exp(power.multiply(ln(number))));
     }
 
+    //TODO Tests
     @Override
     public BigDecimal sqrt(BigDecimal number) {
         return power(number, new BigDecimal(0.5));

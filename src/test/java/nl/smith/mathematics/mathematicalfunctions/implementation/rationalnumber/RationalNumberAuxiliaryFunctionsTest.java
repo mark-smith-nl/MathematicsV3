@@ -22,26 +22,26 @@ class RationalNumberAuxiliaryFunctionsTest extends FunctionContainerTest<Rationa
     @ParameterizedTest
     @NullSource
     void faculty_usingNullArgument(RationalNumber argument) {
-        Exception exception = assertThrows(ConstraintViolationException.class, () -> functionContainer.faculty(argument));
+        Exception exception = assertThrows(ConstraintViolationException.class, () -> functionContainer().faculty(argument));
         Set<ConstraintViolation<?>> constraintViolations = ((ConstraintViolationException) exception).getConstraintViolations();
         assertEquals(1, constraintViolations.size());
         ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
         assertEquals("No value specified", constraintViolation.getMessage());
     }
 
-    @DisplayName("Testing faculty using @MethodSource(\"facultyArguments\"")
+    @DisplayName("Testing faculty using @MethodSource('facultyArguments'")
     @ParameterizedTest
     @MethodSource("facultyArguments")
     void faculty(RationalNumber argument, RationalNumber result, String expectedConstraintMessage) {
         if (expectedConstraintMessage != null) {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> functionContainer.faculty(argument));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> functionContainer().faculty(argument));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         } else {
-            assertEquals(result, functionContainer.faculty(argument));
+            assertEquals(result, functionContainer().faculty(argument));
         }
     }
 
@@ -54,7 +54,7 @@ class RationalNumberAuxiliaryFunctionsTest extends FunctionContainerTest<Rationa
                 Arguments.of(new RationalNumber(4), new RationalNumber(24), null),
                 Arguments.of(new RationalNumber(10), new RationalNumber(3628800), null),
                 Arguments.of(new RationalNumber(20), new RationalNumber(2432902008176640000l), null),
-                Arguments.of(new RationalNumber(101), RationalNumber.valueOf("2432902008176640000"), "Value 101/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption 0 <= (101/1) <= 100 is not true")
+                Arguments.of(new RationalNumber(101), null, "Value 101/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption 0 <= (101/1) <= 100 is not true")
         );
     }
 }

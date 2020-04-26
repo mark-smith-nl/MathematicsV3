@@ -49,8 +49,10 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
         }
 
         RationalNumber delta = ONE.subtract(number);
+
+
         int iMax = TaylorDegreeOfPolynom.get();
-        if (iMax > 0) {
+        if (!delta.equals(ZERO) && iMax > 0) {
             sum = sum.subtract(delta);
             RationalNumber deltaRaiseToPowI = delta;
             for (int i = 2; i <= iMax; i++) {
