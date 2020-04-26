@@ -1,17 +1,12 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
-import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.mathematicalfunctions.FunctionContainerTest;
 import nl.smith.mathematics.numbertype.RationalNumber;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -21,31 +16,13 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
-class RationalNumberAuxiliaryFunctionsTest {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(RationalNumberAuxiliaryFunctionsTest.class);
-
-    // SUT
-    private final RationalNumberAuxiliaryFunctions rationalNumberAuxiliaryFunctions;
-
-    @Autowired
-    public RationalNumberAuxiliaryFunctionsTest(RationalNumberAuxiliaryFunctions rationalNumberAuxiliaryFunctions) {
-        this.rationalNumberAuxiliaryFunctions = rationalNumberAuxiliaryFunctions;
-    }
-
-    @BeforeEach
-    public void init() {
-        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
-        LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
-        RationalNumberOutputType.set(outputType);
-    }
+class RationalNumberAuxiliaryFunctionsTest extends FunctionContainerTest<RationalNumberAuxiliaryFunctions> {
 
     @DisplayName("Testing faculty using null argument")
     @ParameterizedTest
     @NullSource
     void faculty_usingNullArgument(RationalNumber argument) {
-        Exception exception = assertThrows(ConstraintViolationException.class, () -> rationalNumberAuxiliaryFunctions.faculty(argument));
+        Exception exception = assertThrows(ConstraintViolationException.class, () -> functionContainer.faculty(argument));
         Set<ConstraintViolation<?>> constraintViolations = ((ConstraintViolationException) exception).getConstraintViolations();
         assertEquals(1, constraintViolations.size());
         ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
@@ -57,14 +34,14 @@ class RationalNumberAuxiliaryFunctionsTest {
     @MethodSource("facultyArguments")
     void faculty(RationalNumber argument, RationalNumber result, String expectedConstraintMessage) {
         if (expectedConstraintMessage != null) {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> rationalNumberAuxiliaryFunctions.faculty(argument));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> functionContainer.faculty(argument));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         } else {
-            assertEquals(result, rationalNumberAuxiliaryFunctions.faculty(argument));
+            assertEquals(result, functionContainer.faculty(argument));
         }
     }
 

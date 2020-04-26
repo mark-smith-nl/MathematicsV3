@@ -1,9 +1,6 @@
 package nl.smith.mathematics.configuration.constant;
 
-/**
- * Utility class to specify how an instance of a {@link nl.smith.mathematics.numbertype.RationalNumber} should be presented.
- * See {@link nl.smith.mathematics.numbertype.RationalNumber#toString()}.
-*/
+
 public class RationalNumberOutputType extends ConstantConfiguration<RationalNumberOutputType.Type> {
 
     public enum Type {
@@ -11,7 +8,10 @@ public class RationalNumberOutputType extends ConstantConfiguration<RationalNumb
                 "For instance 1051/495 for rational number 1051/495."),
         EXACT("Represents exactly a rational a number using different string components. " +
                 "For instance 2.1{23}R for rational number 1051/495."),
-        COMPONENTS_AND_EXACT("Represent a rational number using " + COMPONENTS + " and " + EXACT +
+        COMPONENTS_AND_EXACT(/**
+         * Utility class to specify how an instance of a {@link nl.smith.mathematics.numbertype.RationalNumber} should be presented.
+         * See {@link nl.smith.mathematics.numbertype.RationalNumber#toString()}.
+         */"Represent a rational number using " + COMPONENTS + " and " + EXACT +
                 "For instance: 1051/495 ---> 2.1{23}R for rational number 1051/495."),
         TRUNCATED("Representation of a rational number truncated using the specified scale." +
                 "For instance 2.1 for rational number 1051/495 using scale 1."),

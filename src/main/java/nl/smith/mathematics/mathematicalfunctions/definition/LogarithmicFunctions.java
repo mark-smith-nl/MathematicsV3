@@ -51,9 +51,12 @@ public abstract class LogarithmicFunctions<T extends Number, S extends Logarithm
    * In this program the value 1 is returned.
    */
   @MathematicalFunction(description = "The number raised to the power")
+  //TODO test implementations and constraint
   public abstract T power(@NotNull T number, @NotNull T power);
 
   @MathematicalFunction(description = "The square root of a number")
+  //TODO test implementations and constraint
+  // Other implementation
   public abstract T sqrt(@NotNull T number);
 
 }
