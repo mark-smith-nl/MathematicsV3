@@ -9,35 +9,36 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.math.BigInteger;
 import java.util.stream.Stream;
 
+import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
+import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 import static org.junit.jupiter.api.Assertions.*;
 
-import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
-import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
-
+/** System under test: {@link nl.smith.mathematics.numbertype.RationalNumber} */
 public class RationalNumberTest {
 
     @Test
-    void constructorUsingInteger() {
+    void constructorUsingLong() {
         assertEquals(new RationalNumber(2).getNumerator(), BigInteger.valueOf(2));
-    }
-
-    @Test
-    void constructorUsingIntegers() {
-        RationalNumber rationalNumber = new RationalNumber(2, 3);
-        assertEquals(rationalNumber.getNumerator(), BigInteger.valueOf(2));
-        assertEquals(rationalNumber.getDenominator(), BigInteger.valueOf(3));
-    }
-
-    @Test
-    void constructorUsingZeroDenominatorInteger() {
-        Exception exception = assertThrows(ArithmeticException.class, () ->  new RationalNumber(2, 0));
-        assertEquals(exception.getMessage(), "Division by zero");
     }
 
     @Test
     void constructorUsingBigInteger() {
         assertEquals(new RationalNumber(BigInteger.valueOf(2)).getNumerator(), BigInteger.valueOf(2));
     }
+
+    @Test
+    void constructorUsingLongs() {
+        RationalNumber rationalNumber = new RationalNumber(2, 3);
+        assertEquals(rationalNumber.getNumerator(), BigInteger.valueOf(2));
+        assertEquals(rationalNumber.getDenominator(), BigInteger.valueOf(3));
+    }
+
+    @Test
+    void constructorUsingZeroDenominatorLong() {
+        Exception exception = assertThrows(ArithmeticException.class, () ->  new RationalNumber(2, 0));
+        assertEquals(exception.getMessage(), "Division by zero");
+    }
+
 
     @Test
     void constructorUsingNullBigInteger() {
@@ -56,12 +57,6 @@ public class RationalNumberTest {
     void constructorUsingBigIntegersDenominatorZero() {
         Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0)));
         assertEquals(exception.getMessage(), "Division by zero");
-    }
-
-    @Test
-    void constructorUsingIllegalDenominator() {
-        Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0)));
-        assertEquals(exception.getMessage(), "Division by zero") ;
     }
 
     @DisplayName("Testing the construction of a RationalNumber using its static public method valueOf()")

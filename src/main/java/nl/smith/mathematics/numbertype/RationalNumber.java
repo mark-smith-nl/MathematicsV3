@@ -17,7 +17,7 @@ import java.util.Map;
  * numerator ∊ ℤ
  * denominator ℤ+
  * <p>
- * Note: Numbers are not normalized by default i.e. 2/10 will not be converted to 1/5.
+ * Note: Unless specified (see: {@link RationalNumberNormalize)} numbers are not normalized by default i.e. 2/10 will not be converted to 1/5.
  */
 public class RationalNumber extends ArithmeticFunctions<RationalNumber> implements Comparable<RationalNumber> {
 
@@ -44,7 +44,21 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
     }
 
     public RationalNumber(RationalNumber rationalNumber) {
-        this(rationalNumber.numerator, rationalNumber.denominator);
+        if (rationalNumber == null) {
+            throw new IllegalArgumentException("A rational number must be specified (not be null)");
+        }
+
+        BigInteger numerator = rationalNumber.numerator;
+        BigInteger denominator = rationalNumber.denominator;
+
+        if (RationalNumberNormalize.get()) {
+            BigInteger[] normalizedComponents = getNormalizedComponents(numerator, denominator);
+            numerator = normalizedComponents[0];
+            denominator = normalizedComponents[1];
+        }
+
+        this.numerator = numerator;
+        this.denominator = denominator;
     }
 
     public RationalNumber(BigInteger numerator, BigInteger denominator) {
@@ -62,20 +76,32 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         }
 
         if (RationalNumberNormalize.get()) {
-            BigInteger gcd = numerator.gcd(denominator);
-
-            numerator = numerator.divide(gcd);
-            denominator = denominator.divide(gcd);
+            BigInteger[] normalizedComponents = getNormalizedComponents(numerator, denominator);
+            numerator = normalizedComponents[0];
+            denominator = normalizedComponents[1];
         }
 
         this.numerator = numerator;
         this.denominator = denominator;
     }
 
-    public RationalNumber normalized() {
+    //TODO tests
+    public static BigInteger[] getNormalizedComponents(BigInteger numerator, BigInteger denominator) {
         BigInteger gcd = numerator.gcd(denominator);
 
-        return new RationalNumber(numerator.divide(gcd), denominator.divide(gcd));
+        if (gcd.equals(BigInteger.ONE)) {
+            return new BigInteger[] {numerator, denominator};
+        }
+
+        return new BigInteger[] {numerator.divide(gcd), denominator.divide(gcd)};
+    }
+
+
+    /** Returns the current instance if it is normalized else returns a new normalized rational number instance.*/
+    public RationalNumber getNormalized() {
+        BigInteger[] normalizedComponents = getNormalizedComponents(numerator, denominator);
+
+        return normalizedComponents[1].equals(denominator) ? this : new RationalNumber(normalizedComponents[0], normalizedComponents[1]);
     }
 
     public RationalNumber[] divideAndRemainder(RationalNumber divisor) {
