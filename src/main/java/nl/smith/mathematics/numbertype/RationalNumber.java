@@ -48,17 +48,17 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
             throw new IllegalArgumentException("A rational number must be specified (not be null)");
         }
 
-        BigInteger numerator = rationalNumber.numerator;
-        BigInteger denominator = rationalNumber.denominator;
+        BigInteger n = rationalNumber.numerator;
+        BigInteger d = rationalNumber.denominator;
 
-        if (RationalNumberNormalize.get()) {
-            BigInteger[] normalizedComponents = getNormalizedComponents(numerator, denominator);
-            numerator = normalizedComponents[0];
-            denominator = normalizedComponents[1];
+        if (Boolean.TRUE.equals(RationalNumberNormalize.get())) {
+            BigInteger[] normalizedComponents = getNormalizedComponents(n, d);
+            n = normalizedComponents[0];
+            d = normalizedComponents[1];
         }
 
-        this.numerator = numerator;
-        this.denominator = denominator;
+        this.numerator = n;
+        this.denominator = d;
     }
 
     public RationalNumber(BigInteger numerator, BigInteger denominator) {
@@ -75,7 +75,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
             denominator = denominator.abs();
         }
 
-        if (RationalNumberNormalize.get()) {
+        if (Boolean.TRUE.equals(RationalNumberNormalize.get())) {
             BigInteger[] normalizedComponents = getNormalizedComponents(numerator, denominator);
             numerator = normalizedComponents[0];
             denominator = normalizedComponents[1];
@@ -155,15 +155,23 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
 
     @Override
     public RationalNumber add(BigInteger augend) {
+        if (augend == null) {
+            throw new ArithmeticException("Please specify an augend.");
+        }
+
         return add(new RationalNumber(augend));
     }
 
     @Override
     public RationalNumber add(RationalNumber augend) {
-        BigInteger numerator = this.numerator.multiply(augend.denominator).add(augend.numerator.multiply(this.denominator));
-        BigInteger denominator = this.denominator.multiply(augend.denominator);
+        if (augend == null) {
+            throw new ArithmeticException("Please specify an augend.");
+        }
 
-        return new RationalNumber(numerator, denominator);
+        BigInteger n = this.numerator.multiply(augend.denominator).add(augend.numerator.multiply(this.denominator));
+        BigInteger d = this.denominator.multiply(augend.denominator);
+
+        return new RationalNumber(n, d);
     }
 
     @Override
@@ -173,14 +181,22 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
 
     @Override
     public RationalNumber subtract(BigInteger subtrahend) {
-        return add(new RationalNumber(subtrahend));
+        if (subtrahend == null) {
+            throw new ArithmeticException("Please specify a subtrahend.");
+        }
+
+        return subtract(new RationalNumber(subtrahend));
     }
     @Override
     public RationalNumber subtract(RationalNumber subtrahend) {
-        BigInteger numerator = this.numerator.multiply(subtrahend.denominator).subtract(subtrahend.numerator.multiply(this.denominator));
-        BigInteger denominator = this.denominator.multiply(subtrahend.denominator);
+        if (subtrahend == null) {
+            throw new ArithmeticException("Please specify a subtrahend.");
+        }
 
-        return new RationalNumber(numerator, denominator);
+        BigInteger n = this.numerator.multiply(subtrahend.denominator).subtract(subtrahend.numerator.multiply(this.denominator));
+        BigInteger d = this.denominator.multiply(subtrahend.denominator);
+
+        return new RationalNumber(n, d);
     }
 
     @Override
@@ -190,15 +206,23 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
 
     @Override
     public RationalNumber multiply(BigInteger multiplicand) {
+        if (multiplicand == null) {
+            throw new ArithmeticException("Please specify a multiplicand.");
+        }
+
         return multiply(new RationalNumber(multiplicand));
     }
 
     @Override
     public RationalNumber multiply(RationalNumber multiplicand) {
-        BigInteger numerator = this.numerator.multiply(multiplicand.numerator);
-        BigInteger denominator = this.denominator.multiply(multiplicand.denominator);
+        if (multiplicand == null) {
+            throw new ArithmeticException("Please specify a multiplicand.");
+        }
 
-        return new RationalNumber(numerator, denominator);
+        BigInteger n = this.numerator.multiply(multiplicand.numerator);
+        BigInteger d = this.denominator.multiply(multiplicand.denominator);
+
+        return new RationalNumber(n, d);
     }
 
     @Override
@@ -208,15 +232,23 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
 
     @Override
     public RationalNumber divide(BigInteger divisor) {
+        if (divisor == null) {
+            throw new ArithmeticException("Please specify a divisor.");
+        }
+
         return divide(new RationalNumber(divisor));
     }
 
     @Override
     public RationalNumber divide(RationalNumber divisor) {
-        BigInteger numerator = this.numerator.multiply(divisor.denominator);
-        BigInteger denominator = this.denominator.multiply(divisor.numerator);
+        if (divisor == null) {
+            throw new ArithmeticException("Please specify a divisor.");
+        }
 
-        return new RationalNumber(numerator, denominator);
+        BigInteger n = this.numerator.multiply(divisor.denominator);
+        BigInteger d = this.denominator.multiply(divisor.numerator);
+
+        return new RationalNumber(n, d);
     }
 
     @Override
@@ -324,7 +356,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
                         fractionalPart.append(repeatingFractionalPart);
                     }
 
-                    fractionalPart.append(repeatingFractionalPart.substring(0, totalDecimalsToAppend % repeatingFractionalPart.length()));
+                    fractionalPart.append(repeatingFractionalPart, 0, totalDecimalsToAppend % repeatingFractionalPart.length());
                     remainder = BigInteger.ZERO;
                 } else {
                     resultDivisionAtPosition.put(remainder, position);

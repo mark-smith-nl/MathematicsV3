@@ -1,10 +1,12 @@
 package nl.smith.mathematics.numbertype;
 
+import nl.smith.mathematics.configuration.constant.RationalNumberNormalize;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
 
 import java.math.BigInteger;
 import java.util.stream.Stream;
@@ -13,124 +15,245 @@ import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 import static org.junit.jupiter.api.Assertions.*;
 
-/** System under test: {@link nl.smith.mathematics.numbertype.RationalNumber} */
+/**
+ * System under test: {@link nl.smith.mathematics.numbertype.RationalNumber}
+ */
 public class RationalNumberTest {
 
     @Test
     void constructorUsingLong() {
-        assertEquals(new RationalNumber(2).getNumerator(), BigInteger.valueOf(2));
-    }
-
-    @Test
-    void constructorUsingBigInteger() {
-        assertEquals(new RationalNumber(BigInteger.valueOf(2)).getNumerator(), BigInteger.valueOf(2));
+        for (long i = -100; i <= 100; i++) {
+            assertEquals(new RationalNumber(i).getNumerator(), BigInteger.valueOf(i));
+        }
     }
 
     @Test
     void constructorUsingLongs() {
-        RationalNumber rationalNumber = new RationalNumber(2, 3);
-        assertEquals(rationalNumber.getNumerator(), BigInteger.valueOf(2));
-        assertEquals(rationalNumber.getDenominator(), BigInteger.valueOf(3));
+        for (long n = -10; n <= 10; n++) {
+            for (int d = -10; d <= 10; d++) {
+                long numerator = d < 0 ? -n : n;
+                long denominator = d < 0 ? -d : d;
+
+                if (denominator == 0) {
+                    Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(numerator, denominator));
+                    assertEquals("Division by zero", exception.getMessage());
+                } else {
+
+                    RationalNumber rationalNumber = new RationalNumber(numerator, denominator);
+                    assertEquals(rationalNumber.getNumerator(), BigInteger.valueOf(numerator));
+                    assertEquals(rationalNumber.getDenominator(), BigInteger.valueOf(denominator));
+                }
+            }
+        }
     }
 
     @Test
-    void constructorUsingZeroDenominatorLong() {
-        Exception exception = assertThrows(ArithmeticException.class, () ->  new RationalNumber(2, 0));
-        assertEquals(exception.getMessage(), "Division by zero");
+    void constructorUsingBigInteger() {
+        for (long numerator = -100; numerator <= 100; numerator++) {
+            assertEquals(new RationalNumber(BigInteger.valueOf(numerator)).getNumerator(), BigInteger.valueOf(numerator));
+        }
     }
 
+    @ParameterizedTest
+    @NullSource
+    void constructorUsingNullBigInteger(BigInteger numerator) {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> new RationalNumber(numerator));
+        assertEquals("Both numerator and denominator must be specified (not be null)", exception.getMessage());
+    }
 
-    @Test
-    void constructorUsingNullBigInteger() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> new RationalNumber((BigInteger) null));
-        assertEquals(exception.getMessage(), "Both numerator and denominator must be specified (not be null)");
+    @ParameterizedTest
+    @MethodSource("constructorUsingNullBigIntegers")
+    void constructorUsingNullBigIntegers(BigInteger numerator, BigInteger denominator) {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> new RationalNumber(numerator, denominator));
+        assertEquals("Both numerator and denominator must be specified (not be null)", exception.getMessage());
     }
 
     @Test
     void constructorUsingBigIntegers() {
-        RationalNumber rationalNumber = new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(6));
-        assertEquals(rationalNumber.getNumerator(), BigInteger.valueOf(2));
-        assertEquals(rationalNumber.getDenominator(), BigInteger.valueOf(6));
+        RationalNumberNormalize.set(false);
+        for (int n = -10; n <= 10; n++) {
+            for (int d = -10; d <= 10; d++) {
+                long numerator = d < 0 ? -n : n;
+                long denominator = d < 0 ? -d : d;
+
+                if (denominator == 0) {
+                    Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(numerator, denominator));
+                    assertEquals("Division by zero", exception.getMessage());
+                } else {
+                    RationalNumber rationalNumber = new RationalNumber(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
+                    assertEquals(rationalNumber.getNumerator(), BigInteger.valueOf(numerator));
+                    assertEquals(rationalNumber.getDenominator(), BigInteger.valueOf(denominator));
+                }
+            }
+        }
     }
 
     @Test
     void constructorUsingBigIntegersDenominatorZero() {
         Exception exception = assertThrows(ArithmeticException.class, () -> new RationalNumber(BigInteger.valueOf(2), BigInteger.valueOf(0)));
-        assertEquals(exception.getMessage(), "Division by zero");
+        assertEquals("Division by zero", exception.getMessage());
     }
 
     @DisplayName("Testing the construction of a RationalNumber using its static public method valueOf()")
     @ParameterizedTest
     @MethodSource("numberString")
     void valueOf(String numberString) {
-        RationalNumber.valueOf(numberString);
+        assertNotNull(RationalNumber.valueOf(numberString));
     }
 
-    @Test
-    void add() {
-        RationalNumber rationalNumber = new RationalNumber(2, 3);
-        RationalNumber augend = new RationalNumber(3, 9);
+    @ParameterizedTest
+    @MethodSource("addUsingLong")
+    void addUsingLong(RationalNumber rationalNumber, long augend, RationalNumber expectedResult) {
         RationalNumber result = rationalNumber.add(augend);
 
-        assertEquals(result, ONE);
+        assertEquals(expectedResult, result);
     }
 
-    @Test
-    void subtract() {
-        RationalNumber rationalNumber = new RationalNumber(2, 3);
-        RationalNumber subtrahend = new RationalNumber(3, 9);
+    @ParameterizedTest
+    @MethodSource("addUsingBigInteger")
+    void addUsingBigInteger(RationalNumber rationalNumber, BigInteger augend, RationalNumber expectedResult, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.add(augend));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            RationalNumber result = rationalNumber.add(augend);
+
+            assertEquals(expectedResult, result);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("addUsingRationalNumber")
+    void add(RationalNumber rationalNumber, RationalNumber augend, RationalNumber expectedResult, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.add(augend));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            RationalNumber result = rationalNumber.add(augend);
+
+            assertEquals(expectedResult, result);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("subtractUsingLong")
+    void subtractUsingLong(RationalNumber rationalNumber, long subtrahend, RationalNumber expectedResult) {
         RationalNumber result = rationalNumber.subtract(subtrahend);
 
-        assertEquals(result, new RationalNumber(1, 3));
+        assertEquals(expectedResult, result);
     }
 
-    @Test
-    void multiply() {
-        RationalNumber rationalNumber = new RationalNumber(2, 3);
-        RationalNumber multiplicand = new RationalNumber(3, 9);
+    @ParameterizedTest
+    @MethodSource("subtractUsingBigInteger")
+    void subtractUsingBigInteger(RationalNumber rationalNumber, BigInteger subtrahend, RationalNumber expectedResult, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.subtract(subtrahend));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            RationalNumber result = rationalNumber.subtract(subtrahend);
+
+            assertEquals(expectedResult, result);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("subtractUsingRationalNumber")
+    void subtractUsingRationalNumber(RationalNumber rationalNumber, RationalNumber subtrahend, RationalNumber expectedResult, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.subtract(subtrahend));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            RationalNumber result = rationalNumber.subtract(subtrahend);
+
+            assertEquals(expectedResult, result);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiplyUsingLong")
+    void multiplyUsingLong(RationalNumber rationalNumber, long multiplicand, RationalNumber expectedResult) {
         RationalNumber result = rationalNumber.multiply(multiplicand);
 
-        assertEquals(result, new RationalNumber(6, 27));
+        assertEquals(expectedResult, result);
     }
 
-    @Test
-    void multiply_usingBigInteger() {
-        RationalNumber rationalNumber = new RationalNumber(2, 3);
-        BigInteger multiplicand = new BigInteger("2");
-        RationalNumber result = rationalNumber.multiply(multiplicand);
+    @ParameterizedTest
+    @MethodSource("multiplyUsingBigInteger")
+    void multiplyUsingBigInteger(RationalNumber rationalNumber, BigInteger multiplicand, RationalNumber expectedResult, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.multiply(multiplicand));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            RationalNumber result = rationalNumber.multiply(multiplicand);
 
-        assertEquals(result, new RationalNumber(4, 3));
+            assertEquals(expectedResult, result);
+        }
     }
 
-    @Test
-    void divide() {
-        RationalNumber rationalNumber = new RationalNumber(2, 3);
-        RationalNumber divisor = new RationalNumber(3, 9);
-        RationalNumber result = rationalNumber.divide(divisor);
+    @ParameterizedTest
+    @MethodSource("multiplyUsingRationalNumber")
+    void multiplyUsingRationalNumber(RationalNumber rationalNumber, RationalNumber multiplicand, RationalNumber expectedResult, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.multiply(multiplicand));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            RationalNumber result = rationalNumber.multiply(multiplicand);
 
-        assertEquals(result, new RationalNumber(2));
+            assertEquals(expectedResult, result);
+        }
     }
 
-    @Test
-    void divideByZero() {
-        RationalNumber rationalNumber = new RationalNumber(2, 3);
-        RationalNumber divisor = new RationalNumber(0);
+    @ParameterizedTest
+    @MethodSource("divideUsingLong")
+    void divideUsingLong(RationalNumber rationalNumber, long divisor, RationalNumber expectedResult, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.divide(divisor));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            RationalNumber result = rationalNumber.divide(divisor);
 
-        assertThrows(ArithmeticException.class, () -> rationalNumber.divide(divisor));
+            assertEquals(expectedResult, result);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("divideUsingBigInteger")
+    void divideUsingBigInteger(RationalNumber rationalNumber, BigInteger divisor, RationalNumber expectedResult, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.divide(divisor));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            RationalNumber result = rationalNumber.divide(divisor);
+
+            assertEquals(expectedResult, result);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("divideUsingRationalNumber")
+    void divideUsingRationalNumber(RationalNumber rationalNumber, RationalNumber divisor, RationalNumber expectedResult, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.divide(divisor));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            RationalNumber result = rationalNumber.divide(divisor);
+
+            assertEquals(expectedResult, result);
+        }
     }
 
     @Test
     void equalsCompareWithNull() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
 
-        assertFalse(rationalNumber.equals(null));
+        assertNotEquals(null, rationalNumber);
     }
 
     @Test
     void equalsCompareWithString() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
 
-        assertFalse(rationalNumber.equals("String"));
+        assertNotEquals("String", rationalNumber);
     }
 
     @Test
@@ -138,7 +261,7 @@ public class RationalNumberTest {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
         RationalNumber otherRationalNumber = new RationalNumber(20, 30);
 
-        assertTrue(rationalNumber.equals(otherRationalNumber));
+        assertEquals(rationalNumber, otherRationalNumber);
     }
 
     @ParameterizedTest
@@ -149,15 +272,212 @@ public class RationalNumberTest {
         assertEquals(remainder, divideAndRemainder[1]);
     }
 
+    private static Stream<Arguments> constructorUsingNullBigIntegers() {
+        return Stream.of(
+                Arguments.of(null, null),
+                Arguments.of(null, BigInteger.valueOf(1)),
+                Arguments.of(BigInteger.valueOf(1), null),
+                Arguments.of(null, null)
+        );
+    }
+
+    private static Stream<Arguments> addUsingLong() {
+        return Stream.of(
+                Arguments.of(ZERO, 0L, ZERO),
+                Arguments.of(ONE, 0L, ONE),
+                Arguments.of(ZERO, 1L, ONE),
+                Arguments.of(new RationalNumber(2), 3, new RationalNumber(5)),
+                Arguments.of(new RationalNumber(3), 2, new RationalNumber(5)),
+                Arguments.of(new RationalNumber(-2), 3, ONE),
+                Arguments.of(new RationalNumber(3), -2, ONE),
+                Arguments.of(new RationalNumber(-2), -3, new RationalNumber(-5)),
+                Arguments.of(new RationalNumber(-3), -2, new RationalNumber(-5)),
+                Arguments.of(new RationalNumber(4, 3), 1, new RationalNumber(7, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> addUsingBigInteger() {
+        return Stream.of(
+                Arguments.of(ONE, null, null, "Please specify an augend."),
+                Arguments.of(ZERO, BigInteger.ZERO, ZERO, null),
+                Arguments.of(ONE, BigInteger.ZERO, ONE, null),
+                Arguments.of(ZERO, BigInteger.ONE, ONE, null),
+                Arguments.of(new RationalNumber(2), BigInteger.valueOf(3), new RationalNumber(5), null),
+                Arguments.of(new RationalNumber(3), BigInteger.valueOf(2), new RationalNumber(5), null),
+                Arguments.of(new RationalNumber(-2), BigInteger.valueOf(3), ONE, null),
+                Arguments.of(new RationalNumber(3), BigInteger.valueOf(-2), ONE, null),
+                Arguments.of(new RationalNumber(-2), BigInteger.valueOf(-3), new RationalNumber(-5), null),
+                Arguments.of(new RationalNumber(-3), BigInteger.valueOf(-2), new RationalNumber(-5), null),
+                Arguments.of(new RationalNumber(4, 3), BigInteger.valueOf(1), new RationalNumber(7, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> addUsingRationalNumber() {
+        return Stream.of(
+                Arguments.of(ONE, null, null, "Please specify an augend."),
+                Arguments.of(ZERO, ZERO, ZERO, null),
+                Arguments.of(ONE, ZERO, ONE, null),
+                Arguments.of(ZERO, ONE, ONE, null),
+                Arguments.of(new RationalNumber(2), new RationalNumber(3), new RationalNumber(5), null),
+                Arguments.of(new RationalNumber(3), new RationalNumber(2), new RationalNumber(5), null),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(3), ONE, null),
+                Arguments.of(new RationalNumber(3), new RationalNumber(-2), ONE, null),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(-3), new RationalNumber(-5), null),
+                Arguments.of(new RationalNumber(-3), new RationalNumber(-2), new RationalNumber(-5), null),
+                Arguments.of(new RationalNumber(4, 3), new RationalNumber(1), new RationalNumber(7, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> subtractUsingLong() {
+        return Stream.of(
+                Arguments.of(ZERO, 0L, ZERO),
+                Arguments.of(ONE, 0L, ONE),
+                Arguments.of(ZERO, 1L, new RationalNumber(-1)),
+                Arguments.of(new RationalNumber(2), 3, new RationalNumber(-1)),
+                Arguments.of(new RationalNumber(3), 2, ONE),
+                Arguments.of(new RationalNumber(-2), 3, new RationalNumber(-5)),
+                Arguments.of(new RationalNumber(3), -2, new RationalNumber(5)),
+                Arguments.of(new RationalNumber(-2), -3, ONE),
+                Arguments.of(new RationalNumber(-3), -2, new RationalNumber(-1)),
+                Arguments.of(new RationalNumber(4, 3), 1, new RationalNumber(1, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> subtractUsingBigInteger() {
+        return Stream.of(
+                Arguments.of(ZERO, null, ZERO, "Please specify a subtrahend."),
+                Arguments.of(ZERO, BigInteger.ZERO, ZERO, null),
+                Arguments.of(ONE, BigInteger.ZERO, ONE, null),
+                Arguments.of(ZERO, BigInteger.valueOf(1), new RationalNumber(-1), null),
+                Arguments.of(new RationalNumber(2), BigInteger.valueOf(3), new RationalNumber(-1), null),
+                Arguments.of(new RationalNumber(3), BigInteger.valueOf(2), ONE, null),
+                Arguments.of(new RationalNumber(-2), BigInteger.valueOf(3), new RationalNumber(-5), null),
+                Arguments.of(new RationalNumber(3), BigInteger.valueOf(-2), new RationalNumber(5), null),
+                Arguments.of(new RationalNumber(-2), BigInteger.valueOf(-3), ONE, null),
+                Arguments.of(new RationalNumber(-3), BigInteger.valueOf(-2), new RationalNumber(-1), null),
+                Arguments.of(new RationalNumber(4, 3), BigInteger.valueOf(1), new RationalNumber(1, 3), null),
+                Arguments.of(new RationalNumber(4, 3), BigInteger.ONE, new RationalNumber(1, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> subtractUsingRationalNumber() {
+        return Stream.of(
+                Arguments.of(ZERO, null, ZERO, "Please specify a subtrahend."),
+                Arguments.of(ZERO, ZERO, ZERO, null),
+                Arguments.of(ONE, ZERO, ONE, null),
+                Arguments.of(ZERO, new RationalNumber(1), new RationalNumber(-1), null),
+                Arguments.of(new RationalNumber(2), new RationalNumber(3), new RationalNumber(-1), null),
+                Arguments.of(new RationalNumber(3), new RationalNumber(2), ONE, null),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(3), new RationalNumber(-5), null),
+                Arguments.of(new RationalNumber(3), new RationalNumber(-2), new RationalNumber(5), null),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(-3), ONE, null),
+                Arguments.of(new RationalNumber(-3), new RationalNumber(-2), new RationalNumber(-1), null),
+                Arguments.of(new RationalNumber(4, 3), new RationalNumber(1), new RationalNumber(1, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> multiplyUsingLong() {
+        return Stream.of(
+                Arguments.of(ZERO, 0L, ZERO),
+                Arguments.of(ONE, 0L, ZERO),
+                Arguments.of(ZERO, 1L, ZERO),
+                Arguments.of(new RationalNumber(2), 3, new RationalNumber(6)),
+                Arguments.of(new RationalNumber(3), 2, new RationalNumber(6)),
+                Arguments.of(new RationalNumber(-2), 3, new RationalNumber(-6)),
+                Arguments.of(new RationalNumber(3), -2, new RationalNumber(-6)),
+                Arguments.of(new RationalNumber(-2), -3, new RationalNumber(6)),
+                Arguments.of(new RationalNumber(-3), -2, new RationalNumber(6)),
+                Arguments.of(new RationalNumber(4, 3), 1, new RationalNumber(4, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> multiplyUsingBigInteger() {
+        return Stream.of(
+                Arguments.of(ZERO, null, ZERO, "Please specify a multiplicand."),
+                Arguments.of(ZERO, BigInteger.ZERO, ZERO, null),
+                Arguments.of(ONE, BigInteger.ZERO, ZERO, null),
+                Arguments.of(ZERO, BigInteger.ONE, ZERO, null),
+                Arguments.of(new RationalNumber(2), BigInteger.valueOf(3), new RationalNumber(6), null),
+                Arguments.of(new RationalNumber(3), BigInteger.valueOf(2), new RationalNumber(6), null),
+                Arguments.of(new RationalNumber(-2), BigInteger.valueOf(3), new RationalNumber(-6), null),
+                Arguments.of(new RationalNumber(3), BigInteger.valueOf(-2), new RationalNumber(-6), null),
+                Arguments.of(new RationalNumber(-2), BigInteger.valueOf(-3), new RationalNumber(6), null),
+                Arguments.of(new RationalNumber(-3), BigInteger.valueOf(-2), new RationalNumber(6), null),
+                Arguments.of(new RationalNumber(4, 3), BigInteger.valueOf(1), new RationalNumber(4, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> multiplyUsingRationalNumber() {
+        return Stream.of(
+                Arguments.of(ZERO, null, ZERO, "Please specify a multiplicand."),
+                Arguments.of(ZERO, ZERO, ZERO, null),
+                Arguments.of(ONE, ZERO, ZERO, null),
+                Arguments.of(ZERO, ONE, ZERO, null),
+                Arguments.of(new RationalNumber(2), new RationalNumber(3), new RationalNumber(6), null),
+                Arguments.of(new RationalNumber(3), new RationalNumber(2), new RationalNumber(6), null),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(3), new RationalNumber(-6), null),
+                Arguments.of(new RationalNumber(3), new RationalNumber(-2), new RationalNumber(-6), null),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(-3), new RationalNumber(6), null),
+                Arguments.of(new RationalNumber(-3), new RationalNumber(-2), new RationalNumber(6), null),
+                Arguments.of(new RationalNumber(4, 3), new RationalNumber(1, 4), new RationalNumber(1, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> divideUsingLong() {
+        return Stream.of(
+                Arguments.of(ZERO, 0L, null, "Division by zero"),
+                Arguments.of(ONE, 0L, null, "Division by zero"),
+                Arguments.of(ZERO, 1L, ZERO, null),
+                Arguments.of(new RationalNumber(2), 3, new RationalNumber(2, 3), null),
+                Arguments.of(new RationalNumber(3), 2, new RationalNumber(3, 2), null),
+                Arguments.of(new RationalNumber(-2), 3, new RationalNumber(-2, 3), null),
+                Arguments.of(new RationalNumber(3), -2, new RationalNumber(3, -2), null),
+                Arguments.of(new RationalNumber(-2), -3, new RationalNumber(-2, -3), null),
+                Arguments.of(new RationalNumber(-3), -2, new RationalNumber(3, 2), null),
+                Arguments.of(new RationalNumber(4, 3), 2, new RationalNumber(2, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> divideUsingBigInteger() {
+        return Stream.of(
+                Arguments.of(ZERO, BigInteger.ZERO, null, "Division by zero"),
+                Arguments.of(ONE, BigInteger.ZERO, null, "Division by zero"),
+                Arguments.of(ZERO, BigInteger.ONE, ZERO, null),
+                Arguments.of(new RationalNumber(2), BigInteger.valueOf(3), new RationalNumber(2, 3), null),
+                Arguments.of(new RationalNumber(3), BigInteger.valueOf(2), new RationalNumber(3, 2), null),
+                Arguments.of(new RationalNumber(-2), BigInteger.valueOf(3), new RationalNumber(-2, 3), null),
+                Arguments.of(new RationalNumber(3), BigInteger.valueOf(-2), new RationalNumber(3, -2), null),
+                Arguments.of(new RationalNumber(-2), BigInteger.valueOf(-3), new RationalNumber(-2, -3), null),
+                Arguments.of(new RationalNumber(-3), BigInteger.valueOf(-2), new RationalNumber(3, 2), null),
+                Arguments.of(new RationalNumber(4, 3), BigInteger.valueOf(2), new RationalNumber(2, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> divideUsingRationalNumber() {
+        return Stream.of(
+                Arguments.of(ZERO, ZERO, null, "Division by zero"),
+                Arguments.of(ONE, ZERO, null, "Division by zero"),
+                Arguments.of(ZERO, ONE, ZERO, null),
+                Arguments.of(new RationalNumber(2), new RationalNumber(3), new RationalNumber(2, 3), null),
+                Arguments.of(new RationalNumber(3), new RationalNumber(2), new RationalNumber(3, 2), null),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(3), new RationalNumber(-2, 3), null),
+                Arguments.of(new RationalNumber(3), new RationalNumber(-2), new RationalNumber(3, -2), null),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(-3), new RationalNumber(-2, -3), null),
+                Arguments.of(new RationalNumber(-3), new RationalNumber(-2), new RationalNumber(3, 2), null),
+                Arguments.of(new RationalNumber(4, 3), new RationalNumber(2), new RationalNumber(2, 3), null)
+        );
+    }
+
     private static Stream<Arguments> numberString() {
         return Stream.of(
                 Arguments.of("1", new RationalNumber(1)),
                 Arguments.of("-1", new RationalNumber(-1)),
                 Arguments.of("12.345", new RationalNumber(12345, 1000)),
                 Arguments.of("-12.345", new RationalNumber(-12345, 1000)),
-                Arguments.of("345E[12]", new RationalNumber(345000000000000l)),
+                Arguments.of("345E[12]", new RationalNumber(345000000000000L)),
                 Arguments.of("0.{142857}R", new RationalNumber(1, 7)),
-                Arguments.of("0.12{345}R", new RationalNumber(12345345 - 12345, 1000000000 - 1000000)));
+                Arguments.of("0.12{345}R", new RationalNumber(12345345 - 12345, 1000000000 - 1000000))
+        );
     }
 
     private static Stream<Arguments> divideAndRemainder() {
@@ -173,6 +493,5 @@ public class RationalNumberTest {
                 Arguments.of(new RationalNumber(8), new RationalNumber(8), ONE, ZERO)
         );
     }
-
 
 }
