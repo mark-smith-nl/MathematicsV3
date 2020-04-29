@@ -85,15 +85,18 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         this.denominator = denominator;
     }
 
-    //TODO tests
-    public static BigInteger[] getNormalizedComponents(BigInteger numerator, BigInteger denominator) {
+    /**
+     * Protected for test purposes.
+     */
+    protected static BigInteger[] getNormalizedComponents(BigInteger numerator, BigInteger denominator) {
+        // Note: The gcd is a positive number
         BigInteger gcd = numerator.gcd(denominator);
 
         if (gcd.equals(BigInteger.ONE)) {
-            return new BigInteger[] {numerator, denominator};
+            return new BigInteger[]{numerator, denominator};
         }
 
-        return new BigInteger[] {numerator.divide(gcd), denominator.divide(gcd)};
+        return new BigInteger[]{numerator.divide(gcd), denominator.divide(gcd)};
     }
 
 

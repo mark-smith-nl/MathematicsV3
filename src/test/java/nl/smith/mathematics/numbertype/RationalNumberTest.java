@@ -11,8 +11,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import java.math.BigInteger;
 import java.util.stream.Stream;
 
-import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
-import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
+import static nl.smith.mathematics.numbertype.RationalNumber.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -99,6 +98,19 @@ public class RationalNumberTest {
     @MethodSource("numberString")
     void valueOf(String numberString) {
         assertNotNull(RationalNumber.valueOf(numberString));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getNormalizedComponents")
+    void getNormalizedComponents(BigInteger numerator, BigInteger denominator, BigInteger expectedNumerator, BigInteger expectedDenominator, String expectedErrormessage) {
+        if (expectedErrormessage != null) {
+            ArithmeticException exception = assertThrows(ArithmeticException.class, () -> RationalNumber.getNormalizedComponents(numerator, denominator));
+            assertEquals(expectedErrormessage, exception.getMessage());
+        } else {
+            BigInteger[] normalizedComponents = RationalNumber.getNormalizedComponents(numerator, denominator);
+            assertEquals(expectedNumerator, normalizedComponents[0]);
+            assertEquals(expectedDenominator, normalizedComponents[1]);
+        }
     }
 
     @ParameterizedTest
@@ -242,6 +254,22 @@ public class RationalNumberTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("negate")
+    void negate(RationalNumber rationalNumber, RationalNumber expectedResult) {
+        RationalNumber result = rationalNumber.negate();
+
+        assertEquals(expectedResult, result);
+    }
+
+    @ParameterizedTest
+    @MethodSource("abs")
+    void abs(RationalNumber rationalNumber, RationalNumber expectedResult) {
+        RationalNumber result = rationalNumber.abs();
+
+        assertEquals(expectedResult, result);
+    }
+
     @Test
     void equalsCompareWithNull() {
         RationalNumber rationalNumber = new RationalNumber(2, 3);
@@ -278,6 +306,20 @@ public class RationalNumberTest {
                 Arguments.of(null, BigInteger.valueOf(1)),
                 Arguments.of(BigInteger.valueOf(1), null),
                 Arguments.of(null, null)
+        );
+    }
+
+    private static Stream<Arguments> getNormalizedComponents() {
+        return Stream.of(
+                Arguments.of(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ONE, "BigInteger divide by zero"),
+                Arguments.of(BigInteger.ZERO, BigInteger.ONE, BigInteger.ZERO, BigInteger.ONE, null),
+                Arguments.of(BigInteger.ZERO, BigInteger.ONE.negate(), BigInteger.ZERO, BigInteger.ONE.negate(), null),
+                Arguments.of(BigInteger.ZERO, BigInteger.TEN.negate(), BigInteger.ZERO, BigInteger.ONE.negate(), null),
+                Arguments.of(BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ONE, null),
+                Arguments.of(BigInteger.TEN, BigInteger.valueOf(5), BigInteger.valueOf(2), BigInteger.ONE, null),
+                Arguments.of(BigInteger.TEN.negate(), BigInteger.valueOf(5), BigInteger.valueOf(2).negate(), BigInteger.ONE, null),
+                Arguments.of(BigInteger.TEN, BigInteger.valueOf(5).negate(), BigInteger.valueOf(2), BigInteger.ONE.negate(), null),
+                Arguments.of(BigInteger.TEN.negate(), BigInteger.valueOf(5).negate(), BigInteger.valueOf(2).negate(), BigInteger.ONE.negate(), null)
         );
     }
 
@@ -465,6 +507,36 @@ public class RationalNumberTest {
                 Arguments.of(new RationalNumber(-2), new RationalNumber(-3), new RationalNumber(-2, -3), null),
                 Arguments.of(new RationalNumber(-3), new RationalNumber(-2), new RationalNumber(3, 2), null),
                 Arguments.of(new RationalNumber(4, 3), new RationalNumber(2), new RationalNumber(2, 3), null)
+        );
+    }
+
+    private static Stream<Arguments> negate() {
+        return Stream.of(
+                Arguments.of(ZERO, ZERO),
+                Arguments.of(ONE, new RationalNumber(-1)),
+                Arguments.of(new RationalNumber(2), new RationalNumber(-2)),
+                Arguments.of(new RationalNumber(-0), ZERO),
+                Arguments.of(new RationalNumber(-1), ONE),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(2)),
+                Arguments.of(new RationalNumber(3), new RationalNumber(-3)),
+                Arguments.of(new RationalNumber(-3), new RationalNumber(3)),
+                Arguments.of(new RationalNumber(-3, 4), new RationalNumber(3, 4)),
+                Arguments.of(new RationalNumber(3, 4), new RationalNumber(-3, 4))
+        );
+    }
+
+    private static Stream<Arguments> abs() {
+        return Stream.of(
+                Arguments.of(ZERO, ZERO),
+                Arguments.of(ONE, ONE),
+                Arguments.of(new RationalNumber(2), new RationalNumber(2)),
+                Arguments.of(new RationalNumber(-0), ZERO),
+                Arguments.of(new RationalNumber(-1), ONE),
+                Arguments.of(new RationalNumber(-2), new RationalNumber(2)),
+                Arguments.of(new RationalNumber(3), new RationalNumber(3)),
+                Arguments.of(new RationalNumber(-3), new RationalNumber(3)),
+                Arguments.of(new RationalNumber(-3, 4), new RationalNumber(3, 4)),
+                Arguments.of(new RationalNumber(3, 4), new RationalNumber(3, 4))
         );
     }
 
