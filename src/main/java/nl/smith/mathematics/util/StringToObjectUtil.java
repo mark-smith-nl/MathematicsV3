@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -42,7 +43,14 @@ public class StringToObjectUtil {
                 return (T) valueOf.invoke(null, stringValue);
             } catch (Exception e) {
                 String arguments = Stream.of(FACTORY_METHOD_ARGUMENT_TYPES).map(Class::getCanonicalName).collect(Collectors.joining(", "));
-                throw new IllegalStateException(String.format("Can not invoke method %s.%s(%s) using %s", clazz.getCanonicalName(), FACTORY_METHOD_NAME, arguments, stringValue));
+                String message ;
+                if (e instanceof InvocationTargetException) {
+                    message = ((InvocationTargetException) e).getTargetException().getMessage();
+                } else {
+                    message = e.getMessage();
+                }
+
+                throw new IllegalStateException(String.format("Can not invoke method %s.%s(%s) using %s.\n Errormessage: %s", clazz.getCanonicalName(), FACTORY_METHOD_NAME, arguments, stringValue, message));
             }
         }
 

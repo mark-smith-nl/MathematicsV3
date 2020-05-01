@@ -26,6 +26,12 @@ public class RationalNumberUtil {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RationalNumberUtil.class);
 
+    public static final String NOT_A_NUMBER_MESSAGE = "\nNumber string is null, empty or does not represent a number.\n" +
+            "Did you use a comma instead of a decimal point?\n" +
+            "Did you prefix a zero number with a minus sign?\n" +
+            "Did you forget to remove all leading zeros before the decimal point?\n" +
+            "Did you forget to remove all trailing zeros after the decimal point?";
+
     public enum NumberComponent {
         SIGN_PART,
         POSITIVE_INTEGER_PART,
@@ -44,7 +50,7 @@ public class RationalNumberUtil {
 
     public static void assertIsNumber(String numberString) {
         if (numberString == null || numberString.isEmpty() || !NUMBER_PATTERN.matcher(numberString).matches()) {
-            throw new IllegalArgumentException("Number string is null, empty or does not represent a number");
+            throw new IllegalArgumentException(NOT_A_NUMBER_MESSAGE);
         }
     }
 

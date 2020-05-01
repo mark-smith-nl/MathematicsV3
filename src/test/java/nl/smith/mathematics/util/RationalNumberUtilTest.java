@@ -2,7 +2,6 @@ package nl.smith.mathematics.util;
 
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,7 +10,8 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RationalNumberUtilTest {
 
@@ -39,7 +39,7 @@ public class RationalNumberUtilTest {
     @NullAndEmptySource
     public void assertIsNumber_usingNullOrEmptyArgument(String numberString) {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> RationalNumberUtil.assertIsNumber(numberString));
-        assertEquals(exception.getMessage(), "Number string is null, empty or does not represent a number");
+        assertEquals(exception.getMessage(), RationalNumberUtil.NOT_A_NUMBER_MESSAGE);
     }
 
     @DisplayName("Testing valid numbers as described by @MethodSource(\"numbers\"")
@@ -54,7 +54,7 @@ public class RationalNumberUtilTest {
     @MethodSource("notNumbers")
     void assertIsNumber_notNumbers(String numberString) {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> RationalNumberUtil.assertIsNumber(numberString));
-        assertEquals(exception.getMessage(), "Number string is null, empty or does not represent a number");
+        assertEquals(exception.getMessage(), RationalNumberUtil.NOT_A_NUMBER_MESSAGE);
     }
 
     @DisplayName("Testing retrieval of number components")
@@ -80,16 +80,18 @@ public class RationalNumberUtilTest {
         }
     }
 
+    //TODO Move to RationalNumberTest
     @DisplayName("Retrieving integer part of rational number")
     @ParameterizedTest
-    @MethodSource("rationalNumbers")
+    @MethodSource("intValue")
     void intValue(RationalNumber rationalNumber, int expectedIntValue) {
         assertEquals(expectedIntValue, rationalNumber.intValue());
     }
 
+    //TODO Move to RationalNumberTest
     @DisplayName("Retrieving long part of rational number")
     @ParameterizedTest
-    @MethodSource({"rationalNumbers", "rationalNumbers_long"})
+    @MethodSource({"intValue", "longValue"})
     void longValue(RationalNumber rationalNumber, long expectedIntValue) {
         assertEquals(expectedIntValue, rationalNumber.longValue());
     }
@@ -180,11 +182,11 @@ public class RationalNumberUtilTest {
 
     private static Stream<Arguments> numberStrings() {
         return Stream.of(
-                Arguments.of(null, null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
-                Arguments.of("", null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
-                Arguments.of("Hello world", null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
-                Arguments.of(" 1", null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
-                Arguments.of("01", null, new IllegalArgumentException("Number string is null, empty or does not represent a number")),
+                Arguments.of(null, null, new IllegalArgumentException(RationalNumberUtil.NOT_A_NUMBER_MESSAGE)),
+                Arguments.of("", null, new IllegalArgumentException(RationalNumberUtil.NOT_A_NUMBER_MESSAGE)),
+                Arguments.of("Hello world", null, new IllegalArgumentException(RationalNumberUtil.NOT_A_NUMBER_MESSAGE)),
+                Arguments.of(" 1", null, new IllegalArgumentException(RationalNumberUtil.NOT_A_NUMBER_MESSAGE)),
+                Arguments.of("01", null, new IllegalArgumentException(RationalNumberUtil.NOT_A_NUMBER_MESSAGE)),
                 Arguments.of("12.345{6789}R", new RationalNumber(10287037, 833250), null),
                 Arguments.of("-12.345{6789}R", new RationalNumber(-10287037, 833250), null),
                 Arguments.of("12.345{6789}RE[02]", new RationalNumber(1028703700, 833250), null),
@@ -196,7 +198,7 @@ public class RationalNumberUtilTest {
         );
     }
 
-    private static Stream<Arguments> rationalNumbers() {
+    private static Stream<Arguments> intValue() {
         return Stream.of(
                 Arguments.of(RationalNumberUtil.getRationalNumber("2"), 2),
                 Arguments.of(RationalNumberUtil.getRationalNumber("2.1"), 2),
@@ -210,7 +212,7 @@ public class RationalNumberUtilTest {
                 );
     }
 
-    private static Stream<Arguments> rationalNumbers_long() {
+    private static Stream<Arguments> longValue() {
             return Stream.of(
                     Arguments.of(RationalNumberUtil.getRationalNumber("1E[18]"), 1000000000000000000l)
                     );

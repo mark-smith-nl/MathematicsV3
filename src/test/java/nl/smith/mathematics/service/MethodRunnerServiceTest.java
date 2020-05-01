@@ -24,7 +24,6 @@ public class MethodRunnerServiceTest {
     public void getMethods() {
         List<MethodSignature> methodSignatures = new ArrayList<>();
         methodRunnerService.extractAnnotatedMethodNames(BigDecimalTestFunctionContainer.class, methodSignatures);
-        methodSignatures.forEach(System.out::println);
         assertEquals(3, methodSignatures.size());
 
     }

@@ -130,6 +130,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
         return numerator.divideAndRemainder(denominator)[0].intValue();
     }
 
+    /** The truncated value as {@link java.math.BigInteger} */
     public BigInteger bigIntValue() {
         return numerator.divideAndRemainder(denominator)[0];
     }

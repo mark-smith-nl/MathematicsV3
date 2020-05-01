@@ -26,6 +26,27 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
 
     @Override
     public RationalNumber exp(RationalNumber number) {
+        if (number.signum() < 0 ) {
+            return ONE.divide(exp(number.abs()));
+        }
+
+        if (number.compareTo(ONE) > 0) {
+            RationalNumber euler = Euler.get();
+            RationalNumber[] divideAndRemainder = number.divideAndRemainder(ONE);
+            RationalNumber i = divideAndRemainder[0];
+            RationalNumber result = euler;
+            do {
+                result = result.multiply(euler);
+                i = i.subtract(ONE);
+            } while (!i.equals(ONE));
+
+            return result.multiply(exp(divideAndRemainder[1]));
+        }
+
+        if (number.equals(ZERO)) {
+           return ONE;
+        }
+
         RationalNumber T = ONE;
         RationalNumber sum = T;
         for (int i = 1; i <= TaylorDegreeOfPolynom.get(); i++) {

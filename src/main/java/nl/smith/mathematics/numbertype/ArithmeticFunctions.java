@@ -44,4 +44,5 @@ public abstract class ArithmeticFunctions<T extends Number> extends Number {
      *         is negative, zero, or positive.
      */
     public abstract int signum();
+
 }

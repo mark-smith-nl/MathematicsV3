@@ -6,9 +6,7 @@ import org.springframework.core.BridgeMethodResolver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +41,6 @@ public class MethodSignature {
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
-                //System.out.println(declaredMethod.getAnnotations().length);
             }
             methodSignature = new MethodSignature(bridgedMethod, annotation);
 
