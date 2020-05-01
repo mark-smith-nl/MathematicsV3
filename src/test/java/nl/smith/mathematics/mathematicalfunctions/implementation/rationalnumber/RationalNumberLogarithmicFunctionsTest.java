@@ -1,6 +1,5 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
-import nl.smith.mathematics.configuration.constant.rationalnumber.MaximumError;
 import nl.smith.mathematics.mathematicalfunctions.FunctionContainerTest;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.Timeout;
@@ -17,6 +16,9 @@ import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import static nl.smith.mathematics.configuration.constant.NumberConstant.*;
+
 
 class RationalNumberLogarithmicFunctionsTest extends FunctionContainerTest<RationalNumberLogarithmicFunctions> {
 
@@ -43,7 +45,7 @@ class RationalNumberLogarithmicFunctionsTest extends FunctionContainerTest<Ratio
             } else {
                 error = functionValue.subtract(expectedResult).divide(expectedResult).multiply(100).abs();
             }
-            assertEquals(-1, error.compareTo(MaximumError.get()));
+            assertEquals(-1, error.compareTo(rationalValueOf.MaximumError.get()));
         }
     }
 
@@ -73,7 +75,7 @@ class RationalNumberLogarithmicFunctionsTest extends FunctionContainerTest<Ratio
             } else {
                 error = functionValue.subtract(expectedResult).divide(expectedResult).multiply(100).abs();
             }
-             assertEquals(-1, error.compareTo(MaximumError.get()));
+             assertEquals(-1, error.compareTo(rationalValueOf.MaximumError.get()));
         }
     }
 

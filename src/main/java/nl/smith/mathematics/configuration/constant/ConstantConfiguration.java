@@ -16,7 +16,7 @@ import java.util.Properties;
  */
 public abstract class ConstantConfiguration<T> {
 
-    private static final String PROPERTY_FILE_NAME = "classpath:application.properties";
+    public static final String PROPERTY_FILE_NAME = "classpath:application.properties";
 
     private final T defaultValue;
 
@@ -41,7 +41,11 @@ public abstract class ConstantConfiguration<T> {
     }
 
     public T getValue() {
-        return (T) UserSystemContext.getValue(propertyName).orElse(defaultValue);
+        return (T) UserSystemContext.getValue(propertyName).orElseGet(this::defaultValue);
+    }
+
+    private T defaultValue() {
+        return defaultValue;
     }
 
     private T getDefaultValueFromSystem() {
@@ -64,4 +68,15 @@ public abstract class ConstantConfiguration<T> {
         return StringToObjectUtil.valueOf(value, clazz);
     }
 
+    public T getDefaultValue() {
+        return defaultValue;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public Class<T> getClazz() {
+        return clazz;
+    }
 }

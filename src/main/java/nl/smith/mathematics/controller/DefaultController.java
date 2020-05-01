@@ -1,8 +1,6 @@
 package nl.smith.mathematics.controller;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
-import nl.smith.mathematics.configuration.constant.Scale;
-import nl.smith.mathematics.configuration.constant.TaylorDegreeOfPolynom;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberGoniometricFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf;
 
 @Controller
 @RequestMapping("/")
@@ -33,9 +33,9 @@ public class DefaultController {
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
         RationalNumberOutputType.set(outputType);
-        Scale.set(scale);
+        integerValueOf.Scale.set(scale);
         for (int i = 0; i < maximumDegreeOfPolynomial; i++) {
-            TaylorDegreeOfPolynom.set(i);
+            integerValueOf.TaylorDegreeOfPolynom.set(i);
             result.put(i, goniometricFunctions.sin(rationalNumber).toString());
         }
 
@@ -47,7 +47,7 @@ public class DefaultController {
         Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = new RationalNumber(numerator, denominator);
-        Scale.set(scale);
+        integerValueOf.Scale.set(scale);
 
         RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
         result.put(outputType, rationalNumber.toString(outputType));
@@ -64,7 +64,7 @@ public class DefaultController {
         Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        Scale.set(scale);
+        integerValueOf.Scale.set(scale);
 
         RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
         result.put(outputType, rationalNumber.toString(outputType));

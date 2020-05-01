@@ -1,8 +1,6 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
 import nl.smith.mathematics.configuration.constant.RoundingMode;
-import nl.smith.mathematics.configuration.constant.Scale;
-import nl.smith.mathematics.configuration.constant.TaylorDegreeOfPolynom;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import org.springframework.context.annotation.Bean;
 
@@ -10,6 +8,7 @@ import java.math.BigDecimal;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf;
 
 public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDecimal, BigDecimalGoniometricFunctions> {
 
@@ -32,9 +31,9 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
     public BigDecimal sin(BigDecimal angle) {
         BigDecimal sum = ZERO;
 
-        int iMax = TaylorDegreeOfPolynom.get();
+        int iMax = integerValueOf.TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
-            Integer scale = Scale.get();
+            Integer scale = integerValueOf.Scale.get();
             java.math.RoundingMode roundingMode = RoundingMode.get();
 
             BigDecimal T = angle;
@@ -53,9 +52,9 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
     public BigDecimal cos(BigDecimal angle) {
         BigDecimal sum = ONE;
 
-        int iMax = TaylorDegreeOfPolynom.get();
+        int iMax = integerValueOf.TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
-            Integer scale = Scale.get();
+            Integer scale = integerValueOf.Scale.get();
             java.math.RoundingMode roundingMode = RoundingMode.get();
 
             BigDecimal T = ONE;
@@ -71,6 +70,6 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
 
     @Override
     public BigDecimal tan(BigDecimal angle) {
-        return sin(angle).divide(cos(angle), Scale.get(), RoundingMode.get());
+        return sin(angle).divide(cos(angle), integerValueOf.Scale.get(), RoundingMode.get());
     }
 }

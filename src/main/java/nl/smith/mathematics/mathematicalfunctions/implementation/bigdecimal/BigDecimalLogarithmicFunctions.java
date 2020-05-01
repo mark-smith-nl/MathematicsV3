@@ -1,9 +1,7 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
+import nl.smith.mathematics.configuration.constant.NumberConstant;
 import nl.smith.mathematics.configuration.constant.RoundingMode;
-import nl.smith.mathematics.configuration.constant.Scale;
-import nl.smith.mathematics.configuration.constant.TaylorDegreeOfPolynom;
-import nl.smith.mathematics.configuration.constant.bigdecimal.Euler;
 import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunctions;
 import org.springframework.context.annotation.Bean;
 
@@ -11,7 +9,7 @@ import java.math.BigDecimal;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-
+import static nl.smith.mathematics.configuration.constant.NumberConstant.*;
 
 public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDecimal, BigDecimalLogarithmicFunctions> {
 
@@ -33,8 +31,8 @@ public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDeci
     public BigDecimal exp(BigDecimal number) {
         BigDecimal T = ONE;
         BigDecimal sum = T;
-        for (int i = 1; i <= TaylorDegreeOfPolynom.get(); i++) {
-            T = T.multiply(number).divide(new BigDecimal(i), Scale.get(), RoundingMode.get());
+        for (int i = 1; i <= integerValueOf.TaylorDegreeOfPolynom.get(); i++) {
+            T = T.multiply(number).divide(new BigDecimal(i), integerValueOf.Scale.get(), RoundingMode.get());
             sum = sum.add(T);
         }
 
@@ -46,16 +44,16 @@ public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDeci
     public BigDecimal ln(BigDecimal number) {
         BigDecimal sum = ZERO;
 
-        BigDecimal euler = Euler.get();
+        BigDecimal euler = NumberConstant.bigDecimalValueOf.Euler.get();
         while (number.compareTo(ONE) > 0) {
             sum = sum.add(ONE);
-            number = number.divide(euler, Scale.get(), RoundingMode.get());
+            number = number.divide(euler, integerValueOf.Scale.get(), RoundingMode.get());
         }
 
         BigDecimal delta = ONE.subtract(number);
 
 
-        int iMax = TaylorDegreeOfPolynom.get();
+        int iMax = integerValueOf.TaylorDegreeOfPolynom.get();
         if (!delta.equals(ZERO) && iMax > 0) {
             sum = sum.subtract(delta);
             BigDecimal deltaRaiseToPowI = delta;

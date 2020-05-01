@@ -2,9 +2,6 @@ package nl.smith.mathematics;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.configuration.constant.RoundingMode;
-import nl.smith.mathematics.configuration.constant.Scale;
-import nl.smith.mathematics.configuration.constant.TaylorDegreeOfPolynom;
-import nl.smith.mathematics.configuration.constant.rationalnumber.Pi;
 import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunctions;
@@ -25,6 +22,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.math.BigDecimal;
 
+import static nl.smith.mathematics.configuration.constant.NumberConstant.*;
+import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type;
+import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.set;
+
 @SpringBootApplication
 @ComponentScan(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
         classes = {FunctionContainer.class}))
@@ -41,47 +42,47 @@ public class MathematicsV3Application {
         System.out.println();
         System.out.println("Example: " + new RationalNumber(1, 7));
         System.out.println("Example: " + new RationalNumber(2, 14));
-        Scale.set(10);
+        integerValueOf.Scale.set(10);
         System.out.println("Example: " + new RationalNumber(2, 14));
-        RationalNumberOutputType.set(RationalNumberOutputType.Type.COMPONENTS_AND_EXACT);
+        RationalNumberOutputType.set(Type.COMPONENTS_AND_EXACT);
         System.out.println("Example 2/14 * 1/3: " + (new RationalNumber(2, 14)).multiply(new RationalNumber(1, 3)));
         System.out.println("Example create number from string literal 12.345{6789}R: " + RationalNumber.valueOf("12.345{6789}R"));
         System.out.println();
 
         GoniometricFunctions goniometricFunctions = context.getBean("rationalNumberGoniometricFunctions", RationalNumberGoniometricFunctions.class);
 
-        RationalNumberOutputType.set(RationalNumberOutputType.Type.TRUNCATED);
-        Scale.set(150);
+        set(Type.TRUNCATED);
+        integerValueOf.Scale.set(150);
         System.out.println("Calculate sin(𝝅/4) using Taylor series:");
-        RationalNumber piDividedByFour = Pi.get().divide(4);
+        RationalNumber piDividedByFour = rationalValueOf.Pi.get().divide(4);
         for (int i = 0; i < 20; i++) {
-            TaylorDegreeOfPolynom.set(i);
-            System.out.println("Taylor (" + TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.sin(piDividedByFour));
+            integerValueOf.TaylorDegreeOfPolynom.set(i);
+            System.out.println("Taylor (" + integerValueOf.TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.sin(piDividedByFour));
         }
         System.out.println();
 
         goniometricFunctions = context.getBean("bigDecimalGoniometricFunctions", BigDecimalGoniometricFunctions.class);
-        BigDecimal piDividedBySix = nl.smith.mathematics.configuration.constant.bigdecimal.Pi.get().divide(new BigDecimal(6), Scale.get(), RoundingMode.get());
+        BigDecimal piDividedBySix = bigDecimalValueOf.Pi.get().divide(new BigDecimal(6), integerValueOf.Scale.get(), RoundingMode.get());
         System.out.println("Calculate cos(𝝅/6) using Taylor series:");
         for (int i = 0; i < 20; i++) {
-            TaylorDegreeOfPolynom.set(i);
-            System.out.println("Taylor (" + TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.cos(piDividedBySix));
+            integerValueOf.TaylorDegreeOfPolynom.set(i);
+            System.out.println("Taylor (" + integerValueOf.TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.cos(piDividedBySix));
         }
         System.out.println();
 
-        RationalNumberOutputType.set(RationalNumberOutputType.Type.TRUNCATED);
+        RationalNumberOutputType.set(Type.TRUNCATED);
         System.out.println("\uD835\uDF45:");
         for (int i = 0; i < 150; i++) {
-            Scale.set(i);
-            System.out.println(Pi.get());
+            integerValueOf.Scale.set(i);
+            System.out.println(rationalValueOf.Pi.get());
         }
         System.out.println();
 
         LogarithmicFunctions logarithmicFunctions = context.getBean("rationalNumberLogarithmicFunctions", RationalNumberLogarithmicFunctions.class);
-        RationalNumberOutputType.set(RationalNumberOutputType.Type.TRUNCATED);
+        RationalNumberOutputType.set(Type.TRUNCATED);
         System.out.println("Calculate Eulers's number:");
         for (int i = 0; i < 150; i++) {
-            Scale.set(i);
+            integerValueOf.Scale.set(i);
             System.out.println(logarithmicFunctions.exp(RationalNumber.ONE));
         }
         System.out.println();
@@ -93,9 +94,9 @@ public class MathematicsV3Application {
         System.out.println("Sum: " + bigDecimalStatisticalFunctions.sum(numbers));
         System.out.println("Average: " + bigDecimalStatisticalFunctions.average(numbers));
         System.out.println("Deviation: " + bigDecimalStatisticalFunctions.deviation(numbers));
-        Scale.set(3);
+        integerValueOf.Scale.set(3);
         RoundingMode.set(java.math.RoundingMode.CEILING);
-        System.out.println(new BigDecimal(16).divide(new BigDecimal(3), Scale.get(), RoundingMode.get()));
+        System.out.println(new BigDecimal(16).divide(new BigDecimal(3), integerValueOf.Scale.get(), RoundingMode.get()));
     }
 
     @Bean
