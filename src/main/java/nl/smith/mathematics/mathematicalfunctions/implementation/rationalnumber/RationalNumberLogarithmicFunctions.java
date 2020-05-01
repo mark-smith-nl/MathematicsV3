@@ -1,13 +1,13 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
-import nl.smith.mathematics.configuration.constant.NumberConstant;
 import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.context.annotation.Bean;
 
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.rationalValueOf;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.*;
 
 public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<RationalNumber, RationalNumberLogarithmicFunctions> {
 
@@ -49,7 +49,7 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
 
         RationalNumber T = ONE;
         RationalNumber sum = T;
-        for (int i = 1; i <= integerValueOf.TaylorDegreeOfPolynom.get(); i++) {
+        for (int i = 1; i <= TaylorDegreeOfPolynom.get(); i++) {
             T = T.multiply(number).divide(i);
             sum = sum.add(T);
         }
@@ -72,7 +72,7 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
         RationalNumber delta = ONE.subtract(number);
 
 
-        int iMax = integerValueOf.TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.get();
         if (!delta.equals(ZERO) && iMax > 0) {
             sum = sum.subtract(delta);
             RationalNumber deltaRaiseToPowI = delta;

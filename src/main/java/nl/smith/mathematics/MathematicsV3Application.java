@@ -22,7 +22,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.math.BigDecimal;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.*;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.bigDecimalValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.rationalValueOf;
 import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type;
 import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.set;
 
@@ -42,7 +45,7 @@ public class MathematicsV3Application {
         System.out.println();
         System.out.println("Example: " + new RationalNumber(1, 7));
         System.out.println("Example: " + new RationalNumber(2, 14));
-        integerValueOf.Scale.set(10);
+        Scale.set(10);
         System.out.println("Example: " + new RationalNumber(2, 14));
         RationalNumberOutputType.set(Type.COMPONENTS_AND_EXACT);
         System.out.println("Example 2/14 * 1/3: " + (new RationalNumber(2, 14)).multiply(new RationalNumber(1, 3)));
@@ -52,28 +55,28 @@ public class MathematicsV3Application {
         GoniometricFunctions goniometricFunctions = context.getBean("rationalNumberGoniometricFunctions", RationalNumberGoniometricFunctions.class);
 
         set(Type.TRUNCATED);
-        integerValueOf.Scale.set(150);
+        Scale.set(150);
         System.out.println("Calculate sin(𝝅/4) using Taylor series:");
         RationalNumber piDividedByFour = rationalValueOf.Pi.get().divide(4);
         for (int i = 0; i < 20; i++) {
-            integerValueOf.TaylorDegreeOfPolynom.set(i);
-            System.out.println("Taylor (" + integerValueOf.TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.sin(piDividedByFour));
+            TaylorDegreeOfPolynom.set(i);
+            System.out.println("Taylor (" + TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.sin(piDividedByFour));
         }
         System.out.println();
 
         goniometricFunctions = context.getBean("bigDecimalGoniometricFunctions", BigDecimalGoniometricFunctions.class);
-        BigDecimal piDividedBySix = bigDecimalValueOf.Pi.get().divide(new BigDecimal(6), integerValueOf.Scale.get(), RoundingMode.get());
+        BigDecimal piDividedBySix = bigDecimalValueOf.Pi.get().divide(new BigDecimal(6), Scale.get(), RoundingMode.get());
         System.out.println("Calculate cos(𝝅/6) using Taylor series:");
         for (int i = 0; i < 20; i++) {
-            integerValueOf.TaylorDegreeOfPolynom.set(i);
-            System.out.println("Taylor (" + integerValueOf.TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.cos(piDividedBySix));
+            TaylorDegreeOfPolynom.set(i);
+            System.out.println("Taylor (" + TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.cos(piDividedBySix));
         }
         System.out.println();
 
         RationalNumberOutputType.set(Type.TRUNCATED);
         System.out.println("\uD835\uDF45:");
         for (int i = 0; i < 150; i++) {
-            integerValueOf.Scale.set(i);
+            Scale.set(i);
             System.out.println(rationalValueOf.Pi.get());
         }
         System.out.println();
@@ -82,7 +85,7 @@ public class MathematicsV3Application {
         RationalNumberOutputType.set(Type.TRUNCATED);
         System.out.println("Calculate Eulers's number:");
         for (int i = 0; i < 150; i++) {
-            integerValueOf.Scale.set(i);
+            Scale.set(i);
             System.out.println(logarithmicFunctions.exp(RationalNumber.ONE));
         }
         System.out.println();
@@ -94,9 +97,9 @@ public class MathematicsV3Application {
         System.out.println("Sum: " + bigDecimalStatisticalFunctions.sum(numbers));
         System.out.println("Average: " + bigDecimalStatisticalFunctions.average(numbers));
         System.out.println("Deviation: " + bigDecimalStatisticalFunctions.deviation(numbers));
-        integerValueOf.Scale.set(3);
+        Scale.set(3);
         RoundingMode.set(java.math.RoundingMode.CEILING);
-        System.out.println(new BigDecimal(16).divide(new BigDecimal(3), integerValueOf.Scale.get(), RoundingMode.get()));
+        System.out.println(new BigDecimal(16).divide(new BigDecimal(3), Scale.get(), RoundingMode.get()));
     }
 
     @Bean

@@ -10,7 +10,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
 
 /**
  * Immutable class to store rational numbers
@@ -144,13 +144,13 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
     //TODO Test
     @Override
     public float floatValue() {
-        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), integerValueOf.Scale.get(), RoundingMode.get()).floatValue();
+        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), Scale.get(), RoundingMode.get()).floatValue();
     }
 
     //TODO Test
     @Override
     public double doubleValue() {
-        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), integerValueOf.Scale.get(), RoundingMode.get()).doubleValue();
+        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), Scale.get(), RoundingMode.get()).doubleValue();
     }
 
     @Override
@@ -384,7 +384,7 @@ public class RationalNumber extends ArithmeticFunctions<RationalNumber> implemen
     }
 
     public String toString(RationalNumberOutputType.Type outputType) {
-        int scale = integerValueOf.Scale.get();
+        int scale = Scale.get();
 
         String result;
         switch (outputType) {

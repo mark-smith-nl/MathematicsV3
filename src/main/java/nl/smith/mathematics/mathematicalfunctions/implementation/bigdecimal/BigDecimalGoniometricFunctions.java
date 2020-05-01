@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
 
 public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDecimal, BigDecimalGoniometricFunctions> {
 
@@ -31,9 +32,9 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
     public BigDecimal sin(BigDecimal angle) {
         BigDecimal sum = ZERO;
 
-        int iMax = integerValueOf.TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
-            Integer scale = integerValueOf.Scale.get();
+            Integer scale = Scale.get();
             java.math.RoundingMode roundingMode = RoundingMode.get();
 
             BigDecimal T = angle;
@@ -52,9 +53,9 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
     public BigDecimal cos(BigDecimal angle) {
         BigDecimal sum = ONE;
 
-        int iMax = integerValueOf.TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
-            Integer scale = integerValueOf.Scale.get();
+            Integer scale = Scale.get();
             java.math.RoundingMode roundingMode = RoundingMode.get();
 
             BigDecimal T = ONE;
@@ -70,6 +71,6 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
 
     @Override
     public BigDecimal tan(BigDecimal angle) {
-        return sin(angle).divide(cos(angle), integerValueOf.Scale.get(), RoundingMode.get());
+        return sin(angle).divide(cos(angle), Scale.get(), RoundingMode.get());
     }
 }

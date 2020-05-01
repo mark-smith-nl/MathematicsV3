@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.Map;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
 
 @Controller
 @RequestMapping("/")
@@ -33,9 +34,9 @@ public class DefaultController {
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
         RationalNumberOutputType.set(outputType);
-        integerValueOf.Scale.set(scale);
+        Scale.set(scale);
         for (int i = 0; i < maximumDegreeOfPolynomial; i++) {
-            integerValueOf.TaylorDegreeOfPolynom.set(i);
+            TaylorDegreeOfPolynom.set(i);
             result.put(i, goniometricFunctions.sin(rationalNumber).toString());
         }
 
@@ -47,7 +48,7 @@ public class DefaultController {
         Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = new RationalNumber(numerator, denominator);
-        integerValueOf.Scale.set(scale);
+        Scale.set(scale);
 
         RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
         result.put(outputType, rationalNumber.toString(outputType));
@@ -64,7 +65,7 @@ public class DefaultController {
         Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        integerValueOf.Scale.set(scale);
+        Scale.set(scale);
 
         RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
         result.put(outputType, rationalNumber.toString(outputType));

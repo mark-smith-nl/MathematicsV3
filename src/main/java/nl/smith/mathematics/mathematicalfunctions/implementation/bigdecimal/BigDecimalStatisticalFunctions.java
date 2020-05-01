@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
 
 public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDecimal, BigDecimalStatisticalFunctions> {
 
@@ -45,7 +45,7 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 
 	@Override
 	public BigDecimal average(BigDecimal... numbers) {
-		return sibling.sum(numbers).divide(new BigDecimal(numbers.length), integerValueOf.Scale.get(), RoundingMode.get());
+		return sibling.sum(numbers).divide(new BigDecimal(numbers.length), Scale.get(), RoundingMode.get());
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 			sum.setValue(difference.multiply(difference).add(sum.getValue()));
 		});
 
-		return sum.getValue().divide(new BigDecimal(numbers.length), integerValueOf.Scale.get(), RoundingMode.get());
+		return sum.getValue().divide(new BigDecimal(numbers.length), Scale.get(), RoundingMode.get());
 	}
 
 }

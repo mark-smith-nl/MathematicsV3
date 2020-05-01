@@ -5,7 +5,7 @@ import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunction
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.context.annotation.Bean;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 
@@ -31,7 +31,7 @@ public class RationalNumberGoniometricFunctions extends GoniometricFunctions<Rat
     public RationalNumber sin(RationalNumber angle) {
         RationalNumber sum = ZERO;
 
-        int iMax = integerValueOf.TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
             RationalNumber T = angle;
             sum = sum.add(T);
@@ -54,7 +54,7 @@ public class RationalNumberGoniometricFunctions extends GoniometricFunctions<Rat
     public RationalNumber cos(RationalNumber angle) {
         RationalNumber sum = ONE;
 
-        int iMax = integerValueOf.TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.get();
         if (iMax > 0) {
             RationalNumber T = ONE;
             RationalNumber squareAngle = angle.multiply(angle);
