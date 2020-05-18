@@ -1,14 +1,7 @@
 package nl.smith.mathematics.service;
 
-import nl.smith.mathematics.mathematicalfunctions.implementation.BigDecimalTestFunctionContainer;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class MethodRunnerServiceTest {
@@ -20,11 +13,4 @@ public class MethodRunnerServiceTest {
         this.methodRunnerService = methodRunnerService;
     }
 
-    @Test
-    public void getMethods() {
-        List<MethodSignature> methodSignatures = new ArrayList<>();
-        methodRunnerService.extractAnnotatedMethodNames(BigDecimalTestFunctionContainer.class, methodSignatures);
-        assertEquals(3, methodSignatures.size());
-
-    }
 }

@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Map;
 
 @SpringBootTest
-public class FunctionContainerTest<S extends FunctionContainer<?, ?>> {
+public class RecursiveFunctionContainerExample<S extends RecursiveFunctionContainer<?, ?>> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

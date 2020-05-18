@@ -1,6 +1,6 @@
 package nl.smith.mathematics;
 
-import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,16 +12,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 class MathematicsV3ApplicationTests {
 
-	private final Set<FunctionContainer> functionContainers;
+	private final Set<RecursiveFunctionContainer> recursiveFunctionContainers;
 
 	@Autowired
-	public MathematicsV3ApplicationTests(Set<FunctionContainer> functionContainers) {
-		this.functionContainers = functionContainers;
+	public MathematicsV3ApplicationTests(Set<RecursiveFunctionContainer> recursiveFunctionContainers) {
+		this.recursiveFunctionContainers = recursiveFunctionContainers;
 	}
 
 	@Test
 	void contextLoads() {
-		assertTrue(functionContainers.size() > 0);
+		assertTrue(recursiveFunctionContainers.size() > 0);
 	}
 
 }

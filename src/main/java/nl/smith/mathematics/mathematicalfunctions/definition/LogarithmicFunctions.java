@@ -1,18 +1,18 @@
 package nl.smith.mathematics.mathematicalfunctions.definition;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
+import nl.smith.mathematics.annotation.MathematicalFunctionContainer;
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsLargerThan;
-import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 
 import javax.validation.constraints.NotNull;
 
-public abstract class LogarithmicFunctions<T extends Number, S extends LogarithmicFunctions> extends FunctionContainer<T, S> {
+@MathematicalFunctionContainer(name = "Logarithmic methods", description = "Logarithmic methods: exp, ln")
+public abstract class LogarithmicFunctions<N extends Number, S extends LogarithmicFunctions> extends RecursiveFunctionContainer<N, S> {
 
-  @Override
-  public String getDescription() {
-    return "Logarithmic methods: exp, ln";
+  public LogarithmicFunctions() {
+    super(LogarithmicFunctions.class);
   }
-
 
   /**
    *             ∞
@@ -25,7 +25,7 @@ public abstract class LogarithmicFunctions<T extends Number, S extends Logarithm
    */
   @MathematicalFunction(description = "The exp of a number")
   //TODO test implementations
-  public abstract T exp(@NotNull T number);
+  public abstract N exp(@NotNull N number);
 
   /**
    *
@@ -42,7 +42,7 @@ public abstract class LogarithmicFunctions<T extends Number, S extends Logarithm
    */
   @MathematicalFunction(description = "The natural logarithm of a number")
   //TODO test implementations and constraint
-  public abstract T ln(@NotNull @IsLargerThan("0") T number);
+  public abstract N ln(@NotNull @IsLargerThan("0") N number);
 
   /** Note: Zero to the power of zero, denoted by 0⁰ = 1, is a mathematical expression with no agreed-upon value.
    * The most common possibilities are 1 or leaving the expression undefined, with justifications existing for each, depending on context.
@@ -52,11 +52,11 @@ public abstract class LogarithmicFunctions<T extends Number, S extends Logarithm
    */
   @MathematicalFunction(description = "The number raised to the power")
   //TODO test implementations and constraint
-  public abstract T power(@NotNull T number, @NotNull T power);
+  public abstract N power(@NotNull N number, @NotNull N power);
 
   @MathematicalFunction(description = "The square root of a number")
   //TODO test implementations and constraint
   // Other implementation
-  public abstract T sqrt(@NotNull T number);
+  public abstract N sqrt(@NotNull N number);
 
 }

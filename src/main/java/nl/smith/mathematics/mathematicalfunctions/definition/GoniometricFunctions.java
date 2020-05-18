@@ -1,15 +1,16 @@
 package nl.smith.mathematics.mathematicalfunctions.definition;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
-import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
+import nl.smith.mathematics.annotation.MathematicalFunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 
 import javax.validation.constraints.NotNull;
 
-public abstract class GoniometricFunctions<T extends Number, S extends GoniometricFunctions> extends FunctionContainer<T, S> {
+@MathematicalFunctionContainer(name = "Goniometric methods", description = "Goniometric methods (sin, cos, tan, arcsin, arccos, arctan")
+public abstract class GoniometricFunctions<N extends Number, S extends GoniometricFunctions> extends RecursiveFunctionContainer<N, S> {
 
-  @Override
-  public String getDescription() {
-    return "Goniometric methods (sin, cos, tan, arcsin, arccos, arctan";
+  public GoniometricFunctions() {
+    super(GoniometricFunctions.class);
   }
 
   /**
@@ -24,18 +25,18 @@ public abstract class GoniometricFunctions<T extends Number, S extends Goniometr
   @MathematicalFunction (description = "The sinus of an angle")
   //TODO Test omplementations
   //TODO Implement Modulo
-  public abstract T sin(@NotNull T angle);
+  public abstract N sin(@NotNull N angle);
 
   @MathematicalFunction (description = "The cosinus of an angle")
   //TODO Test omplementations
   //TODO Implement Modulo
   //TODO Change implementation cos(x) = f(sin(x))
-  public abstract T cos(@NotNull T angle);
+  public abstract N cos(@NotNull N angle);
 
 
   @MathematicalFunction (description = "The tangent of an angle")
   //TODO Test omplementations
-  public abstract T tan(@NotNull T angle);
+  public abstract N tan(@NotNull N angle);
 
 
 }

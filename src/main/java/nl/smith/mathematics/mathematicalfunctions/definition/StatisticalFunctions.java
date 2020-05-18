@@ -1,35 +1,36 @@
 package nl.smith.mathematics.mathematicalfunctions.definition;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
-import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
+import nl.smith.mathematics.annotation.MathematicalFunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 
 import javax.validation.constraints.NotNull;
 
-public abstract class StatisticalFunctions<T extends Number, S extends StatisticalFunctions> extends FunctionContainer<T, S> {
+@MathematicalFunctionContainer(name = "Statistical methods", description = "Statistical methods: mean, standard deviation, maimum, minimum")
+public abstract class StatisticalFunctions<N extends Number, S extends StatisticalFunctions> extends RecursiveFunctionContainer<N, S> {
 
-    @Override
-    public String getDescription() {
-        return "Statistical methods: mean, standard deviation, maimum, minimum";
+    public StatisticalFunctions() {
+        super(StatisticalFunctions.class);
     }
 
     @MathematicalFunction(description = "Sum of a set of numbers")
     //TODO Add constraint
     //TODO Test omplementations
-    public abstract T sum(T ... numbers);
+    public abstract N sum(N ... numbers);
 
     @MathematicalFunction(description = "Product of a set of numbers")
     //TODO Add constraint
     //TODO Test omplementations
-    public abstract T prod(@NotNull T ... numbers);
+    public abstract N prod(@NotNull N ... numbers);
 
     @MathematicalFunction(description = "Average of a set of numbers")
     //TODO Add constraint
     //TODO Test omplementations
-    public abstract T average(T ... numbers);
+    public abstract N average(N ... numbers);
 
     @MathematicalFunction(description = "Standard deviation of a set of numbers")
     //TODO Add constraint
     //TODO Test omplementations
-    public abstract T deviation(T ... numbers);
+    public abstract N deviation(N ... numbers);
 
 }

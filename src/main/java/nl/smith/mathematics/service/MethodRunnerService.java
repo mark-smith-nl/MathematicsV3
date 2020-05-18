@@ -1,16 +1,14 @@
 package nl.smith.mathematics.service;
 
-import nl.smith.mathematics.annotation.MathematicalFunction;
-import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.validation.annotation.Validated;
 
 @Service
 @Validated
@@ -18,19 +16,19 @@ public class MethodRunnerService {
 
   private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
 
-  private final Set<FunctionContainer<? extends Number, ? extends FunctionContainer>> functionContainers;
+  private final Set<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> recursiveFunctionContainers;
 
-  private final Map<? extends Class<? extends Number>, List<FunctionContainer<? extends Number, ? extends FunctionContainer>>> functionContainersByNumberType;
+  private final Map<? extends Class<? extends Number>, List<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>>> functionContainersByNumberType;
 
   private final Set<Class<? extends Number>> numberTypes;
 
   /** The selected number type to work with */
   private Class<? extends Number> numberType;
 
-  public MethodRunnerService(@NotEmpty Set<FunctionContainer<? extends Number, ? extends FunctionContainer>> functionContainers) {
-    this.functionContainers = Collections.unmodifiableSet(functionContainers);
+  public MethodRunnerService(@NotEmpty Set<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> recursiveFunctionContainers) {
+    this.recursiveFunctionContainers = Collections.unmodifiableSet(recursiveFunctionContainers);
 
-    functionContainersByNumberType = Collections.unmodifiableMap(functionContainers.stream()
+    functionContainersByNumberType = Collections.unmodifiableMap(recursiveFunctionContainers.stream()
       .collect(Collectors.groupingBy(container -> container.getNumberType())));
 
     numberTypes = Collections.unmodifiableSet(functionContainersByNumberType.keySet());
@@ -39,7 +37,7 @@ public class MethodRunnerService {
 
     LOGGER.info("\nSpecified number types: {}\nUsed number type: {}\n",   numberTypes.stream().map(c -> c.getSimpleName()).sorted().collect(Collectors.joining(", ")), numberType == null ? "Number type not defined": numberType.getSimpleName());
 
-    functionContainers.forEach(f -> f.getMathematicalFunctions().forEach((k,v) -> LOGGER.info("\n{}\n", k)));
+    recursiveFunctionContainers.forEach(f -> f.getMathematicalFunctions().forEach((k, v) -> LOGGER.info("\n{}\n", k)));
   }
 
   public Set<Class<? extends Number>> getNumberTypes() {
@@ -59,26 +57,12 @@ public class MethodRunnerService {
     this.numberType = numberType;
   }
 
-  public List<FunctionContainer<? extends Number, ? extends FunctionContainer>> getAvailableFunctionContainers(){
+  public List<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> getAvailableFunctionContainers(){
     return functionContainersByNumberType.get(numberType);
   }
 
-  public Set<FunctionContainer<? extends Number, ? extends FunctionContainer>> getFunctionContainers() {
-    return functionContainers;
-  }
-
-  /** Protected for test purposes. */
-  protected void extractAnnotatedMethodNames(Class<? extends FunctionContainer> clazz, List<MethodSignature> methodSignatures) {
-    methodSignatures.addAll(Arrays.stream(clazz.getDeclaredMethods())
-            .filter(m -> Modifier.isPublic(m.getModifiers()))
-            .filter(m -> !Modifier.isStatic(m.getModifiers()))
-            .filter(m -> m.getAnnotation(MathematicalFunction.class) != null)
-            .map(MethodSignature::getMethodSignature)
-            .collect(Collectors.toList()));
-
-    if (clazz.getSuperclass() != FunctionContainer.class) {
-      extractAnnotatedMethodNames((Class<? extends FunctionContainer>) clazz.getSuperclass(), methodSignatures);
-    }
+  public Set<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> getRecursiveFunctionContainers() {
+    return recursiveFunctionContainers;
   }
 
 }

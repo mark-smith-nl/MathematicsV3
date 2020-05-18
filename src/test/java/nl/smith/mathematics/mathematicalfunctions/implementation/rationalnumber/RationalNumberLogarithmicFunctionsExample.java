@@ -1,7 +1,8 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber;
 
-import nl.smith.mathematics.mathematicalfunctions.FunctionContainerTest;
+import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainerExample;
 import nl.smith.mathematics.numbertype.RationalNumber;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,15 +13,19 @@ import javax.validation.ConstraintViolationException;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static nl.smith.mathematics.configuration.constant.NumberConstant.rationalValueOf;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.*;
 
+class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContainerExample<RationalNumberLogarithmicFunctions> {
 
-class RationalNumberLogarithmicFunctionsTest extends FunctionContainerTest<RationalNumberLogarithmicFunctions> {
+    @Test
+    void getNumberType() {
+        assertEquals(RationalNumber.class, functionContainer().getNumberType());
+    }
 
     @ParameterizedTest
     @MethodSource("exp")

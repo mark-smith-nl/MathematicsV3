@@ -11,7 +11,8 @@ import org.junit.jupiter.params.provider.NullSource;
 import java.math.BigInteger;
 import java.util.stream.Stream;
 
-import static nl.smith.mathematics.numbertype.RationalNumber.*;
+import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
+import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

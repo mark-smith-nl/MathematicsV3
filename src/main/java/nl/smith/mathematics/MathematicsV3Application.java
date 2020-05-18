@@ -2,7 +2,7 @@ package nl.smith.mathematics;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.configuration.constant.RoundingMode;
-import nl.smith.mathematics.mathematicalfunctions.FunctionContainer;
+import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigDecimalGoniometricFunctions;
@@ -31,7 +31,7 @@ import static nl.smith.mathematics.configuration.constant.RationalNumberOutputTy
 
 @SpringBootApplication
 @ComponentScan(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-        classes = {FunctionContainer.class}))
+        classes = {RecursiveFunctionContainer.class}))
 public class MathematicsV3Application {
 
     public static void main(String[] args) {
