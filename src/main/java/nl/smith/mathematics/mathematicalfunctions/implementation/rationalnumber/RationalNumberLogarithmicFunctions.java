@@ -57,8 +57,6 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
         return sum;
     }
 
-
-
     @Override
     public RationalNumber ln(RationalNumber number) {
         RationalNumber sum = ZERO;

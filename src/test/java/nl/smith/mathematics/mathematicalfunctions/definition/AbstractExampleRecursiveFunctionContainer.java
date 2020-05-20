@@ -30,8 +30,6 @@ public abstract class AbstractExampleRecursiveFunctionContainer<N extends Number
         return number;
     }
 
-    // Note: Annotation will be ignored since the methods return type is not generic.
-    @MathematicalFunction(description = "function: Four")
     public abstract BigDecimal four(BigDecimal number);
 
     @MathematicalFunction(description = "function: Five")

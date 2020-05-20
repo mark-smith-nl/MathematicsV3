@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -70,13 +69,10 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
     }
 
     private Map<String, MathematicalMethod> getMathematicalFunctionsFromGenericSuperClass(Class<? extends RecursiveFunctionContainer> mathematicalFunctionContainerClass) {
-        TypeVariable<? extends Class<?>> numberTypeParameter = mathematicalFunctionContainerClass.getTypeParameters()[0];
-
         return Stream.of(mathematicalFunctionContainerClass.getDeclaredMethods())
                 .filter(m -> Modifier.isPublic(m.getModifiers()))
                 .filter(m -> Modifier.isAbstract(m.getModifiers()))
                 .filter(m -> m.getAnnotation(MathematicalFunction.class) != null)
-                .filter(m -> m.getGenericReturnType().equals(numberTypeParameter))
                 .map(MathematicalMethod::new)
                 .collect(Collectors.toMap(MathematicalMethod::getName, mm -> mm));
     }

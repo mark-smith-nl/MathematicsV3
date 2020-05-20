@@ -1,5 +1,6 @@
 package nl.smith.mathematics.mathematicalfunctions.definition;
 
+import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.annotation.MathematicalFunctionContainer;
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsBetween;
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNaturalNumber;
@@ -15,6 +16,7 @@ public abstract class AuxiliaryFunctions<N extends Number, S extends AuxiliaryFu
     }
 
     //TODO Test omplementations
+    @MathematicalFunction(description = "Faculty of a number")
     public abstract N faculty(@NotNull
                               @IsNaturalNumber
                               @IsBetween(floor = "0", includingFloor = true, ceiling = "100", includingCeiling = true) N number);

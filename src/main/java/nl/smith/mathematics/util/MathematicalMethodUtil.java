@@ -1,12 +1,15 @@
 package nl.smith.mathematics.util;
 
+import nl.smith.mathematics.mathematicalfunctions.MathematicalMethod;
 import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 
 import java.lang.reflect.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Utility to check if @{@link nl.smith.mathematics.mathematicalfunctions.MathematicalMethod} annotated methods use and return the correct value types. */
+/**
+ * Utility to check if @{@link nl.smith.mathematics.mathematicalfunctions.MathematicalMethod} annotated methods use and return the correct value types.
+ */
 public class MathematicalMethodUtil {
 
     private MathematicalMethodUtil() {
@@ -18,19 +21,22 @@ public class MathematicalMethodUtil {
             throw new IllegalStateException("Please specify a class.");
         }
 
-        boolean validGenericClass = false;
+        boolean valid = false;
 
         if (clazz.getSuperclass() == RecursiveFunctionContainer.class) {
             TypeVariable<? extends Class<?>>[] typeParameters = clazz.getTypeParameters();
+            // Note: There should be two typeparameters, each with one boundary.
+            // The first parameter denotes the number type: it should extend number.
+            // The second parameter is the concrete service class needed to bidirectional inject the services.
             if (typeParameters.length == 2) {
                 Type[] bounds = typeParameters[0].getBounds();
                 if (bounds.length == 1) {
-                    validGenericClass = bounds[0] == Number.class;
+                    valid = bounds[0] == Number.class;
                 }
             }
         }
 
-        if (!validGenericClass) {
+        if (!valid) {
             throw new IllegalStateException(String.format("Improper use of generics.\n" +
                             "Define your class as public abstract <N extends %s, S extends %s> extends %s<N, S>",
                     Number.class.getSimpleName(),
@@ -44,7 +50,7 @@ public class MathematicalMethodUtil {
             throw new IllegalStateException("Please specify a method.");
         }
 
-        int modifier  = method.getModifiers();
+        int modifier = method.getModifiers();
 
         if (!Modifier.isPublic(modifier) || !Modifier.isAbstract(modifier)) {
             throw new IllegalStateException(String.format("The method %s.%s should be public and abstract.",
@@ -58,28 +64,38 @@ public class MathematicalMethodUtil {
             throw new IllegalStateException("Please specify a method.");
         }
 
-        boolean validReturnType = false;
-        Type genericReturnType = method.getGenericReturnType();
-        boolean isGenericArray = GenericArrayType.class.isAssignableFrom(genericReturnType.getClass());
-        boolean isTypeVariable = TypeVariable.class.isAssignableFrom(genericReturnType.getClass());
+        boolean valid = false;
 
-        if (isGenericArray || isTypeVariable) {
-           if (isGenericArray) {
-               GenericArrayType genericArrayType = (GenericArrayType) genericReturnType;
-               validReturnType = genericArrayType.getGenericComponentType() == Number.class;
-           }
+        // There should not be any declared type parameters.
+        if (method.getTypeParameters().length == 0) {
+            Type genericReturnType = method.getGenericReturnType();
+            // Only generic or geneic return types are allowed.
+            boolean isGenericArray = GenericArrayType.class.isAssignableFrom(genericReturnType.getClass());
+            boolean isTypeVariable = TypeVariable.class.isAssignableFrom(genericReturnType.getClass());
 
-           if (isTypeVariable) {
-               TypeVariable typeVariable = (TypeVariable) genericReturnType;
-               if (typeVariable.getBounds().length == 1) {
-                   validReturnType = typeVariable.getBounds()[0] == Number.class;
-               }
-           }
+            if (isGenericArray || isTypeVariable) {
+                if (isGenericArray) {
+                    GenericArrayType genericArrayType = (GenericArrayType) genericReturnType;
+                    TypeVariable typeVariable = (TypeVariable) genericArrayType.getGenericComponentType();
+
+                    if (typeVariable.getBounds().length == 1) {
+                        valid = typeVariable.getBounds()[0] == Number.class;
+                    }
+                }
+
+                if (isTypeVariable) {
+                    TypeVariable typeVariable = (TypeVariable) genericReturnType;
+
+                    if (typeVariable.getBounds().length == 1) {
+                        valid = typeVariable.getBounds()[0] == Number.class;
+                    }
+                }
+            }
         }
 
-        if (!validReturnType) {
-            throw new IllegalStateException(String.format("The return type of %s%s is not valid.\n" +
-                    "It should be: T or T[] with <T extends %s>",
+        if (!valid) {
+            throw new IllegalStateException(String.format("The return type of %s.%s is not valid.\n" +
+                            "It should be: T or T[] with <T extends %s>",
                     method.getDeclaringClass().getSimpleName(),
                     method.getName(),
                     Number.class.getSimpleName()));
@@ -87,21 +103,75 @@ public class MathematicalMethodUtil {
 
     }
 
+    /**
+     * Only methods with the following signature are valid:
+     */
+    public static void checkArguments(Method method) {
+        if (method == null) {
+            throw new IllegalStateException("Please specify a method.");
+        }
 
+        boolean valid = false;
+        // There should be at least one parameter.
+        int parameterCount = method.getParameterCount();
+        if (parameterCount > 0) {
+            Type[] genericParameterTypes = method.getGenericParameterTypes();
+            valid = true;
+            for (int i = 0; i < parameterCount - 1; i++) {
+                Type genericParameterType = genericParameterTypes[i];
+                valid = TypeVariable.class.isAssignableFrom(genericParameterType.getClass());
+                if (!valid) {
+                    break;
+                }
+            }
 
-    public static String getSignatureFromMethod(Method method) {
-        int modifiers = method.getModifiers();
+            if (valid) {
+                Type genericParameterType = genericParameterTypes[parameterCount - 1];
+                valid = GenericArrayType.class.isAssignableFrom(genericParameterType.getClass()) ||
+                        TypeVariable.class.isAssignableFrom(genericParameterType.getClass());
+            }
+        }
 
-        StringBuilder signature = new StringBuilder("");
-        signature.append(Modifier.isPublic(modifiers) ? "public " : "");
-        signature.append(Modifier.isProtected(modifiers) ? "protected " : "");
-        signature.append(Modifier.isPrivate(modifiers) ? "private " : "");
-        signature.append(Modifier.isAbstract(modifiers) ? "abstract " : "");
-        signature.append(Modifier.isStatic(modifiers) ? "static " : "");
-        signature.append(method.getReturnType().getSimpleName() + " ");
-        signature.append(method.getDeclaringClass().getSimpleName() + "." + method.getName());
-        signature.append("(" + Stream.of(method.getParameterTypes()).map(Class::getSimpleName).collect(Collectors.joining(", ")) + ")");
+        if (!valid) {
+            throw new IllegalStateException(String.format("The argument types of %s.%s are not valid.\n" +
+                            "It should be: T or T[] with <T extends %s>",
+                    method.getDeclaringClass().getSimpleName(),
+                    method.getName(),
+                    Number.class.getSimpleName()));
+        }
+    }
 
-        return signature.toString();
+    public static String getMathematicalMethodSignature(MathematicalMethod mathematicalMethod) {
+        if (mathematicalMethod == null) {
+            throw new IllegalStateException("Please specify a mathematical method.");
+        }
+
+        return getMathematicalMethodGenericReturnTypeAsString(mathematicalMethod) + " " +
+                mathematicalMethod.getName() + "(" +
+                getMathematicalMethodGenericParameterTypesAsString(mathematicalMethod) + ")";
+    }
+
+    private static String getMathematicalMethodGenericReturnTypeAsString(MathematicalMethod mathematicalMethod) {
+        Type genericReturnType = mathematicalMethod.getMethod().getGenericReturnType();
+
+        if (GenericArrayType.class.isAssignableFrom(genericReturnType.getClass())) {
+            return ((GenericArrayType) genericReturnType).getTypeName();
+        }
+
+        return ((TypeVariable) genericReturnType).getName();
+
+    }
+
+    private static String getMathematicalMethodGenericParameterTypesAsString(MathematicalMethod mathematicalMethod) {
+        Type[] genericParameterTypes = mathematicalMethod.getMethod().getGenericParameterTypes();
+
+        return Stream.of(mathematicalMethod.getMethod().getGenericParameterTypes()).map(genericParameterType -> {
+            if (GenericArrayType.class.isAssignableFrom(genericParameterType.getClass())) {
+                return ((GenericArrayType) genericParameterType).getTypeName();
+            }
+
+            return ((TypeVariable) genericParameterType).getName();
+        }).collect(Collectors.joining(", "));
+
     }
 }

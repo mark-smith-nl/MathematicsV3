@@ -70,7 +70,7 @@ class MathematicalMethodUtilTest {
         Method method = clazz.getDeclaredMethod("four", new Class<?>[]{BigDecimal.class});
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> MathematicalMethodUtil.checkReturnType(method));
 
-        assertEquals("The return type of AbstractExampleRecursiveFunctionContainerfour is not valid.\n" +
+        assertEquals("The return type of AbstractExampleRecursiveFunctionContainer.four is not valid.\n" +
                 "It should be: T or T[] with <T extends Number>", exception.getMessage());
     }
 

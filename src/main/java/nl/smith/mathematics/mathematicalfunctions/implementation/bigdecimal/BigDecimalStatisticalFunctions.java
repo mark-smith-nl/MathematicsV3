@@ -61,4 +61,8 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 		return sum.getValue().divide(new BigDecimal(numbers.length), Scale.get(), RoundingMode.get());
 	}
 
+	@Override
+	public BigDecimal[] square(BigDecimal... numbers) {
+		return new BigDecimal[0];
+	}
 }

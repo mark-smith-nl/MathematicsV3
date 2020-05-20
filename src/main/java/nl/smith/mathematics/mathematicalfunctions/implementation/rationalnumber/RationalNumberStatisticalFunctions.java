@@ -59,4 +59,8 @@ public class RationalNumberStatisticalFunctions extends StatisticalFunctions<Rat
 		return sum.getValue().divide(numbers.length);
 	}
 
+	@Override
+	public RationalNumber[] square(RationalNumber... numbers) {
+		return new RationalNumber[0];
+	}
 }
