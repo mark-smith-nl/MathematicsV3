@@ -74,7 +74,7 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
                 .filter(m -> Modifier.isAbstract(m.getModifiers()))
                 .filter(m -> m.getAnnotation(MathematicalFunction.class) != null)
                 .map(MathematicalMethod::new)
-                .collect(Collectors.toMap(MathematicalMethod::getName, mm -> mm));
+                .collect(Collectors.toMap(MathematicalMethod::getSignature, mm -> mm));
     }
 
     public Class<N> getNumberType() {

@@ -146,8 +146,7 @@ public class MathematicalMethodUtil {
             throw new IllegalStateException("Please specify a mathematical method.");
         }
 
-        return getMathematicalMethodGenericReturnTypeAsString(mathematicalMethod) + " " +
-                mathematicalMethod.getName() + "(" +
+        return  mathematicalMethod.getName() + "(" +
                 getMathematicalMethodGenericParameterTypesAsString(mathematicalMethod) + ")";
     }
 
