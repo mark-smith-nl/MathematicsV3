@@ -60,6 +60,11 @@ public class RationalNumberStatisticalFunctions extends StatisticalFunctions<Rat
 	}
 
 	@Override
+	public RationalNumber keyNumber(RationalNumber number, RationalNumber... numbers) {
+		return null;
+	}
+
+	@Override
 	public RationalNumber[] square(RationalNumber... numbers) {
 		return new RationalNumber[0];
 	}

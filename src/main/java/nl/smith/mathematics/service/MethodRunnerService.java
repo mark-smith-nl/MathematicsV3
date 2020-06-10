@@ -1,6 +1,6 @@
 package nl.smith.mathematics.service;
 
-import nl.smith.mathematics.mathematicalfunctions.MathematicalMethod;
+import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class MethodRunnerService {
   /** The selected number type to work with */
   private Class<? extends Number> numberType;
 
-  private final Map<Class<? extends Number>, Map<String, MathematicalMethod>> mathematicalMethodsByNumberTypeAndSignature = new HashMap<>();
+  private final Map<Class<? extends Number>, Set<MathematicalFunctionMethodMapping>> mathematicalMethodsByNumberType = new HashMap<>();
 
   public MethodRunnerService(@NotEmpty Set<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> recursiveFunctionContainers) {
     LOGGER.info("Retrieved {} recursive function containers with duplicates.", recursiveFunctionContainers.size());
@@ -34,9 +34,10 @@ public class MethodRunnerService {
     LOGGER.info("Retrieved {} recursive function containers without duplicates.", recursiveFunctionContainers.size());
 
     this.recursiveFunctionContainers = Collections.unmodifiableSet(recursiveFunctionContainers);
+    this.recursiveFunctionContainers.forEach(c -> c.getMathematicalFunctionMethodMappings().forEach(mf -> LOGGER.info("{} signature:\n\t{}", c.getClass().getCanonicalName(), mf.getSignature())));
 
     functionContainersByNumberType = Collections.unmodifiableMap(recursiveFunctionContainers.stream()
-      .collect(Collectors.groupingBy(container -> container.getNumberType())));
+      .collect(Collectors.groupingBy(c -> c.getNumberType())));
 
     numberTypes = Collections.unmodifiableSet(functionContainersByNumberType.keySet());
 
@@ -44,9 +45,9 @@ public class MethodRunnerService {
 
     LOGGER.info("\nSpecified number types: {}\nUsed number type: {}\n", numberTypes.stream().map(c -> c.getSimpleName()).sorted().collect(Collectors.joining(", ")), numberType == null ? "Number type not defined": numberType.getSimpleName());
 
-    buildMathematicalMethodsByNumberTypeAndSignature();
+    buildMathematicalMethodsByNumberType();
 
-    recursiveFunctionContainers.forEach(f -> f.getMathematicalFunctions().forEach((k, v) -> LOGGER.info("\n{}\n", k)));
+    recursiveFunctionContainers.forEach(c -> c.getMathematicalFunctionMethodMappings().forEach(mf -> LOGGER.info("\n{}\n", mf.getSignature())));
   }
 
   // Since all function containers are recursive and thus have siblings, duplicate containers have to be removed.
@@ -61,13 +62,27 @@ public class MethodRunnerService {
     recursiveFunctionContainers.removeAll(duplicateRecursiveFunctionContainersClasses.values());
   }
 
-  private void buildMathematicalMethodsByNumberTypeAndSignature() {
+  private void buildMathematicalMethodsByNumberType() {
     numberTypes.forEach(numberType -> {
-      Map<String, MathematicalMethod> mathematicalMethodsMap = new HashMap<>();
-      mathematicalMethodsByNumberTypeAndSignature.put(numberType, mathematicalMethodsMap);
+      Set<MathematicalFunctionMethodMapping> mathematicalFunctionMethodMappings = new HashSet<>();
+      List<MathematicalFunctionMethodMapping> duplicateMathematicalFunctionMethodMappings = new ArrayList<>();
+      mathematicalMethodsByNumberType.put(numberType, mathematicalFunctionMethodMappings);
 
       List<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> functionContainers = functionContainersByNumberType.get(numberType);
-      functionContainers.forEach(functionContainer -> mathematicalMethodsMap.putAll(functionContainer.getMathematicalFunctions()));
+
+      functionContainers.forEach(c -> c.getMathematicalFunctionMethodMappings().forEach(mf -> {if(!mathematicalFunctionMethodMappings.add(mf)) {
+        duplicateMathematicalFunctionMethodMappings.add(mf);
+      }}));
+
+      if (duplicateMathematicalFunctionMethodMappings.isEmpty()) {
+        return;
+      }
+
+      String error = duplicateMathematicalFunctionMethodMappings.stream()
+              .map(mf -> mf.getMethod().getDeclaringClass().getCanonicalName() + mf.getMethod().getName() + "--->" + mf.getSignature())
+              .collect(Collectors.joining("\n"));
+
+      throw new IllegalStateException("Duplicate mathematical method references found in multiple classes.\n" + error);
     });
   }
 
@@ -83,7 +98,6 @@ public class MethodRunnerService {
     setNumberType((Class<? extends Number>) Class.forName(numberType));
   }
 
-
   public void setNumberType(Class<? extends Number> numberType) {
     this.numberType = numberType;
   }
@@ -96,5 +110,11 @@ public class MethodRunnerService {
     return recursiveFunctionContainers;
   }
 
+  public <N extends Number> void invokeMathematicalMethod(@NotEmpty String mathematicalMethodName, N arguments) {
+
+    List<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> recursiveFunctionContainers = this.functionContainersByNumberType.get(numberType);
+    recursiveFunctionContainers.forEach(c -> c.getMathematicalFunctionMethodMappings());
+
+  }
 }
 

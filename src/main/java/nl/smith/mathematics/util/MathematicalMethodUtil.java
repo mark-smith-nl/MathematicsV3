@@ -1,6 +1,6 @@
 package nl.smith.mathematics.util;
 
-import nl.smith.mathematics.mathematicalfunctions.MathematicalMethod;
+import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 
 import java.lang.reflect.*;
@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Utility to check if @{@link nl.smith.mathematics.mathematicalfunctions.MathematicalMethod} annotated methods use and return the correct value types.
+ * Utility to check if @{@link MathematicalFunctionMethodMapping} annotated methods use and return the correct value types.
  */
 public class MathematicalMethodUtil {
 
@@ -141,17 +141,17 @@ public class MathematicalMethodUtil {
         }
     }
 
-    public static String getMathematicalMethodSignature(MathematicalMethod mathematicalMethod) {
-        if (mathematicalMethod == null) {
+    public static String getMathematicalMethodSignature(MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping) {
+        if (mathematicalFunctionMethodMapping == null) {
             throw new IllegalStateException("Please specify a mathematical method.");
         }
 
-        return  mathematicalMethod.getName() + "(" +
-                getMathematicalMethodGenericParameterTypesAsString(mathematicalMethod) + ")";
+        return  mathematicalFunctionMethodMapping.getName() + "(" +
+                getMathematicalMethodGenericParameterTypesAsString(mathematicalFunctionMethodMapping) + ")";
     }
 
-    private static String getMathematicalMethodGenericReturnTypeAsString(MathematicalMethod mathematicalMethod) {
-        Type genericReturnType = mathematicalMethod.getMethod().getGenericReturnType();
+    private static String getMathematicalMethodGenericReturnTypeAsString(MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping) {
+        Type genericReturnType = mathematicalFunctionMethodMapping.getMethod().getGenericReturnType();
 
         if (GenericArrayType.class.isAssignableFrom(genericReturnType.getClass())) {
             return ((GenericArrayType) genericReturnType).getTypeName();
@@ -161,10 +161,10 @@ public class MathematicalMethodUtil {
 
     }
 
-    private static String getMathematicalMethodGenericParameterTypesAsString(MathematicalMethod mathematicalMethod) {
-        Type[] genericParameterTypes = mathematicalMethod.getMethod().getGenericParameterTypes();
+    private static String getMathematicalMethodGenericParameterTypesAsString(MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping) {
+        Type[] genericParameterTypes = mathematicalFunctionMethodMapping.getMethod().getGenericParameterTypes();
 
-        return Stream.of(mathematicalMethod.getMethod().getGenericParameterTypes()).map(genericParameterType -> {
+        return Stream.of(mathematicalFunctionMethodMapping.getMethod().getGenericParameterTypes()).map(genericParameterType -> {
             if (GenericArrayType.class.isAssignableFrom(genericParameterType.getClass())) {
                 return ((GenericArrayType) genericParameterType).getTypeName();
             }

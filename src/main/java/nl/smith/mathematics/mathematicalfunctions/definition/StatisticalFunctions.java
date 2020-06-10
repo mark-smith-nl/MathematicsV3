@@ -33,6 +33,11 @@ public abstract class StatisticalFunctions<N extends Number, S extends Statistic
     //TODO Test omplementations
     public abstract N deviation(N ... numbers);
 
+    @MathematicalFunction(description = "Standard deviation of a set of numbers")
+    //TODO Add constraint
+    //TODO Test omplementations
+    public abstract N keyNumber(N number, N ... numbers);
+
     @MathematicalFunction(description = "SQUARE")
     //TODO Add constraint
     //TODO Test omplementations

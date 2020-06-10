@@ -3,13 +3,14 @@ package nl.smith.mathematics.mathematicalfunctions;
 import nl.smith.mathematics.annotation.MathematicalFunction;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 import static nl.smith.mathematics.util.MathematicalMethodUtil.*;
 
 /**
  * Class to store information about a method annotated with @{@link nl.smith.mathematics.annotation.MathematicalFunction}
  */
-public class MathematicalMethod {
+public class MathematicalFunctionMethodMapping {
 
     private final String name;
 
@@ -19,7 +20,11 @@ public class MathematicalMethod {
 
     private final String signature;
 
-    public MathematicalMethod(Method method) {
+    private final int parameterCount;
+
+    private final boolean isVararg;
+
+    public MathematicalFunctionMethodMapping(Method method) {
         checkGenericsEnclosingClass(method.getDeclaringClass());
         checkModifiers(method);
         checkReturnType(method);
@@ -30,6 +35,8 @@ public class MathematicalMethod {
         name = "".equals(annotation.name()) ? method.getName() : annotation.name();
         description = annotation.description();
         this.method = method;
+        parameterCount = method.getParameterCount();
+        isVararg = method.isVarArgs();
         signature = getMathematicalMethodSignature(this);
     }
 
@@ -45,8 +52,30 @@ public class MathematicalMethod {
         return method;
     }
 
+    public int getParameterCount() {
+        return parameterCount;
+    }
+
+    public boolean isVararg() {
+        return isVararg;
+    }
+
     public String getSignature() {
         return signature;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MathematicalFunctionMethodMapping that = (MathematicalFunctionMethodMapping) o;
+        return parameterCount == that.parameterCount &&
+                isVararg == that.isVararg &&
+                name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, parameterCount, isVararg);
+    }
 }

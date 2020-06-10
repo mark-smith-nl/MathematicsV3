@@ -1,6 +1,5 @@
 package nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument;
 
-import nl.smith.mathematics.validator.IsBetweenValidator;
 import nl.smith.mathematics.validator.IsLargerThanValidator;
 
 import javax.validation.Constraint;
@@ -15,7 +14,7 @@ public @interface IsLargerThan {
 
   String message() default "{isLargerThan.not.true}";
 
-  /** Value is not an int since it is not bound to the domain {@link java.lang.Integer#MIN_VALUE} {@link java.lang.Integer#MAX_VALUE} */
+  /** Value is not an int, double or other numeric primitive datatype since it is not bound to the domain {@link java.lang.Integer#MIN_VALUE} {@link java.lang.Integer#MAX_VALUE} */
   String value();
 
   boolean includingBoundary() default false;

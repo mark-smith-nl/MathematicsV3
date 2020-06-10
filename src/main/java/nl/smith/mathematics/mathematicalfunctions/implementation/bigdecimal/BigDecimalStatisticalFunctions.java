@@ -62,6 +62,11 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 	}
 
 	@Override
+	public BigDecimal keyNumber(BigDecimal number, BigDecimal... numbers) {
+		return null;
+	}
+
+	@Override
 	public BigDecimal[] square(BigDecimal... numbers) {
 		return new BigDecimal[0];
 	}
