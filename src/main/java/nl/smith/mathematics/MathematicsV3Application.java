@@ -10,6 +10,7 @@ import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigD
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberGoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
+import nl.smith.mathematics.service.MethodRunnerService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,6 +36,14 @@ import static nl.smith.mathematics.configuration.constant.RationalNumberOutputTy
 public class MathematicsV3Application {
 
     public static void main(String[] args) {
+        ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);
+
+        MethodRunnerService methodRunnerService = context.getBean(MethodRunnerService.class);
+        methodRunnerService.setNumberType(RationalNumber.class);
+        System.out.println(methodRunnerService.invokeMathematicalMethod("faculty", BigDecimal.valueOf(10)).getClass());
+    }
+
+    public static void main2(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);
 
         System.out.println();

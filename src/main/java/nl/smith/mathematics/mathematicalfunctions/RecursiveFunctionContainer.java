@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotEmpty;
-import java.io.File;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -77,7 +76,7 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
                 .filter(m -> Modifier.isPublic(m.getModifiers()))
                 .filter(m -> Modifier.isAbstract(m.getModifiers()))
                 .filter(m -> m.getAnnotation(MathematicalFunction.class) != null)
-                .map(MathematicalFunctionMethodMapping::new)
+                .map(m -> new MathematicalFunctionMethodMapping(this, m))
                 .collect(Collectors.groupingBy(MathematicalFunctionMethodMapping::getSignature));
 
         Map<String, List<MathematicalFunctionMethodMapping>> duplicateMathematicalMethods = mathematicalMethodsBySignature.entrySet().stream().filter(e -> e.getValue().size() > 1).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -87,7 +86,7 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
             mathematicalMethodsBySignature.values().forEach(e -> e.forEach(mathematicalFunctionMethodMappings::add));
             return mathematicalFunctionMethodMappings;
         }
-        System.out.println(String.format("Link %s", new File("/Users/msmith/prive/java/code/MathematicsV3/src/main/java/nl/smith/mathematics/mathematicalfunctions/RecursiveFunctionContainer.java")));
+
         List<String> errors = new ArrayList<>();
         errors.add(String.format("\nMultiple colliding mathematical method references found in enclosing class %s.", mathematicalFunctionContainerClass.getCanonicalName()));
         errors.add(String.format("Please specify the correct mathematical function name in the annotation (%s.name) annotating your methods.", MathematicalFunction.class.getCanonicalName()));
@@ -121,7 +120,7 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
         MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping = mathematicaFunctionsWithIdenticalNames.stream().filter(mf -> !mf.isVararg()).filter(mf -> mf.getParameterCount() == parameterCount).findFirst().orElse(null);
 
         if (mathematicalFunctionMethodMapping == null) {
-            mathematicaFunctionsWithIdenticalNames.stream().filter(mf -> mf.isVararg()).filter(mf -> mf.getParameterCount() <= parameterCount).findFirst().orElse(null);
+            mathematicalFunctionMethodMapping = mathematicaFunctionsWithIdenticalNames.stream().filter(mf -> mf.isVararg()).filter(mf -> mf.getParameterCount() <= parameterCount).findFirst().orElse(null);
         }
 
         return Optional.ofNullable(mathematicalFunctionMethodMapping);

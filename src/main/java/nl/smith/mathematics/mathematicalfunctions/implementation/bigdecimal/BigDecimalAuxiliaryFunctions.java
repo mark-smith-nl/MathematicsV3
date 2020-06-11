@@ -27,7 +27,13 @@ public class BigDecimalAuxiliaryFunctions extends AuxiliaryFunctions<BigDecimal,
 	 */
 	@Override
 	public BigDecimal faculty(BigDecimal number) {
-		 return number.compareTo(ONE) < 1 ? ONE : number.multiply(number.subtract(ONE));
+		BigDecimal faculty = ONE;
+		BigDecimal i = BigDecimal.valueOf(2);
+		while (i.compareTo(number) < 1) {
+			faculty = faculty.multiply(i);
+			i = i.add(ONE);
+		}
+		 return faculty;
 	}
 
 }

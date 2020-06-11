@@ -23,7 +23,13 @@ public class RationalNumberAuxiliaryFunctions extends AuxiliaryFunctions<Rationa
 
     @Override
     public RationalNumber faculty(RationalNumber number) {
-        return number.compareTo(ONE) < 1 ? ONE : number.multiply(faculty(number.subtract(ONE)));
+        RationalNumber faculty = ONE;
+        RationalNumber i = new RationalNumber(2);
+        while (i.compareTo(number) < 1) {
+            faculty = faculty.multiply(i);
+            i = i.add(ONE);
+        }
+        return faculty;
     }
 
 }

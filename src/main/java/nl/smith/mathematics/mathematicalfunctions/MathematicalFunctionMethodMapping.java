@@ -12,6 +12,8 @@ import static nl.smith.mathematics.util.MathematicalMethodUtil.*;
  */
 public class MathematicalFunctionMethodMapping {
 
+    private final RecursiveFunctionContainer container;
+
     private final String name;
 
     private final String description;
@@ -24,7 +26,9 @@ public class MathematicalFunctionMethodMapping {
 
     private final boolean isVararg;
 
-    public MathematicalFunctionMethodMapping(Method method) {
+    public MathematicalFunctionMethodMapping(RecursiveFunctionContainer container, Method method) {
+        this.container = container;
+
         checkGenericsEnclosingClass(method.getDeclaringClass());
         checkModifiers(method);
         checkReturnType(method);
@@ -38,6 +42,10 @@ public class MathematicalFunctionMethodMapping {
         parameterCount = method.getParameterCount();
         isVararg = method.isVarArgs();
         signature = getMathematicalMethodSignature(this);
+    }
+
+    public RecursiveFunctionContainer getContainer() {
+        return container;
     }
 
     public String getName() {
