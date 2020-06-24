@@ -118,6 +118,10 @@ public class MethodRunnerService {
     public <N extends Number> N invokeMathematicalMethod(@NotEmpty String mathematicalMethodName, N... arguments) {
         MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping = getMathematicalFunctionMethodMapping(functionContainersByNumberType.get(numberType), mathematicalMethodName, arguments.length);
 
+        if (arguments[0].getClass() != numberType) {
+            throw new IllegalStateException(String.format("Wrong type of number class.\nThe number type of the %s instance is set to %s while the arguments for the method invocation are of type %s.\nBoth types should be equal.",
+                    this.getClass().getCanonicalName(), numberType.getCanonicalName(), arguments[0].getClass().getCanonicalName()));
+        }
         Method method = mathematicalFunctionMethodMapping.getMethod();
         RecursiveFunctionContainer container = mathematicalFunctionMethodMapping.getContainer();
         Object[] invocationParameters = getInvocationParameters(mathematicalFunctionMethodMapping, arguments);

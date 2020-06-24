@@ -2,7 +2,7 @@ package nl.smith.mathematics.util;
 
 /** Utility class to wrap an object.
  * The wrapper can be used in lambda expressions in which variables should be declared final.
- * Wrap the value in the as final declared ObjectWrapper and use setValue() to set its value.
+ * Wrap the value in the, as final declared, ObjectWrapper and use setValue() to set its value.
  */
 public class ObjectWrapper <T> {
 
@@ -28,7 +28,7 @@ public class ObjectWrapper <T> {
         public NotNullObjectWrapper(T value, Class<T> clazz) {
             super(value);
             if (clazz == null) {
-                throw new IllegalStateException(String.format("Please specify a class for constructing an instance of %s."));
+                throw new IllegalStateException(String.format("Please specify a class for constructing an instance of %s.", this.getClass().getCanonicalName()));
             }
             this.clazz = clazz;
         }
