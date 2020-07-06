@@ -15,7 +15,9 @@ public @interface IsSmallerThan {
 
   String message() default "{isSmallerThan.not.true}";
 
-  /** Value is not an int since it is not bound to the domain {@link java.lang.Integer#MIN_VALUE} {@link java.lang.Integer#MAX_VALUE} */
+  /** Value is not of type {@link Number}
+   * The value is a string which can be converted to a value of type {@link Number}
+   * The actual type is that of the annotated parameter.*/
   String value();
 
   boolean includingBoundary() default false;
