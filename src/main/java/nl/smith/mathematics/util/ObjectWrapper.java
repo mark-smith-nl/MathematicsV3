@@ -25,17 +25,21 @@ public class ObjectWrapper <T> {
 
         private final Class<T> clazz;
 
-        public NotNullObjectWrapper(T value, Class<T> clazz) {
+        private final String errorMessage;
+
+        public NotNullObjectWrapper(T value, Class<T> clazz, String errorMessage) {
             super(value);
             if (clazz == null) {
                 throw new IllegalStateException(String.format("Please specify a class for constructing an instance of %s.", this.getClass().getCanonicalName()));
             }
             this.clazz = clazz;
+
+            this.errorMessage = errorMessage ;
         }
 
         public T getValue() {
             if (super.getValue() == null) {
-                throw new IllegalStateException(String.format("Value is null. Expected a %s not null value.", clazz.getCanonicalName()));
+                throw new IllegalStateException(String.format("%s\nValue is null.\nExpected a %s not null value.", errorMessage, clazz.getCanonicalName()));
             }
 
             return super.getValue();

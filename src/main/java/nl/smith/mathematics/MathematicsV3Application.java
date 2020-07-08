@@ -37,10 +37,10 @@ public class MathematicsV3Application {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);
-
+// test
         MethodRunnerService methodRunnerService = context.getBean(MethodRunnerService.class);
-        methodRunnerService.setNumberType(RationalNumber.class);
-        System.out.println(methodRunnerService.invokeMathematicalMethod("faculty", BigDecimal.valueOf(10)).getClass());
+        methodRunnerService.setNumberType(BigDecimal.class);
+        System.out.println(methodRunnerService.invokeMathematicalMethod("faculty4", new BigDecimal("2.5")));
     }
 
     public static void main2(String[] args) {

@@ -25,6 +25,8 @@ public class ConsistentTextAnnotationParametersValidator implements ConstraintVa
 
         }
 
+        // Null values result in a postive validation.
+        // Null values should be checked with @NotNull constraint annotations placed on the method parameters.
         if (value[0] != null && value[1] != null) {
             if (!(value[0] instanceof String)) {
                 throw new IllegalStateException("First method argument should be of type String.");
@@ -40,13 +42,19 @@ public class ConsistentTextAnnotationParametersValidator implements ConstraintVa
                 throw new IllegalStateException("Second method argument should be of type int[] or Coleection<Integer>.");
             }
 
-            isValid = text.equals(getValidText(text));
+            if (!text.isEmpty() && position.length > 0) {
+                isValid = text.equals(getValidText(text));
 
-            if (isValid) {
-                isValid = position.length == Arrays.stream(position).boxed()
-                        .filter(p -> p >= 0)
-                        .filter(p -> p < text.length())
-                        .collect(Collectors.toSet()).size();
+                if (isValid) {
+                    isValid = position.length > 0;
+                }
+
+                if (isValid) {
+                    isValid = position.length == Arrays.stream(position).boxed()
+                            .filter(p -> p >= 0)
+                            .filter(p -> p < text.length())
+                            .collect(Collectors.toSet()).size();
+                }
             }
         }
 
@@ -56,7 +64,7 @@ public class ConsistentTextAnnotationParametersValidator implements ConstraintVa
     /**
      * Protected for test purposes.
      * Removes empty lines and lines with trailing white space characters.
-     * Is the text ends with a newline the result also ends with a newline.
+     * If the text ends with a newline the result also ends with a newline.
      */
     protected static String getValidText(String text) {
         return Arrays.asList(text.split("\n")).stream()
