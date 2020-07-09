@@ -1,7 +1,6 @@
 package nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument;
 
-import nl.smith.mathematics.validator.IsNaturalNumberValidator;
-import nl.smith.mathematics.validator.IsNumberValidator;
+import nl.smith.mathematics.validator.mathematicalfunctionargument.IsNumberValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

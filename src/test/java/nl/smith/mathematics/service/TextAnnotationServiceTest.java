@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +48,7 @@ class TextAnnotationServiceTest {
         assertTrue(actualConstraintViolations.containsAll(expectedConstraintViolations),
                 "Constraint path/messages violations thrown are not identical to that which are specified:\nActual constraint path/messages violations thrown:\n" +
                         actualConstraintViolations.stream().map(acv -> acv.getKey() + "(" + acv.getValue() + ")").collect(Collectors.joining("\n")) +
-                        "\n\nSpecified constraint path/messages violations:\n" +
+                        "\n\nexpected constraint path/messages violations:\n" +
                         expectedConstraintViolations.stream().map(ecv -> ecv.getKey() + "(" + ecv.getValue() + ")").collect(Collectors.joining("\n")));
     }
 
@@ -64,14 +65,8 @@ class TextAnnotationServiceTest {
         assertTrue(actualConstraintViolations.containsAll(expectedConstraintViolations),
                 "Constraint path/messages violations thrown are not identical to that which are specified:\nActual constraint path/messages violations thrown:\n" +
                         actualConstraintViolations.stream().map(acv -> acv.getKey() + "(" + acv.getValue() + ")").collect(Collectors.joining("\n")) +
-                        "\n\nSpecified constraint path/messages violations:\n" +
+                        "\n\nExpected constraint path/messages violations:\n" +
                         expectedConstraintViolations.stream().map(ecv -> ecv.getKey() + "(" + ecv.getValue() + ")").collect(Collectors.joining("\n")));
-    }
-
-    @Test
-    public void doIt() {
-        System.out.println(textAnnotationService.getAnnotatedText("Mijn\tnaam\t is\t  Mark\t   Smith.\nIk\twoon\tin\tGeldermalsen.\nIk\tben\tChemicus", 4, 5, 6, 30, 31, 52, 53));
-        //                                                         01234 56789 0123 4567890 12345678901 2345"
     }
 
     private static Stream<Arguments> invalidTextAndPositionsUsingIntegerArray() {
@@ -96,23 +91,21 @@ class TextAnnotationServiceTest {
                 ))),
                 // String with trailing white space character in line
                 Arguments.of("Hello world3\t", new int[]{4}, new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
+                        new Pair<>("getAnnotatedText.lines[0].<list element>", "The provided text is not a line. It contains a new line character and/or contains trailing white space characters.")
                 ))),
                 // String with trailing multiple newlines
                 Arguments.of("Hello world4\n\n", new int[]{4}, new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
+                        new Pair<>("getAnnotatedText.lines[1].<list element>", "Line element can not be blank."),
+                        new Pair<>("getAnnotatedText.lines[2].<list element>", "Line element can not be blank.")
                 ))),
                 // Valid String, negative position to be annotated
-                Arguments.of("Hello world5", new int[]{-1}, new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
+                Arguments.of("Hello world5", new int[]{-5, -10}, new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.positions[].<iterable element>", "Negative positions (-5) are not allowed."),
+                        new Pair<>("getAnnotatedText.positions[].<iterable element>", "Negative positions (-10) are not allowed.")
                 ))),
                 // Valid String, position to be annotated out of range
-                Arguments.of("Hello world6", new int[]{100}, new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
-                ))),
-                // Valid String, duplicate valid positions
-                Arguments.of("Hello world7", new int[]{10, 10}, new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
+                Arguments.of("Hello world6", new int[]{100, 33}, new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.positions", "Supplied positions contain values(33, 100) larger than or equal to the size of the provided string (12).")
                 )))
         );
     }
@@ -139,23 +132,21 @@ class TextAnnotationServiceTest {
                 ))),
                 // String with trailing white space character in line
                 Arguments.of("Hello world3\t", new HashSet(Arrays.asList(4)), new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
+                        new Pair<>("getAnnotatedText.lines[0].<list element>", "The provided text is not a line. It contains a new line character and/or contains trailing white space characters.")
                 ))),
                 // String with trailing multiple newlines
                 Arguments.of("Hello world4\n\n", new HashSet(Arrays.asList(4)), new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
+                        new Pair<>("getAnnotatedText.lines[1].<list element>", "Line element can not be blank."),
+                        new Pair<>("getAnnotatedText.lines[2].<list element>", "Line element can not be blank.")
                 ))),
                 // Valid String, negative position to be annotated
-                Arguments.of("Hello world5", new HashSet(Arrays.asList(-1)), new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
+                Arguments.of("Hello world5", new HashSet(Arrays.asList(-5, -10)), new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.positions[].<iterable element>", "Negative positions (-5) are not allowed."),
+                        new Pair<>("getAnnotatedText.positions[].<iterable element>", "Negative positions (-10) are not allowed.")
                 ))),
                 // Valid String, position to be annotated out of range
-                Arguments.of("Hello world6", new HashSet(Arrays.asList(100)), new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
-                ))),
-                // Valid String, duplicate valid positions
-                Arguments.of("Hello world7", new HashSet(Arrays.asList(100, 100)), new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.<cross-parameter>", "The provided text string contains empty lines or none empty lines with trailing white space characters or positions are not well defined.")
+                Arguments.of("Hello world6", new HashSet(Arrays.asList(100, 33)), new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.positions", "Supplied positions contain values(33, 100) larger than or equal to the size of the provided string (12).")
                 )))
         );
     }

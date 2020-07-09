@@ -1,6 +1,6 @@
 package nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument;
 
-import nl.smith.mathematics.validator.IsBetweenValidator;
+import nl.smith.mathematics.validator.mathematicalfunctionargument.IsBetweenValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

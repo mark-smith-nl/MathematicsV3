@@ -1,6 +1,6 @@
 package nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument;
 
-import nl.smith.mathematics.validator.IsLargerThanValidator;
+import nl.smith.mathematics.validator.mathematicalfunctionargument.IsLargerThanValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

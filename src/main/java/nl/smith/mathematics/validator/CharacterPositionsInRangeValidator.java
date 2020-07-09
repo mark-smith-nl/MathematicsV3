@@ -1,19 +1,20 @@
 package nl.smith.mathematics.validator;
 
-import nl.smith.mathematics.annotation.constraint.ConsistentTextAnnotationParameters;
+import nl.smith.mathematics.annotation.constraint.CharacterPositionsInRange;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraintvalidation.SupportedValidationTarget;
 import javax.validation.constraintvalidation.ValidationTarget;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @SupportedValidationTarget(ValidationTarget.PARAMETERS)
-public class ConsistentTextAnnotationParametersValidator implements ConstraintValidator<ConsistentTextAnnotationParameters, Object[]> {
+public class CharacterPositionsInRangeValidator implements ConstraintValidator<CharacterPositionsInRange, Object[]> {
 
     @Override
     public boolean isValid(Object[] value, ConstraintValidatorContext constraintValidatorContext) {
@@ -29,31 +30,35 @@ public class ConsistentTextAnnotationParametersValidator implements ConstraintVa
         // Null values should be checked with @NotNull constraint annotations placed on the method parameters.
         if (value[0] != null && value[1] != null) {
             if (!(value[0] instanceof String)) {
+                // An exception is thrown. A constraint violation is not raised. Inproper use of annotations.
                 throw new IllegalStateException("First method argument should be of type String.");
             }
             String text = (String) value[0];
 
-            int[] position;
+            Collection<Integer> positions;
             if ((value[1] instanceof int[])) {
-                position = (int[]) value[1];
-            } else if (value[1] instanceof Collection<?>) {
-                position = ((Collection<Integer>) value[1]).stream().mapToInt(Number::intValue).toArray();
+                positions = IntStream.of((int[]) value[1]).boxed().collect(Collectors.toList());
+            } else if (value[1] instanceof Set<?>) {
+                positions = (Set<Integer>) value[1];
             } else {
-                throw new IllegalStateException("Second method argument should be of type int[] or Coleection<Integer>.");
+                // An exception is thrown. A constraint violation is not raised. Inproper use of annotations.
+                throw new IllegalStateException("Second method argument should be of type int[] or Set<Integer>.");
             }
 
-            if (!text.isEmpty() && position.length > 0) {
-                isValid = text.equals(getValidText(text));
+            if (!positions.isEmpty() && positions.stream().filter(p -> p < 0).collect(Collectors.toSet()).isEmpty()) {
+                // Positions are specified that are not negative.
+                Set<Integer> outOfRangePositions = positions.stream()
+                        .filter(p -> p >= text.length()) // Remove positions that are out of range.
+                        .collect(Collectors.toSet());
 
-                if (isValid) {
-                    isValid = position.length > 0;
-                }
-
-                if (isValid) {
-                    isValid = position.length == Arrays.stream(position).boxed()
-                            .filter(p -> p >= 0)
-                            .filter(p -> p < text.length())
-                            .collect(Collectors.toSet()).size();
+                if (!outOfRangePositions.isEmpty()) {
+                    isValid = false;
+                    constraintValidatorContext.disableDefaultConstraintViolation();
+                    constraintValidatorContext.buildConstraintViolationWithTemplate(
+                            String.format("Supplied positions contain values(%s) larger than or equal to the size of the provided string (%d).",
+                                    positions.stream().sorted().map(String::valueOf).collect(Collectors.joining(", ")),
+                                    text.length()))
+                            .addParameterNode(1).addConstraintViolation();
                 }
             }
         }

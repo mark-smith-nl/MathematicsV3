@@ -40,7 +40,7 @@ public class MathematicsV3Application {
 // test
         MethodRunnerService methodRunnerService = context.getBean(MethodRunnerService.class);
         methodRunnerService.setNumberType(BigDecimal.class);
-        System.out.println(methodRunnerService.invokeMathematicalMethod("faculty4", new BigDecimal("2.5")));
+        System.out.println(methodRunnerService.invokeMathematicalMethod("faculty", new BigDecimal("5")));
     }
 
     public static void main2(String[] args) {

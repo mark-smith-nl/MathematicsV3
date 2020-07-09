@@ -1,4 +1,4 @@
-package nl.smith.mathematics.validator;
+package nl.smith.mathematics.validator.mathematicalfunctionargument;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNumber;
 import nl.smith.mathematics.util.NumberUtil;

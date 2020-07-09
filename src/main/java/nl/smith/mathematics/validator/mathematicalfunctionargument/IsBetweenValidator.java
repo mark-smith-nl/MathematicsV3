@@ -1,4 +1,4 @@
-package nl.smith.mathematics.validator;
+package nl.smith.mathematics.validator.mathematicalfunctionargument;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsBetween;
 import nl.smith.mathematics.util.NumberUtil;

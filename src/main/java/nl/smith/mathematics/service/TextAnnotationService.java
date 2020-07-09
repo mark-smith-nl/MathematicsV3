@@ -1,20 +1,17 @@
 package nl.smith.mathematics.service;
 
-import javafx.util.Pair;
-import nl.smith.mathematics.annotation.constraint.ConsistentTextAnnotationParameters;
-import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigDecimalAuxiliaryFunctions;
+import nl.smith.mathematics.annotation.constraint.CharacterPositionsInRange;
+import nl.smith.mathematics.annotation.constraint.LineNoTrailingBlanks;
 import nl.smith.mathematics.util.ObjectWrapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Array;
-import java.sql.SQLSyntaxErrorException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service to annotate texts.
@@ -39,22 +36,40 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
         return new TextAnnotationService();
     }
 
-    @ConsistentTextAnnotationParameters()
-    public String getAnnotatedText(@NotEmpty(message = "Please specify a string to annotate.") String text,
+    public String getAnnotatedText(@NotBlank(message = "Please specify a string to annotate.") String text,
                                    @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") int... position) {
-        return sibling.getAnnotatedText(text, Arrays.stream(position).boxed().filter(p -> p >= 0).collect(Collectors.toSet()));
+        return sibling.getAnnotatedText(text, Arrays.stream(position).boxed().collect(Collectors.toSet()));
     }
 
-    @ConsistentTextAnnotationParameters()
-    public String getAnnotatedText(@NotEmpty(message = "Please specify a string to annotate.") String text,
-                                   @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<Integer> positions) {
-        List<String> lines = Arrays.asList(text.split("\n")).stream().map(l -> l.concat(String.valueOf(endOfLineCharacter))).collect(Collectors.toList());
+    @CharacterPositionsInRange()
+    public String getAnnotatedText(@NotBlank(message = "Please specify a string to annotate.") String text,
+                                   @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<@NotNull @Min(value = 0, message = "Negative positions (${validatedValue}) are not allowed.") Integer> positions) {
+        return sibling.getAnnotatedText(split(text), positions);
+    }
 
+    /** Protected for validation purposes. Note: private functions will never be validated when called by a sibling service. */
+    protected String getAnnotatedText(List<@NotBlank(message = "Line element can not be blank.") @LineNoTrailingBlanks String> lines, Set<Integer> positions) {
         List<String> annotatedTextLines = new ArrayList<>();
-
+        List<String> linesWithEndOfLineCharacter = lines.stream().map(l -> l.concat(String.valueOf(endOfLineCharacter))).collect(Collectors.toList());
         ObjectWrapper<Integer> offSet = new ObjectWrapper<>(0);
-        lines.forEach(line -> processLine(line, positions, offSet, annotatedTextLines));
+        linesWithEndOfLineCharacter.forEach(line -> processLine(line, positions, offSet, annotatedTextLines));
         return String.join("\n", annotatedTextLines);
+    }
+
+    private static List<String> split(String text) {
+        List<StringBuilder> lines = new ArrayList<>();
+        StringBuilder line = new StringBuilder();
+        lines.add(line);
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '\n') {
+                line = new StringBuilder();
+                lines.add(line);
+            } else {
+                line.append(text.charAt(i));
+            }
+        }
+
+        return lines.stream().map(StringBuilder::toString).collect(Collectors.toList());
     }
 
     private void processLine(String line, Set<Integer> positions, ObjectWrapper<Integer> offSet, List<String> annotatedTextLines) {
