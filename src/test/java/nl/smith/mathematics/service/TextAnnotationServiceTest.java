@@ -91,12 +91,11 @@ class TextAnnotationServiceTest {
                 ))),
                 // String with trailing white space character in line
                 Arguments.of("Hello world3\t", new int[]{4}, new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.lines[0].<list element>", "The provided text is not a line. It contains a new line character and/or contains trailing white space characters.")
+                        new Pair<>("getAnnotatedText.text", "The provided text has lines with trailing whitespace characters at position(s): 12.")
                 ))),
                 // String with trailing multiple newlines
                 Arguments.of("Hello world4\n\n", new int[]{4}, new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.lines[1].<list element>", "Line element can not be blank."),
-                        new Pair<>("getAnnotatedText.lines[2].<list element>", "Line element can not be blank.")
+                        new Pair<>("getAnnotatedText.text", "The provided text has lines with trailing whitespace characters at position(s): 12.")
                 ))),
                 // Valid String, negative position to be annotated
                 Arguments.of("Hello world5", new int[]{-5, -10}, new HashSet<>(Arrays.asList(
@@ -132,12 +131,11 @@ class TextAnnotationServiceTest {
                 ))),
                 // String with trailing white space character in line
                 Arguments.of("Hello world3\t", new HashSet(Arrays.asList(4)), new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.lines[0].<list element>", "The provided text is not a line. It contains a new line character and/or contains trailing white space characters.")
+                        new Pair<>("getAnnotatedText.text", "The provided text has lines with trailing whitespace characters at position(s): 12.")
                 ))),
                 // String with trailing multiple newlines
                 Arguments.of("Hello world4\n\n", new HashSet(Arrays.asList(4)), new HashSet<>(Arrays.asList(
-                        new Pair<>("getAnnotatedText.lines[1].<list element>", "Line element can not be blank."),
-                        new Pair<>("getAnnotatedText.lines[2].<list element>", "Line element can not be blank.")
+                        new Pair<>("getAnnotatedText.text", "The provided text has lines with trailing whitespace characters at position(s): 12.")
                 ))),
                 // Valid String, negative position to be annotated
                 Arguments.of("Hello world5", new HashSet(Arrays.asList(-5, -10)), new HashSet<>(Arrays.asList(

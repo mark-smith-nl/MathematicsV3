@@ -1,15 +1,13 @@
 package nl.smith.mathematics.service;
 
 import nl.smith.mathematics.annotation.constraint.CharacterPositionsInRange;
-import nl.smith.mathematics.annotation.constraint.LineNoTrailingBlanks;
+import nl.smith.mathematics.annotation.constraint.LineWithoutTrailingBlanks;
+import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
 import nl.smith.mathematics.util.ObjectWrapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,6 +23,10 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
 
     private boolean showEndOfLine = true;
 
+    private static final String ANSI_RESET = "\u001B[0m";
+
+    private static final String ANSI_RED = "\u001B[31m";
+
     @Override
     public String getSiblingBeanName() {
         return SIBLING_BEAN_NAME;
@@ -36,19 +38,22 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
         return new TextAnnotationService();
     }
 
-    public String getAnnotatedText(@NotBlank(message = "Please specify a string to annotate.") String text,
+    public String getAnnotatedText(@NotBlank(message = "Please specify a string to annotate.") @TextWithoutLinesWithTrailingBlanks String text,
                                    @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") int... position) {
         return sibling.getAnnotatedText(text, Arrays.stream(position).boxed().collect(Collectors.toSet()));
     }
 
     @CharacterPositionsInRange()
-    public String getAnnotatedText(@NotBlank(message = "Please specify a string to annotate.") String text,
+    public String getAnnotatedText(@NotBlank(message = "Please specify a string to annotate.") @TextWithoutLinesWithTrailingBlanks String text,
                                    @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<@NotNull @Min(value = 0, message = "Negative positions (${validatedValue}) are not allowed.") Integer> positions) {
         return sibling.getAnnotatedText(split(text), positions);
     }
 
-    /** Protected for validation purposes. Note: private functions will never be validated when called by a sibling service. */
-    protected String getAnnotatedText(List<@NotBlank(message = "Line element can not be blank.") @LineNoTrailingBlanks String> lines, Set<Integer> positions) {
+    //TODO Create tests
+    /**
+     * Protected for validation purposes. Note: private functions will never be validated when called by a sibling service.
+     */
+    protected String getAnnotatedText(List<@NotBlank(message = "Line element can not be blank.") @LineWithoutTrailingBlanks String> lines, Set<Integer> positions) {
         List<String> annotatedTextLines = new ArrayList<>();
         List<String> linesWithEndOfLineCharacter = lines.stream().map(l -> l.concat(String.valueOf(endOfLineCharacter))).collect(Collectors.toList());
         ObjectWrapper<Integer> offSet = new ObjectWrapper<>(0);
@@ -69,6 +74,10 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
             }
         }
 
+        if (lines.get(lines.size() - 1).length() == 0) {
+            lines.remove(lines.size() - 1);
+        }
+
         return lines.stream().map(StringBuilder::toString).collect(Collectors.toList());
     }
 
@@ -82,22 +91,27 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
 
-            if (relevantPositions.contains(i)) {
+            if (relevantPositions.contains(i) && c != '\t') {
                 annotationLine.append('^');
-                annotationLine.append(c == '\t' ? c : "");
+                annotationLine.append("");
                 lineIsAnnotated = true;
             } else {
                 annotationLine.append(c == '\t' ? c : ' ');
             }
         }
 
-
         annotatedTextLines.add(showEndOfLine ? line : line.substring(0, line.length() - 1));
         if (lineIsAnnotated) {
-            annotatedTextLines.add(annotationLine.toString());
+            annotatedTextLines.add(ANSI_RED + annotationLine.toString() + ANSI_RESET);
         }
 
         offSet.setValue(offSet.getValue() + line.length());
     }
 
+    public static void main(String[] args) {
+
+        String input = "\tgd\ngjghgjgjgj\nfffff";
+
+        System.out.println(input.matches("(.*\\S\n)*(.*\\S\n?)"));
+    }
 }
