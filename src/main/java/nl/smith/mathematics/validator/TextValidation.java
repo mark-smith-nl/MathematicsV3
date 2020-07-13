@@ -38,8 +38,8 @@ public class TextValidation {
 
             boolean isValid = true;
 
-            if (s != null && !s.isEmpty()) {
-                isValid = !(s.contains("\n"));
+            if (s != null && !s.isEmpty() && !s.matches("\\s*") ) {
+                isValid = !(s.matches("\n"));
 
                 if (isValid) {
                     isValid = !s.matches(".*\\s");

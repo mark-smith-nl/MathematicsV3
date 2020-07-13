@@ -11,10 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,6 +65,25 @@ class TextAnnotationServiceTest {
                         "\n\nExpected constraint path/messages violations:\n" +
                         expectedConstraintViolations.stream().map(ecv -> ecv.getKey() + "(" + ecv.getValue() + ")").collect(Collectors.joining("\n")));
     }
+
+    @DisplayName("Testing getAnnotatedText(List<String>, Set<Integer>) with invalid arguments")
+    @ParameterizedTest
+    @MethodSource("invalidTextAndPositionsUsingStringListAndIntegerSet")
+    public void getAnnotatedText_usingStringListAndIntegerSet_preconditionsNotMet(List<String> lines, Set<Integer> positions, Set<Pair<String, String>> expectedConstraintViolations) {
+        ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> textAnnotationService.getAnnotatedText(lines, positions));
+
+        Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
+        assertEquals(expectedConstraintViolations.size(), constraintViolations.size(), "The number of constraint violations actually thrown is not equal to the specified number.");
+
+        Set<Pair<String, String>> actualConstraintViolations = constraintViolations.stream().map(cv -> new Pair<>(cv.getPropertyPath().toString(), cv.getMessage())).collect(Collectors.toSet());
+        assertTrue(actualConstraintViolations.containsAll(expectedConstraintViolations),
+                "Constraint path/messages violations thrown are not identical to that which are specified:\nActual constraint path/messages violations thrown:\n" +
+                        actualConstraintViolations.stream().map(acv -> acv.getKey() + "(" + acv.getValue() + ")").collect(Collectors.joining("\n")) +
+                        "\n\nExpected constraint path/messages violations:\n" +
+                        expectedConstraintViolations.stream().map(ecv -> ecv.getKey() + "(" + ecv.getValue() + ")").collect(Collectors.joining("\n")));
+
+    }
+
 
     private static Stream<Arguments> invalidTextAndPositionsUsingIntegerArray() {
         return Stream.of(
@@ -149,4 +165,48 @@ class TextAnnotationServiceTest {
         );
     }
 
+    private static Stream<Arguments> invalidTextAndPositionsUsingStringListAndIntegerSet() {
+        return Stream.of(
+                // Null text String and null position array
+                Arguments.of(null, null, new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.lines", "Please specify one or more lines."),
+                        new Pair<>("getAnnotatedText.positions", "Please specify one or more positions at which the text should be annotated.")
+                ))),
+                // Empty text string and null position array
+                Arguments.of(Arrays.asList(""), null, new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.lines[0].<list element>", "Line element can not be blank."),
+                        new Pair<>("getAnnotatedText.positions", "Please specify one or more positions at which the text should be annotated.")
+                ))),
+                //Null position array
+                Arguments.of(Arrays.asList("Hello world1", ""), null, new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.lines[1].<list element>", "Line element can not be blank."),
+                        new Pair<>("getAnnotatedText.positions", "Please specify one or more positions at which the text should be annotated.")
+                ))),
+                // Empty position set
+                Arguments.of(Arrays.asList("Hello world2"), new HashSet<Integer>(), new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.positions", "Please specify one or more positions at which the text should be annotated.")
+                ))),
+                // String with trailing white space character in line
+                Arguments.of(Arrays.asList("Hello world3", "Hello world3\t", "Hello world3 ", "Hello world3\n"), new HashSet(Arrays.asList(4)), new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.lines[1].<list element>", "The provided text is not a line. It contains a new line character and/or contains trailing white space characters."),
+                        new Pair<>("getAnnotatedText.lines[2].<list element>", "The provided text is not a line. It contains a new line character and/or contains trailing white space characters."),
+                        new Pair<>("getAnnotatedText.lines[3].<list element>", "The provided text is not a line. It contains a new line character and/or contains trailing white space characters.")
+                ))),
+                // String with trailing multiple newlines
+                Arguments.of(Arrays.asList("Hello world4", "\t\n", "Hello world4\t\n"), new HashSet(Arrays.asList(4)), new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.lines[1].<list element>", "Line element can not be blank."),
+                        new Pair<>("getAnnotatedText.lines[2].<list element>", "The provided text is not a line. It contains a new line character and/or contains trailing white space characters.")
+                )))
+                //TODO repair test
+                /*// Valid String, negative position to be annotated
+                Arguments.of(Arrays.asList("Hello world5"), new HashSet(Arrays.asList(-5, -10)), new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.positions[].<iterable element>", "Negative positions (-5) are not allowed."),
+                        new Pair<>("getAnnotatedText.positions[].<iterable element>", "Negative positions (-10) are not allowed.")
+                )))
+                // Valid String, position to be annotated out of range
+                Arguments.of("Hello world6", new HashSet(Arrays.asList(100, 33)), new HashSet<>(Arrays.asList(
+                        new Pair<>("getAnnotatedText.positions", "Supplied positions contain values(33, 100) larger than or equal to the size of the provided string (12).")
+                )))*/
+        );
+    }
 }

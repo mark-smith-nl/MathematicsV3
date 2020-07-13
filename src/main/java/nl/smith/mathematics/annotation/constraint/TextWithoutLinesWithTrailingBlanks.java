@@ -15,14 +15,16 @@ public @interface TextWithoutLinesWithTrailingBlanks {
 
   String message() default "";
 
+  @SuppressWarnings("unused")
   Class<?>[] groups() default {};
 
+  @SuppressWarnings("unused")
   Class<? extends Payload>[] payload() default {};
 
   @Target(ElementType.PARAMETER)
   @Retention(RetentionPolicy.RUNTIME)
   @Documented
-  public @interface List {
+  @interface List {
     TextWithoutLinesWithTrailingBlanks[] value();
   }
 }

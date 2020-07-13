@@ -14,8 +14,10 @@ public @interface CharacterPositionsInRange {
 
   String message() default "";
 
+  @SuppressWarnings("unused")
   Class<?>[] groups() default {};
 
+  @SuppressWarnings("unused")
   Class<? extends Payload>[] payload() default {};
 
 }

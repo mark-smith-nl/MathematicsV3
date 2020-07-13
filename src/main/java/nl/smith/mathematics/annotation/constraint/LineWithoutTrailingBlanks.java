@@ -15,14 +15,16 @@ public @interface LineWithoutTrailingBlanks {
 
   String message() default "The provided text is not a line. It contains a new line character and/or contains trailing white space characters.";
 
+  @SuppressWarnings("unused")
   Class<?>[] groups() default {};
 
+  @SuppressWarnings("unused")
   Class<? extends Payload>[] payload() default {};
 
   @Target(ElementType.PARAMETER)
   @Retention(RetentionPolicy.RUNTIME)
   @Documented
-  public @interface List {
+  @interface List {
     LineWithoutTrailingBlanks[] value();
   }
 }

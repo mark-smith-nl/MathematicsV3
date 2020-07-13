@@ -13,6 +13,14 @@ import java.util.stream.Collectors;
 
 /**
  * Service to annotate texts.
+ * <pre>
+ * Invalid texts:
+ *  - Null
+ *  - Empty
+ *  - Containing empty lines
+ *  - Containing lines ending with white spaces
+ * </pre>
+ * Invalid texts:
  */
 @Service
 public class TextAnnotationService extends RecursiveValidatedService<TextAnnotationService> {
@@ -53,7 +61,9 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
     /**
      * Protected for validation purposes. Note: private functions will never be validated when called by a sibling service.
      */
-    protected String getAnnotatedText(List<@NotBlank(message = "Line element can not be blank.") @LineWithoutTrailingBlanks String> lines, Set<Integer> positions) {
+    //TODO Annotate with @CharacterPositionsInRange() and repair test
+    protected String getAnnotatedText(@NotEmpty(message = "Please specify one or more lines.")  List<@NotBlank(message = "Line element can not be blank.") @LineWithoutTrailingBlanks String> lines,
+                                      @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<Integer> positions) {
         List<String> annotatedTextLines = new ArrayList<>();
         List<String> linesWithEndOfLineCharacter = lines.stream().map(l -> l.concat(String.valueOf(endOfLineCharacter))).collect(Collectors.toList());
         ObjectWrapper<Integer> offSet = new ObjectWrapper<>(0);
@@ -108,10 +118,4 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
         offSet.setValue(offSet.getValue() + line.length());
     }
 
-    public static void main(String[] args) {
-
-        String input = "\tgd\ngjghgjgjgj\nfffff";
-
-        System.out.println(input.matches("(.*\\S\n)*(.*\\S\n?)"));
-    }
 }
