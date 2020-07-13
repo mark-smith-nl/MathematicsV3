@@ -84,7 +84,7 @@ public class UserSystemContext {
     private static Map<String, Object> getMap() {
         Map<String, Object> map = threadLocal.get();
         if (map == null) {
-            map = new HashMap<String, Object>();
+            map = new HashMap<>();
             threadLocal.set(map);
         }
 

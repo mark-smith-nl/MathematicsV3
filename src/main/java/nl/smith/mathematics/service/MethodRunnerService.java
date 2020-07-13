@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Validated
 public class MethodRunnerService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
+    private static final  Logger LOGGER = LoggerFactory.getLogger(MethodRunnerService.class);
 
     private final Set<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> recursiveFunctionContainers;
 
