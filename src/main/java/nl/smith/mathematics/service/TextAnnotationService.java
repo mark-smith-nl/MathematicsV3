@@ -1,7 +1,7 @@
 package nl.smith.mathematics.service;
 
 import nl.smith.mathematics.annotation.constraint.CharacterPositionsInRange;
-import nl.smith.mathematics.annotation.constraint.LineWithoutTrailingBlanks;
+import nl.smith.mathematics.annotation.constraint.LineWithoutNewLinesAndTrailingBlanks;
 import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
 import nl.smith.mathematics.util.ObjectWrapper;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +27,7 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
 
     private final static String SIBLING_BEAN_NAME = "TEXTANNOTATIONSERVICE";
 
-    private char endOfLineCharacter = (char) 182;
+    private static char endOfLineCharacter = (char) 182;
 
     private boolean showEndOfLine = true;
 
@@ -53,7 +53,7 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
 
     @CharacterPositionsInRange()
     public String getAnnotatedText(@NotBlank(message = "Please specify a string to annotate.") @TextWithoutLinesWithTrailingBlanks String text,
-                                   @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<@NotNull @Min(value = 0, message = "Negative positions (${validatedValue}) are not allowed.") Integer> positions) {
+                                    @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<@NotNull @Min(value = 0, message = "Negative positions (${validatedValue}) are not allowed.") Integer> positions) {
         return sibling.getAnnotatedText(split(text), positions);
     }
 
@@ -61,13 +61,12 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
     /**
      * Protected for validation purposes. Note: private functions will never be validated when called by a sibling service.
      */
-    //TODO Annotate with @CharacterPositionsInRange() and repair test
-    protected String getAnnotatedText(@NotEmpty(message = "Please specify one or more lines.")  List<@NotBlank(message = "Line element can not be blank.") @LineWithoutTrailingBlanks String> lines,
-                                      @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<Integer> positions) {
+    @CharacterPositionsInRange()
+    protected String getAnnotatedText(@NotEmpty(message = "Please specify one or more lines.")  List<@NotBlank(message = "Line element can not be blank.") @LineWithoutNewLinesAndTrailingBlanks String> lines,
+                                      @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<@NotNull @Min(value = 0, message = "Negative positions (${validatedValue}) are not allowed.")Integer> positions) {
         List<String> annotatedTextLines = new ArrayList<>();
-        List<String> linesWithEndOfLineCharacter = lines.stream().map(l -> l.concat(String.valueOf(endOfLineCharacter))).collect(Collectors.toList());
         ObjectWrapper<Integer> offSet = new ObjectWrapper<>(0);
-        linesWithEndOfLineCharacter.forEach(line -> processLine(line, positions, offSet, annotatedTextLines));
+        lines.forEach(line -> processLine(line, positions, offSet, annotatedTextLines));
         return String.join("\n", annotatedTextLines);
     }
 
@@ -88,7 +87,7 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
             lines.remove(lines.size() - 1);
         }
 
-        return lines.stream().map(StringBuilder::toString).collect(Collectors.toList());
+        return lines.stream().map(StringBuilder::toString).map(l -> l + endOfLineCharacter).collect(Collectors.toList());
     }
 
     private void processLine(String line, Set<Integer> positions, ObjectWrapper<Integer> offSet, List<String> annotatedTextLines) {

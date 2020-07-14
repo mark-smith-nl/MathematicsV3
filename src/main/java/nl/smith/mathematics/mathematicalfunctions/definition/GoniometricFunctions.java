@@ -7,7 +7,7 @@ import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import javax.validation.constraints.NotNull;
 
 @MathematicalFunctionContainer(name = "Goniometric methods", description = "Goniometric methods (sin, cos, tan, arcsin, arccos, arctan")
-public abstract class GoniometricFunctions<N extends Number, S extends GoniometricFunctions> extends RecursiveFunctionContainer<N, S> {
+public abstract class GoniometricFunctions<N extends Number, S extends GoniometricFunctions<?, ?>> extends RecursiveFunctionContainer<N, S> {
 
   public GoniometricFunctions() {
     super(GoniometricFunctions.class);

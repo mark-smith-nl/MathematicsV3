@@ -13,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
  * @param <S>
  */
 @Validated
-public abstract class RecursiveValidatedService<S> {
+public abstract class RecursiveValidatedService<S extends RecursiveValidatedService> {
 
   protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -31,4 +31,5 @@ public abstract class RecursiveValidatedService<S> {
   }
 
   public abstract S makeSibling();
+
 }

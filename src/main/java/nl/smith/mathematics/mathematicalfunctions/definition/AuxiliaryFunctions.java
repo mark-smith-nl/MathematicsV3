@@ -9,7 +9,7 @@ import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import javax.validation.constraints.NotNull;
 
 @MathematicalFunctionContainer(name = "Auxiliary fumctions", description = "Auxiliary methods: faculty")
-public abstract class AuxiliaryFunctions<N extends Number, S extends AuxiliaryFunctions> extends RecursiveFunctionContainer<N, S> {
+public abstract class AuxiliaryFunctions<N extends Number, S extends AuxiliaryFunctions<?, ?>> extends RecursiveFunctionContainer<N, S> {
 
     public AuxiliaryFunctions() {
         super(AuxiliaryFunctions.class);

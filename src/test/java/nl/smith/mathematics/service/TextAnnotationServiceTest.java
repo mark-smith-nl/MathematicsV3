@@ -81,7 +81,6 @@ class TextAnnotationServiceTest {
                         actualConstraintViolations.stream().map(acv -> acv.getKey() + "(" + acv.getValue() + ")").collect(Collectors.joining("\n")) +
                         "\n\nExpected constraint path/messages violations:\n" +
                         expectedConstraintViolations.stream().map(ecv -> ecv.getKey() + "(" + ecv.getValue() + ")").collect(Collectors.joining("\n")));
-
     }
 
 
@@ -196,17 +195,17 @@ class TextAnnotationServiceTest {
                 Arguments.of(Arrays.asList("Hello world4", "\t\n", "Hello world4\t\n"), new HashSet(Arrays.asList(4)), new HashSet<>(Arrays.asList(
                         new Pair<>("getAnnotatedText.lines[1].<list element>", "Line element can not be blank."),
                         new Pair<>("getAnnotatedText.lines[2].<list element>", "The provided text is not a line. It contains a new line character and/or contains trailing white space characters.")
-                )))
-                //TODO repair test
-                /*// Valid String, negative position to be annotated
+                ))),
                 Arguments.of(Arrays.asList("Hello world5"), new HashSet(Arrays.asList(-5, -10)), new HashSet<>(Arrays.asList(
                         new Pair<>("getAnnotatedText.positions[].<iterable element>", "Negative positions (-5) are not allowed."),
                         new Pair<>("getAnnotatedText.positions[].<iterable element>", "Negative positions (-10) are not allowed.")
-                )))
+                ))),
                 // Valid String, position to be annotated out of range
-                Arguments.of("Hello world6", new HashSet(Arrays.asList(100, 33)), new HashSet<>(Arrays.asList(
+                Arguments.of(Arrays.asList("Hello world6"), new HashSet(Arrays.asList(100, 33)), new HashSet<>(Arrays.asList(
                         new Pair<>("getAnnotatedText.positions", "Supplied positions contain values(33, 100) larger than or equal to the size of the provided string (12).")
-                )))*/
+                )))
         );
     }
+
+    //TODO Make happycases
 }

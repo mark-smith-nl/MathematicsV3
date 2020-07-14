@@ -3,6 +3,7 @@ package nl.smith.mathematics.service;
 import javafx.util.Pair;
 import nl.smith.domain.RawExpression;
 import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
+import nl.smith.mathematics.exception.InValidExpressionStringException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,8 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         return new ExpressionDigestionService(textAnnotationService);
     }
 
-    public RawExpression digest(@NotBlank @TextWithoutLinesWithTrailingBlanks String text) {
+
+    public RawExpression digest(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks String text) {
         RawExpression rawExpression = new RawExpression();
         LinkedList<RawExpression> rawExpressionStack = new LinkedList<>();
         rawExpressionStack.push(rawExpression);
@@ -61,6 +63,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
                     rawExpression.addCharacter(c);
                     break;
                 case BEGIN_SIBLING:
+                    rawExpression.setEndsAt(i);
                     assertIsNotEmpty(rawExpression, text, i);
                     RawExpression previousRawExpression = rawExpressionStack.pop(); // Remove the previous sibling from the stack.
                     rawExpression = new RawExpression(i + 1); // Note: the expressions starts after START_SIBLING_CHARACTER.
@@ -77,12 +80,12 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
                     break;
                 case END_SUBEXPRESSION:
                     logger.debug("Ending subexpression at position {}.", i);
+                    rawExpression.setEndsAt(i);
                     assertIsNotEmptyAndProperlyClosed(openeningAggregationTokenStack, text, i, c);
-                    assert rawExpression != null;
                     assertIsNotEmpty(rawExpression, text, i);
 
                     openeningAggregationTokenStack.pop(); // Remove the opening token from the token stack.
-                    rawExpression.setEndsAt(i);
+
                     rawExpressionStack.pop(); // Remove the (sub) expression) from the stack.
 
                     rawExpression = rawExpressionStack.peek(); // Retrieve the parent expression from the stack.
@@ -135,45 +138,44 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
     }
 
     private void assertIsNotEmpty(RawExpression rawExpression, String text, int currentPosition) {
-        if (rawExpression.isEmpty()) {
-            Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartsAt(), currentPosition));
-            String message = String.format("Blank expression.%nDid you forget to specify the expression?%n%s",
-                    textAnnotationService.getAnnotatedText(text, positions));
-            throw new IllegalArgumentException(message);
+        if (rawExpression.isBlank()) {
+            //TODO fixme
+            Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartsAt(), currentPosition - 1));
+            String message = String.format("Blank expression from %d-%d.%nDid you forget to specify the expression?.", rawExpression.getStartsAt(), currentPosition - 1);
+            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
         }
     }
 
-    private void assertIsNotEmptyAndProperlyClosed(LinkedList<Pair<Character, Integer>> openingAggregationTokenStack, String text, int currentPosition, char currentCharacter) {
+    private void assertIsNotEmptyAndProperlyClosed(LinkedList<Pair<Character, Integer>> openingAggregationTokenStack, String text, int currentPosition, char closeToken) {
         Pair<Character, Integer> openingAggregationTokenPair = openingAggregationTokenStack.peek();
         char openingAggregationToken;
-        int openingAggregationTokenPosition;
         if (openingAggregationTokenPair == null) {
-            String message = String.format("Missing matching open token '%c' for '%c'.%nnDid you forget to begin the subexpression?%n%s",
-                    getMatchingOpenToken(currentCharacter),
-                    currentCharacter,
-                    textAnnotationService.getAnnotatedText(text, currentPosition));
-            throw new IllegalArgumentException(message);
+            String message = String.format("Missing matching open token '%c' for '%c' at position %d.%nDid you forget to begin the subexpression?",
+                    getMatchingOpenToken(closeToken),
+                    closeToken,
+                    currentPosition
+            );
+            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, currentPosition));
         } else {
             openingAggregationToken = openingAggregationTokenPair.getKey();
-            openingAggregationTokenPosition = openingAggregationTokenPair.getValue();
         }
 
-        if (getMatchingCloseToken(openingAggregationToken) != currentCharacter) {
-            String message = String.format("Wrong open token '%c' for closing token'%c'.%nYou should close the subexpression with '%c' instead of '%2$c'%n%s",
+        if (getMatchingCloseToken(openingAggregationToken) != closeToken) {
+            String message = String.format("Wrong open token '%c' for closing token '%c' at position %d.%nYou should close the subexpression with '%c' instead of '%2$c'.",
                     openingAggregationToken,
-                    currentCharacter,
-                    getMatchingCloseToken(openingAggregationToken),
-                    textAnnotationService.getAnnotatedText(text, openingAggregationTokenPosition, currentPosition));
-            throw new IllegalArgumentException(message);
+                    closeToken,
+                    currentPosition,
+                    getMatchingCloseToken(openingAggregationToken));
+            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, currentPosition));
         }
     }
 
     private void assertIsEmpty(LinkedList<Pair<Character, Integer>> openeningAggregationTokenStack, String text) {
         Set<Integer> positions = openeningAggregationTokenStack.stream().map(Pair::getValue).collect(Collectors.toSet());
+
         if (!positions.isEmpty()) {
-            String message = String.format("Encounted unmatched open tokens.%nDid you forget to close some subexpressions?%n%s",
-                    textAnnotationService.getAnnotatedText(text, positions));
-            throw new IllegalArgumentException(message);
+            String message = String.format("Encounted unmatched open tokens at positions %s.%nDid you forget to close some subexpressions?", positions.stream().sorted().map(p -> p.toString()).collect(Collectors.joining(", ")));
+            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
         }
     }
 

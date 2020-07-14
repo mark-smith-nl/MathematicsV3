@@ -7,11 +7,11 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = TextValidation.LineWithoutTrailingBlanksValidator.class)
-@Repeatable(LineWithoutTrailingBlanks.List.class)
+@Constraint(validatedBy = TextValidation.LineWithoutNewLinesAndTrailingBlanksValidator.class)
+@Repeatable(LineWithoutNewLinesAndTrailingBlanks.List.class)
 @Target({ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LineWithoutTrailingBlanks {
+public @interface LineWithoutNewLinesAndTrailingBlanks {
 
   String message() default "The provided text is not a line. It contains a new line character and/or contains trailing white space characters.";
 
@@ -25,6 +25,6 @@ public @interface LineWithoutTrailingBlanks {
   @Retention(RetentionPolicy.RUNTIME)
   @Documented
   @interface List {
-    LineWithoutTrailingBlanks[] value();
+    LineWithoutNewLinesAndTrailingBlanks[] value();
   }
 }

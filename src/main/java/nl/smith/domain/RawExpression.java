@@ -7,6 +7,7 @@ public class RawExpression {
 
     private final int startsAt;
 
+    /* Not including. */
     private int endsAt = -1;
 
     private final StringBuilder value;
@@ -52,7 +53,7 @@ public class RawExpression {
         subExpressions.add(rawExpression);
     }
 
-    public boolean isEmpty() {
+    public boolean isBlank() {
         return value.toString().matches("\\s*") && sibling == null && subExpressions.isEmpty();
     }
 

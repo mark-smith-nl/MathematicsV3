@@ -8,19 +8,19 @@ import javax.validation.ConstraintValidatorContext;
 
 public class IsBetweenValidator implements ConstraintValidator<IsBetween, Object> {
 
-    private String floor;
+    private String floorAsString;
 
     private boolean includingFloor;
 
-    private String ceiling;
+    private String ceilingAsString;
 
     private boolean includingCeiling;
 
     @Override
     public void initialize(IsBetween constraintAnnotation) {
-        this.floor = constraintAnnotation.floor();
+        this.floorAsString = constraintAnnotation.floor();
         this.includingFloor = constraintAnnotation.includingFloor();
-        this.ceiling = constraintAnnotation.ceiling();
+        this.ceilingAsString = constraintAnnotation.ceiling();
         this.includingCeiling = constraintAnnotation.includingCeiling();
     }
 
@@ -30,8 +30,8 @@ public class IsBetweenValidator implements ConstraintValidator<IsBetween, Object
 
         if (o != null) {
             if (NumberUtil.isNumber(o)) {
-                Number floor = NumberUtil.valueOf(this.floor, (Class<Number>) o.getClass());
-                Number ceiling = NumberUtil.valueOf(this.ceiling, (Class<Number>) o.getClass());
+                Number floor = NumberUtil.valueOf(this.floorAsString, (Class<Number>) o.getClass());
+                Number ceiling = NumberUtil.valueOf(this.ceilingAsString, (Class<Number>) o.getClass());
                 isValid = (includingFloor ? ((Comparable) o).compareTo(floor) >= 0 :  ((Comparable) o).compareTo(floor) > 0) &&
                 (includingCeiling ? ((Comparable) o).compareTo(ceiling) <= 0 :  ((Comparable) o).compareTo(ceiling) < 0);
             } else {

@@ -1,6 +1,6 @@
 package nl.smith.mathematics.validator;
 
-import nl.smith.mathematics.annotation.constraint.LineWithoutTrailingBlanks;
+import nl.smith.mathematics.annotation.constraint.LineWithoutNewLinesAndTrailingBlanks;
 import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
 
 import javax.validation.ConstraintValidator;
@@ -32,7 +32,7 @@ public class TextValidation {
         return positions;
     }
 
-    public static class LineWithoutTrailingBlanksValidator implements ConstraintValidator<LineWithoutTrailingBlanks, String> {
+    public static class LineWithoutNewLinesAndTrailingBlanksValidator implements ConstraintValidator<LineWithoutNewLinesAndTrailingBlanks, String> {
         @Override
         public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
 
@@ -42,7 +42,7 @@ public class TextValidation {
                 isValid = !(s.matches("\n"));
 
                 if (isValid) {
-                    isValid = !s.matches(".*\\s");
+                    isValid = !s.contains("\n") && !s.matches(".*\\s");
                 }
             }
 
@@ -65,7 +65,6 @@ public class TextValidation {
                 constraintValidatorContext.buildConstraintViolationWithTemplate(
                         String.format("The provided text has lines with trailing whitespace characters at position(s): %s.", positionsIllegalLineEndings.stream().map(String::valueOf).collect(Collectors.joining(", "))))
                         .addConstraintViolation();
-                System.out.println();
             }
             return isValid;
         }

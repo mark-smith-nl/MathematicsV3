@@ -18,8 +18,6 @@ import java.util.stream.Stream;
 
 public abstract class RecursiveFunctionContainer<N extends Number, S extends RecursiveFunctionContainer> extends RecursiveValidatedService<S> {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(RecursiveFunctionContainer.class);
-
     /** The annotation that describes the container. */
     protected final MathematicalFunctionContainer annotation;
 
@@ -35,7 +33,7 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
 
         mathematicalFunctionMethodMappings = getMathematicalFunctionMethodMappingsFromGenericSuperClass(mathematicalFunctionContainerClass);
 
-        LOGGER.info("Instantiated {}", this.getClass().getCanonicalName());
+        logger.info("Instantiated {}", this.getClass().getCanonicalName());
     }
 
     private MathematicalFunctionContainer getAnnotationFromGenericSuperClass(Class<? extends RecursiveFunctionContainer> mathematicalFunctionContainerClass) {

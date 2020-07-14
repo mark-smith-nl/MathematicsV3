@@ -1,12 +1,12 @@
 package nl.smith.mathematics.validator;
 
 import nl.smith.mathematics.annotation.constraint.CharacterPositionsInRange;
+import nl.smith.mathematics.util.ObjectWrapper;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraintvalidation.SupportedValidationTarget;
 import javax.validation.constraintvalidation.ValidationTarget;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -26,14 +26,20 @@ public class CharacterPositionsInRangeValidator implements ConstraintValidator<C
 
         }
 
-        // Null values result in a postive validation.
+        // Null values result in a positive validation.
         // Null values should be checked with @NotNull constraint annotations placed on the method parameters.
         if (value[0] != null && value[1] != null) {
-            if (!(value[0] instanceof String)) {
+            ObjectWrapper<Integer> maximumPosition = new ObjectWrapper<>(-1);
+
+            if (value[0] instanceof String) {
+                maximumPosition.setValue(((String) value[0]).length() - 1);
+            } else if (value[0] instanceof List && !((List<?>) value[0]).isEmpty() && ((List<?>) value[0]).get(0) instanceof String) {
+                List<String> lines = (List<String>) value[0];
+                lines.forEach(l -> maximumPosition.setValue(maximumPosition.getValue() + l.length()));
+            } else {
                 // An exception is thrown. A constraint violation is not raised. Inproper use of annotations.
-                throw new IllegalStateException("First method argument should be of type String.");
+                //throw new IllegalStateException("First method argument should be of type String.");
             }
-            String text = (String) value[0];
 
             Collection<Integer> positions;
             if ((value[1] instanceof int[])) {
@@ -45,10 +51,9 @@ public class CharacterPositionsInRangeValidator implements ConstraintValidator<C
                 throw new IllegalStateException("Second method argument should be of type int[] or Set<Integer>.");
             }
 
-            if (!positions.isEmpty() && positions.stream().filter(p -> p < 0).collect(Collectors.toSet()).isEmpty()) {
-                // Positions are specified that are not negative.
+            if (!positions.isEmpty()) {
                 Set<Integer> outOfRangePositions = positions.stream()
-                        .filter(p -> p >= text.length()) // Remove positions that are out of range.
+                        .filter(p -> p > maximumPosition.getValue()) // Remove positions that are out of range.
                         .collect(Collectors.toSet());
 
                 if (!outOfRangePositions.isEmpty()) {
@@ -57,25 +62,13 @@ public class CharacterPositionsInRangeValidator implements ConstraintValidator<C
                     constraintValidatorContext.buildConstraintViolationWithTemplate(
                             String.format("Supplied positions contain values(%s) larger than or equal to the size of the provided string (%d).",
                                     positions.stream().sorted().map(String::valueOf).collect(Collectors.joining(", ")),
-                                    text.length()))
+                                    maximumPosition.getValue() + 1))
                             .addParameterNode(1).addConstraintViolation();
                 }
             }
         }
 
         return isValid;
-    }
-
-    /**
-     * Protected for test purposes.
-     * Removes empty lines and lines with trailing white space characters.
-     * If the text ends with a newline the result also ends with a newline.
-     */
-    protected static String getValidText(String text) {
-        return Arrays.asList(text.split("\n")).stream()
-                .filter(s -> !s.isEmpty()) // Empty lines are not allowed
-                .filter(s -> !(s.matches(".*\\s"))) // Lines with trailing white space characters are not allowed
-                .collect(Collectors.joining("\n")) + (text.endsWith("\n") ? "\n" : "");
     }
 
 }
