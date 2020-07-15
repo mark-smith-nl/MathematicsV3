@@ -5,40 +5,47 @@ import java.util.Set;
 
 public class RawExpression {
 
-    private final int startsAt;
+    private boolean initialized;
+
+    /* Including. */
+    private int startPosition;
 
     /* Not including. */
-    private int endsAt = -1;
+    private int endPosition;
 
-    private final StringBuilder value;
+    private final StringBuilder value = new StringBuilder();
 
     private RawExpression sibling;
 
     private final Set<RawExpression> subExpressions = new HashSet<>();
 
-    public RawExpression() {
-        this(0);
+    public boolean isInitialized() {
+        return initialized;
     }
 
-    public RawExpression(int startsAt) {
-        this.startsAt = startsAt;
-        value = new StringBuilder();
+    public void initializeAtPosition(int startPosition) {
+        initialized = true;
+        this.startPosition = startPosition;
     }
 
     public void addCharacter(char c) {
         value.append(c);
     }
 
-    public int getStartsAt() {
-        return startsAt;
+    public int getStartPosition() {
+        return startPosition;
     }
 
-    public int getEndsAt() {
-        return endsAt;
+    public int getEndsPosition() {
+        return endPosition;
     }
 
-    public void setEndsAt(int endsAt) {
-        this.endsAt = endsAt;
+    public void setEndPosition(int endPosition) {
+        this.endPosition = endPosition;
+    }
+
+    public Set<RawExpression> getSubExpressions() {
+        return subExpressions;
     }
 
     public RawExpression getSibling() {

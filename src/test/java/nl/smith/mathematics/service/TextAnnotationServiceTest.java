@@ -11,7 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,7 +37,7 @@ class TextAnnotationServiceTest {
 
     @DisplayName("Testing getAnnotatedText(String, int[]) with invalid arguments")
     @ParameterizedTest
-    @MethodSource("invalidTextAndPositionsUsingIntegerArray")
+    @MethodSource("getAnnotatedText_usingIntegerArray_preconditionsNotMet")
     public void getAnnotatedText_usingIntegerArray_preconditionsNotMet(String text, int[] position, Set<Pair<String, String>> expectedConstraintViolations) {
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> textAnnotationService.getAnnotatedText(text, position));
 
@@ -51,7 +54,7 @@ class TextAnnotationServiceTest {
 
     @DisplayName("Testing getAnnotatedText(String, Set<Integer>) with invalid arguments")
     @ParameterizedTest
-    @MethodSource("invalidTextAndPositionsUsingIntegerSet")
+    @MethodSource("getAnnotatedText_usingIntegerSet_preconditionsNotMet")
     public void getAnnotatedText_usingIntegerSet_preconditionsNotMet(String text, Set<Integer> positions, Set<Pair<String, String>> expectedConstraintViolations) {
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> textAnnotationService.getAnnotatedText(text, positions));
 
@@ -68,7 +71,7 @@ class TextAnnotationServiceTest {
 
     @DisplayName("Testing getAnnotatedText(List<String>, Set<Integer>) with invalid arguments")
     @ParameterizedTest
-    @MethodSource("invalidTextAndPositionsUsingStringListAndIntegerSet")
+    @MethodSource("getAnnotatedText_usingStringListAndIntegerSet_preconditionsNotMet")
     public void getAnnotatedText_usingStringListAndIntegerSet_preconditionsNotMet(List<String> lines, Set<Integer> positions, Set<Pair<String, String>> expectedConstraintViolations) {
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> textAnnotationService.getAnnotatedText(lines, positions));
 
@@ -84,7 +87,7 @@ class TextAnnotationServiceTest {
     }
 
 
-    private static Stream<Arguments> invalidTextAndPositionsUsingIntegerArray() {
+    private static Stream<Arguments> getAnnotatedText_usingIntegerArray_preconditionsNotMet() {
         return Stream.of(
                 // Null text String and null position array
                 Arguments.of(null, null, new HashSet<>(Arrays.asList(
@@ -124,7 +127,7 @@ class TextAnnotationServiceTest {
         );
     }
 
-    private static Stream<Arguments> invalidTextAndPositionsUsingIntegerSet() {
+    private static Stream<Arguments> getAnnotatedText_usingIntegerSet_preconditionsNotMet() {
         return Stream.of(
                 // Null text String and null position array
                 Arguments.of(null, null, new HashSet<>(Arrays.asList(
@@ -164,7 +167,7 @@ class TextAnnotationServiceTest {
         );
     }
 
-    private static Stream<Arguments> invalidTextAndPositionsUsingStringListAndIntegerSet() {
+    private static Stream<Arguments> getAnnotatedText_usingStringListAndIntegerSet_preconditionsNotMet() {
         return Stream.of(
                 // Null text String and null position array
                 Arguments.of(null, null, new HashSet<>(Arrays.asList(
@@ -208,4 +211,5 @@ class TextAnnotationServiceTest {
     }
 
     //TODO Make happycases
+
 }
