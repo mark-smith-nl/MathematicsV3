@@ -86,7 +86,6 @@ class TextAnnotationServiceTest {
                         expectedConstraintViolations.stream().map(ecv -> ecv.getKey() + "(" + ecv.getValue() + ")").collect(Collectors.joining("\n")));
     }
 
-
     private static Stream<Arguments> getAnnotatedText_usingIntegerArray_preconditionsNotMet() {
         return Stream.of(
                 // Null text String and null position array

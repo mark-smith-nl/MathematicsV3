@@ -71,7 +71,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
                     break;
                 case BEGIN_SIBLING:
                     // Beginning a sibling implicates a previous initialized sibling has been set.
-                    assertRawExpressionIsInitializedAndIsNotEmpty(rawExpression, text, position);
+                    assertRawExpressionInitializedAndNotEmpty(rawExpression, text, position);
                     rawExpression.setEndPosition(position);
                     RawExpression previousRawExpression = rawExpressionStack.pop(); // Remove the previous sibling from the stack.
                     rawExpression = new RawExpression(); // Note: the sibling expressions starts after START_SIBLING_CHARACTER and has not been initialized.
@@ -96,7 +96,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
                     // Validate proper nesting of aggregation tokens.
                     assertTokenStackIsNotEmptyAndClosedTokenMatchesOpenToken(openeningAggregationTokenStack, text, position, c);
                     // Ending a subexpression implicates that the subexpression was initialized.
-                    assertRawExpressionIsInitializedAndIsNotEmpty(rawExpression, text, position);
+                    assertRawExpressionInitializedAndNotEmpty(rawExpression, text, position);
                     rawExpression.setEndPosition(position);
 
                     rawExpressionStack.pop(); // Remove the (sub) expression) from the stack.
@@ -109,7 +109,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
         int endPosition = text.length() -1;
         assertTokenStackIsEmpty(openeningAggregationTokenStack, text);
-        assertRawExpressionIsInitializedAndIsNotEmpty(rawExpression, text, endPosition);
+        assertRawExpressionInitializedAndNotEmpty(rawExpression, text, endPosition);
 
         rawExpression.setEndPosition(endPosition);
 
@@ -170,12 +170,23 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
      *
      * </pre>
      */
-    private void assertRawExpressionIsInitializedAndIsNotEmpty(RawExpression rawExpression, String text, int currentPosition) {
+    private void assertRawExpressionInitializedAndNotEmpty(RawExpression rawExpression, String text, int position) {
+
+        if (!rawExpression.isInitialized()) {
+            Set<Integer> positions = new HashSet<>(Arrays.asList(position));
+            String message = String.format("Expected an expression before position %d.%nDid you forget to specify the expression?", position);
+            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
+        }
 
         if (rawExpression.isBlank()) {
-            //TODO fixme
-            Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition(), currentPosition - 1));
-            String message = String.format("Blank expression from %d-%d.%nDid you forget to specify the expression?.", rawExpression.getStartPosition(), currentPosition - 1);
+            Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition(), position - 1));
+            String message = String.format("Blank expression from [%d-%d].%nDid you forget to specify the expression?", rawExpression.getStartPosition(), position - 1);
+            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
+        }
+
+        if (rawExpression.hasOneSubExpressionsButNoContent()) {
+            Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition() -1, position));
+            String message = String.format("Expression is blank and has only one subexpression.\nRemove unnecessary aggregation tokens at position %d and %d", rawExpression.getStartPosition() -1, position);
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
         }
     }
@@ -208,7 +219,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         Set<Integer> positions = openeningAggregationTokenStack.stream().map(Pair::getValue).collect(Collectors.toSet());
 
         if (!positions.isEmpty()) {
-            String message = String.format("Encounted unmatched open tokens at positions %s.%nDid you forget to close some subexpressions?", positions.stream().sorted().map(p -> p.toString()).collect(Collectors.joining(", ")));
+            String message = String.format("Encountered unmatched open tokens at positions %s.%nDid you forget to close some subexpressions?", positions.stream().sorted().map(p -> p.toString()).collect(Collectors.joining(", ")));
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
         }
     }

@@ -61,7 +61,10 @@ public class RawExpression {
     }
 
     public boolean isBlank() {
-        return value.toString().matches("\\s*") && sibling == null && subExpressions.isEmpty();
+        return value.toString().matches("\\s*") && subExpressions.isEmpty();
     }
 
+    public boolean hasOneSubExpressionsButNoContent() {
+        return value.toString().matches("\\s*") && subExpressions.size() == 1;
+    }
 }

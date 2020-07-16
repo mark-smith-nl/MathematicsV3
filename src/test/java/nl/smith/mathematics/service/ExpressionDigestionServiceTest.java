@@ -89,6 +89,15 @@ public class ExpressionDigestionServiceTest {
         assertEquals(expectedInValidExpressionStringException.getSimpelMessage(), exception.getSimpelMessage());
     }
 
+    @DisplayName("Testing digest(String) with valid arguments but with uninitialized/empty/blank sibling or subexpressions")
+    @ParameterizedTest
+    @MethodSource("digest_uninitializedOrEmptyExpression")
+    public void digest_uninitializedOrEmptyExpression(String text, InValidExpressionStringException expectedInValidExpressionStringException) {
+        InValidExpressionStringException exception = assertThrows(InValidExpressionStringException.class, () -> expressionDigestionService.digest(text));
+
+        assertEquals(expectedInValidExpressionStringException.getSimpelMessage(), exception.getSimpelMessage());
+    }
+
     private static Stream<Arguments> getMatchingOpenToken() {
         return Stream.of(
                 Arguments.of(')', '(', null),
@@ -157,7 +166,30 @@ public class ExpressionDigestionServiceTest {
                 Arguments.of("2 + 3 * (6 - 2] + 4",
                         new InValidExpressionStringException("Wrong open token '(' for closing token ']' at position 14.\nYou should close the subexpression with ')' instead of ']'.", "Not specified annotated expression")),
                 Arguments.of("2 + {3 * [ (6 -2) + 4",
-                        new InValidExpressionStringException("Encounted unmatched open tokens at positions 4, 9.\nDid you forget to close some subexpressions?", "Not specified annotated expression"))
+                        new InValidExpressionStringException("Encountered unmatched open tokens at positions 4, 9.\nDid you forget to close some subexpressions?", "Not specified annotated expression"))
+        );
+    }
+
+    private static Stream<Arguments> digest_uninitializedOrEmptyExpression() {
+        return Stream.of(
+                // Expected expression before position 8
+                Arguments.of("1 + sum(,4+5)", new InValidExpressionStringException("Expected an expression before position 8.\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                // Blank sibling expression at position [8-8]
+                Arguments.of("1 + sum( ,4+5)", new InValidExpressionStringException("Blank expression from [8-8].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                // Blank sibling expression at position [8-9]
+                Arguments.of("1 + sum(  ,4+5)", new InValidExpressionStringException("Blank expression from [8-9].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                // Blank sibling expression (tab) at position [8-8]
+                Arguments.of("1 + sum(\t,4+5)", new InValidExpressionStringException("Blank expression from [8-8].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                // Blank sibling expression (two tabs) at position [8-9]
+                Arguments.of("1 + sum(\t\t,4+5)", new InValidExpressionStringException("Blank expression from [8-9].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                // Blank sibling expression (<CR> followed by two tabs) at position [8-9]
+                Arguments.of("1 + sum(\n\t\t,4+5)", new InValidExpressionStringException("Blank expression from [8-10].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                // Expected expression before position 5
+                Arguments.of("1 + ()", new InValidExpressionStringException("Expected an expression before position 5.\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                // Blank subexpression at position [9-11]
+                Arguments.of("1 + (   {   } )", new InValidExpressionStringException("Blank expression from [9-11].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                // Blank subexpression with one subexpression at position [9-11]
+                Arguments.of("1 + (   { 3  } )", new InValidExpressionStringException("Expression is blank and has only one subexpression.\nRemove unnecessary aggregation tokens at position 4 and 15", "Not specified annotated expression"))
         );
     }
 
