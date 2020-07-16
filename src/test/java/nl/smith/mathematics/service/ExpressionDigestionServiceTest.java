@@ -1,7 +1,7 @@
 package nl.smith.mathematics.service;
 
 import javafx.util.Pair;
-import nl.smith.domain.RawExpression;
+import nl.smith.mathematics.domain.RawExpression;
 import nl.smith.mathematics.exception.InValidExpressionStringException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ public class ExpressionDigestionServiceTest {
     public void getRawExpression_invalidCloseTag(String text, InValidExpressionStringException expectedInValidExpressionStringException) {
         InValidExpressionStringException exception = assertThrows(InValidExpressionStringException.class, () -> expressionDigestionService.getRawExpression(text));
 
-        assertEquals(expectedInValidExpressionStringException.getSimpelMessage(), exception.getSimpelMessage());
+        assertEquals(expectedInValidExpressionStringException.getSimpleMessage(), exception.getSimpleMessage());
     }
 
     @DisplayName("Testing digest(String) with valid arguments but with uninitialized/empty/blank sibling or subexpressions")
@@ -96,7 +96,7 @@ public class ExpressionDigestionServiceTest {
     public void getRawExpression_uninitializedOrEmptyExpression(String text, InValidExpressionStringException expectedInValidExpressionStringException) {
         InValidExpressionStringException exception = assertThrows(InValidExpressionStringException.class, () -> expressionDigestionService.getRawExpression(text));
 
-        assertEquals(expectedInValidExpressionStringException.getSimpelMessage(), exception.getSimpelMessage());
+        assertEquals(expectedInValidExpressionStringException.getSimpleMessage(), exception.getSimpleMessage());
     }
 
     @ParameterizedTest

@@ -28,8 +28,10 @@ public @interface IsBetween {
 
   boolean includingCeiling() default false;
 
+  @SuppressWarnings("unused")
   Class<?>[] groups() default {};
 
+  @SuppressWarnings("unused")
   Class<? extends Payload>[] payload() default {};
 
 }

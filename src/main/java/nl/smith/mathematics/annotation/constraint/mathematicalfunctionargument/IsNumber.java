@@ -14,8 +14,10 @@ public @interface IsNumber {
 
   String message() default "{isNumber.not.true}";
 
+  @SuppressWarnings("unused")
   Class<?>[] groups() default {};
 
+  @SuppressWarnings("unused")
   Class<? extends Payload>[] payload() default {};
 
 }

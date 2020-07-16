@@ -14,7 +14,7 @@ class StringToObjectUtilTest {
     @DisplayName("Trying to retrieve a corresponding wrapper class for a primitve class")
     @ParameterizedTest
     @MethodSource("classes")
-    void getPrimitiveClassToWrapperClass(Class clazz, Class expectedClass) {
+    void getPrimitiveClassToWrapperClass(Class<?> clazz, Class<?> expectedClass) {
         assertEquals(expectedClass, StringToObjectUtil.getPrimitiveClassToWrapperClass(clazz));
     }
 

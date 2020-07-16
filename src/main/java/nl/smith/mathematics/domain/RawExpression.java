@@ -1,4 +1,4 @@
-package nl.smith.domain;
+package nl.smith.mathematics.domain;
 
 import java.util.*;
 import java.util.function.Function;

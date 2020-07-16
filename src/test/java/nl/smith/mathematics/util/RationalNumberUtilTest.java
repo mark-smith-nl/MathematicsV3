@@ -39,7 +39,7 @@ public class RationalNumberUtilTest {
     @NullAndEmptySource
     public void assertIsNumber_usingNullOrEmptyArgument(String numberString) {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> RationalNumberUtil.assertIsNumber(numberString));
-        assertEquals(exception.getMessage(), RationalNumberUtil.NOT_A_NUMBER_MESSAGE);
+        assertEquals(RationalNumberUtil.NOT_A_NUMBER_MESSAGE, exception.getMessage());
     }
 
     @DisplayName("Testing valid numbers as described by @MethodSource(\"numbers\"")
@@ -54,7 +54,7 @@ public class RationalNumberUtilTest {
     @MethodSource("notNumbers")
     void assertIsNumber_notNumbers(String numberString) {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> RationalNumberUtil.assertIsNumber(numberString));
-        assertEquals(exception.getMessage(), RationalNumberUtil.NOT_A_NUMBER_MESSAGE);
+        assertEquals(RationalNumberUtil.NOT_A_NUMBER_MESSAGE, exception.getMessage());
     }
 
     @DisplayName("Testing retrieval of number components")
@@ -116,7 +116,7 @@ public class RationalNumberUtilTest {
         Stream<Arguments> s4 = Stream.of(NUMBERS).map(n -> n.concat("E[+00]")).map(Arguments::of);
         Stream<Arguments> s5 = Stream.of(NUMBERS).map(n -> n.concat("E[+10]")).map(Arguments::of);
         Stream<Arguments> s6 = Stream.of(NUMBERS).map(n -> n.concat("E[123]")).map(Arguments::of);
-        Stream<Arguments> s7 = Stream.of(NUMBERS).filter(n -> "0".equals(n)).map(n -> n.concat("E[00]")).map(Arguments::of);
+        Stream<Arguments> s7 = Stream.of(NUMBERS).filter("0"::equals).map(n -> n.concat("E[00]")).map(Arguments::of);
 
         return Stream.of(s0, s1, s2, s3, s4, s5, s6, s7).flatMap(i -> i);
     }
@@ -214,7 +214,7 @@ public class RationalNumberUtilTest {
 
     private static Stream<Arguments> longValue() {
             return Stream.of(
-                    Arguments.of(RationalNumberUtil.getRationalNumber("1E[18]"), 1000000000000000000l)
+                    Arguments.of(RationalNumberUtil.getRationalNumber("1E[18]"), 1000000000000000000L)
                     );
     }
 }

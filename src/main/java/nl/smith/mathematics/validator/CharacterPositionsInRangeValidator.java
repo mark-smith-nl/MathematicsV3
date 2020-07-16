@@ -38,7 +38,7 @@ public class CharacterPositionsInRangeValidator implements ConstraintValidator<C
                 lines.forEach(l -> maximumPosition.setValue(maximumPosition.getValue() + l.length()));
             } else {
                 // An exception is thrown. A constraint violation is not raised. Inproper use of annotations.
-                //throw new IllegalStateException("First method argument should be of type String.");
+                throw new IllegalStateException("First method argument should be of type String or List<string>.");
             }
 
             Collection<Integer> positions;

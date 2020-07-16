@@ -37,9 +37,10 @@ public class ObjectWrapper <T> {
             this.errorMessage = errorMessage ;
         }
 
+        @Override
         public T getValue() {
             if (super.getValue() == null) {
-                throw new IllegalStateException(String.format("%s\nValue is null.\nExpected a %s not null value.", errorMessage, clazz.getCanonicalName()));
+                throw new IllegalStateException(String.format("%s%nValue is null.%nExpected a %s not null value.", errorMessage, clazz.getCanonicalName()));
             }
 
             return super.getValue();

@@ -13,10 +13,6 @@ import java.util.stream.Collectors;
 
 public class TextValidation {
 
-    public static boolean isValidText(String s) {
-        return s != null && !s.isEmpty() && s.matches("(.*\\S\n)*(.*\\S\n?)");
-    }
-
     public static List<Integer> getPositionsIllegalLineEndings(String s) {
         List<Integer> positions = new ArrayList<>();
 
@@ -70,15 +66,4 @@ public class TextValidation {
         }
     }
 
-    public static void main(String[] args) {
-        String text = "Mijn naam iss \nIk woon in     \t\naaa        ";
-        //             012345678901234 5678901234567890 1 2345
-        Pattern pattern = Pattern.compile("(\\s)+\n|(\\s)+$");
-        Matcher matcher = pattern.matcher(text);
-
-        while (matcher.find()) {
-            System.out.println(matcher.start());
-        }
-
-    }
 }

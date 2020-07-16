@@ -162,16 +162,12 @@ public class MethodRunnerService {
         String errorMessage = String.format("Can not find a method %s accepting %d argument(s) of type %s.", mathematicalMethodName, parameterCount, numberType.getCanonicalName());
         ObjectWrapper<MathematicalFunctionMethodMapping> wrapper = new ObjectWrapper.NotNullObjectWrapper<>(null, MathematicalFunctionMethodMapping.class, errorMessage);
         recursiveFunctionContainers.forEach(c -> {
-            Optional<MathematicalFunctionMethodMapping> a = c.getMathematicalFunctionMethodMapping(mathematicalMethodName, parameterCount);
-            c.getMathematicalFunctionMethodMapping(mathematicalMethodName, parameterCount).ifPresent(mf -> wrapper.setValue(mf));
+            c.getMathematicalFunctionMethodMapping(mathematicalMethodName, parameterCount).ifPresent(wrapper::setValue);
         });
 
         return wrapper.getValue();
 
     }
 
-    public static void main(String[] args) {
-        System.out.println(String.format("Can not find a method %s accepting %d arguments of type %s.", "okama", 4, "Integer"));
-    }
 }
 

@@ -21,8 +21,10 @@ public @interface IsSmallerThan {
 
   boolean includingBoundary() default false;
 
+  @SuppressWarnings("unused")
   Class<?>[] groups() default {};
 
+  @SuppressWarnings("unused")
   Class<? extends Payload>[] payload() default {};
 
 }

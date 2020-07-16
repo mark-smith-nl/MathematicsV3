@@ -19,7 +19,7 @@ public class IsNaturalNumberValidator implements ConstraintValidator<IsNaturalNu
         if (o != null) {
             if (NumberUtil.isNumber(o)) {
                 Class<Number> clazz = (Class<Number>) o.getClass();
-                if (clazz.equals(BigInteger.class)) {
+                if (clazz.equals(BigInteger.class)) { // TODO empty why?
                 } else if (clazz.equals(BigDecimal.class)) {
                     isValid = ((BigDecimal) o).divideAndRemainder(BigDecimal.ONE)[1].compareTo(BigDecimal.ZERO) == 0;
                 } else if (ArithmeticFunctions.class.isAssignableFrom(o.getClass())) {

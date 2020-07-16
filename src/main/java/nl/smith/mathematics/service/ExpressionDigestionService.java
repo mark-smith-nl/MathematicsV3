@@ -1,7 +1,7 @@
 package nl.smith.mathematics.service;
 
 import javafx.util.Pair;
-import nl.smith.domain.RawExpression;
+import nl.smith.mathematics.domain.RawExpression;
 import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
 import nl.smith.mathematics.exception.InValidExpressionStringException;
 import org.springframework.context.annotation.Bean;

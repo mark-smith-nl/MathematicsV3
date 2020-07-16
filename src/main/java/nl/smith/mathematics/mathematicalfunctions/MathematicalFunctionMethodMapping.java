@@ -12,7 +12,7 @@ import static nl.smith.mathematics.util.MathematicalMethodUtil.*;
  */
 public class MathematicalFunctionMethodMapping {
 
-    private final RecursiveFunctionContainer container;
+    private final RecursiveFunctionContainer<? extends Number, ?> container;
 
     private final String name;
 
@@ -26,7 +26,7 @@ public class MathematicalFunctionMethodMapping {
 
     private final boolean isVararg;
 
-    public MathematicalFunctionMethodMapping(RecursiveFunctionContainer container, Method method) {
+    public MathematicalFunctionMethodMapping(RecursiveFunctionContainer<? extends Number, ?> container, Method method) {
         this.container = container;
 
         checkGenericsEnclosingClass(method.getDeclaringClass());
@@ -44,7 +44,7 @@ public class MathematicalFunctionMethodMapping {
         signature = getMathematicalMethodSignature(this);
     }
 
-    public RecursiveFunctionContainer getContainer() {
+    public RecursiveFunctionContainer<? extends Number, ?> getContainer() {
         return container;
     }
 
