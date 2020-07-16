@@ -53,13 +53,18 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         return new ExpressionDigestionService(textAnnotationService);
     }
 
-    public RawExpression digest(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks String text) {
+
+
+    /**
+     * Protected for test purposes.
+     */
+    protected RawExpression getRawExpression(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks String text) {
         LinkedList<RawExpression> rawExpressionStack = new LinkedList<>();
-        RawExpression rawExpression = new RawExpression(); // Note: the expression has not been initialized.
-        rawExpressionStack.push(rawExpression);
+        RawExpression rawExpression = new RawExpression(text); // Note: the expression has not been initialized.
         LinkedList<Pair<Character, Integer>> openeningAggregationTokenStack = new LinkedList<>();
 
-        for (int position = 0; position < text.length(); position++) {
+        int position;
+        for (position = 0; position < text.length(); position++) {
             char c = text.charAt(position);
             switch (getCharacterType(c)) {
                 case NORMAL:
@@ -71,50 +76,46 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
                     break;
                 case BEGIN_SIBLING:
                     // Beginning a sibling implicates a previous initialized sibling has been set.
-                    assertRawExpressionInitializedAndNotEmpty(rawExpression, text, position);
+                    assertRawExpressionInitializedAndNotEmpty(rawExpression, position);
                     rawExpression.setEndPosition(position);
-                    RawExpression previousRawExpression = rawExpressionStack.pop(); // Remove the previous sibling from the stack.
-                    rawExpression = new RawExpression(); // Note: the sibling expressions starts after START_SIBLING_CHARACTER and has not been initialized.
-                    previousRawExpression.setSibling(rawExpression); // Linking the new sibling expression.
 
-                    rawExpressionStack.push(rawExpression); // Add the new sibling to the stack.
+                    RawExpression previousSiblingRawExpression = rawExpression;
+                    rawExpression = new RawExpression(text); // Note: the sibling expressions starts after START_SIBLING_CHARACTER and has not been initialized.
+                    previousSiblingRawExpression.setSibling(rawExpression); // Linking the new sibling expression.
 
                     break;
                 case BEGIN_SUBEXPRESSION:
                     if (!rawExpression.isInitialized()) {
                         rawExpression.initializeAtPosition(position);
                     }
+
                     RawExpression parentRawExpression = rawExpression;
-                    rawExpression = new RawExpression(); // Note: the sub expressions starts after the open token character and has not been initialized.
+                    rawExpression = new RawExpression(text); // Note: the sub expressions starts after the open token character and has not been initialized.
                     parentRawExpression.addSubExpression(rawExpression);
 
                     openeningAggregationTokenStack.push(new Pair<Character, Integer>(c, position));
-                    rawExpressionStack.push(rawExpression); // Add the new (sub) expression) to the stack.
-
+                    rawExpressionStack.push(parentRawExpression);
                     break;
                 case END_SUBEXPRESSION:
                     // Validate proper nesting of aggregation tokens.
                     assertTokenStackIsNotEmptyAndClosedTokenMatchesOpenToken(openeningAggregationTokenStack, text, position, c);
                     // Ending a subexpression implicates that the subexpression was initialized.
-                    assertRawExpressionInitializedAndNotEmpty(rawExpression, text, position);
+                    assertRawExpressionInitializedAndNotEmpty(rawExpression, position);
                     rawExpression.setEndPosition(position);
 
-                    rawExpressionStack.pop(); // Remove the (sub) expression) from the stack.
+
                     openeningAggregationTokenStack.pop(); // Remove the opening token from the token stack.
-                    rawExpression = rawExpressionStack.peek(); // Retrieve the parent expression from the stack.
+                    rawExpression = rawExpressionStack.pop(); // Remove the parent expression) from the stack to continue append the parent.
 
                     break;
             }
         }
 
-        int endPosition = text.length() -1;
         assertTokenStackIsEmpty(openeningAggregationTokenStack, text);
-        assertRawExpressionInitializedAndNotEmpty(rawExpression, text, endPosition);
-
-        rawExpression.setEndPosition(endPosition);
+        assertRawExpressionInitializedAndNotEmpty(rawExpression, position);
+        rawExpression.setEndPosition(position);
 
         return rawExpression;
-
     }
 
     /**
@@ -170,24 +171,24 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
      *
      * </pre>
      */
-    private void assertRawExpressionInitializedAndNotEmpty(RawExpression rawExpression, String text, int position) {
+    private void assertRawExpressionInitializedAndNotEmpty(RawExpression rawExpression , int position) {
 
         if (!rawExpression.isInitialized()) {
             Set<Integer> positions = new HashSet<>(Arrays.asList(position));
             String message = String.format("Expected an expression before position %d.%nDid you forget to specify the expression?", position);
-            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
+            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));
         }
 
         if (rawExpression.isBlank()) {
             Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition(), position - 1));
             String message = String.format("Blank expression from [%d-%d].%nDid you forget to specify the expression?", rawExpression.getStartPosition(), position - 1);
-            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
+            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));
         }
 
-        if (rawExpression.hasOneSubExpressionsButNoContent()) {
-            Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition() -1, position));
-            String message = String.format("Expression is blank and has only one subexpression.\nRemove unnecessary aggregation tokens at position %d and %d", rawExpression.getStartPosition() -1, position);
-            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
+        if (rawExpression.hasSubExpressionsButNoContent()) {
+            Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition(), position - 1));
+            String message = String.format("Essentially blank expression (contains only subexpressions) from [%d-%d].%nRemove unnecessary aggregation tokens and blank characters.", rawExpression.getStartPosition(), position);
+            throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));
         }
     }
 

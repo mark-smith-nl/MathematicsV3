@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class TextAnnotationService extends RecursiveValidatedService<TextAnnotationService> {
 
-    private final static String SIBLING_BEAN_NAME = "TEXTANNOTATIONSERVICE";
+    private static final String SIBLING_BEAN_NAME = "TEXTANNOTATIONSERVICE";
 
     private static char endOfLineCharacter = (char) 182;
 
@@ -34,6 +34,14 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
     private static final String ANSI_RESET = "\u001B[0m";
 
     private static final String ANSI_RED = "\u001B[31m";
+
+    public boolean isShowEndOfLine() {
+        return showEndOfLine;
+    }
+
+    public void setShowEndOfLine(boolean showEndOfLine) {
+        this.showEndOfLine = showEndOfLine;
+    }
 
     @Override
     public String getSiblingBeanName() {
@@ -57,7 +65,6 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
         return sibling.getAnnotatedText(split(text), positions);
     }
 
-    //TODO Create tests
     /**
      * Protected for validation purposes. Note: private functions will never be validated when called by a sibling service.
      */
@@ -94,7 +101,7 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
         Set<Integer> relevantPositions = positions.stream().filter(p -> p.compareTo(offSet.getValue() + line.length()) < 0).collect(Collectors.toSet());
         positions.removeAll(relevantPositions);
         relevantPositions = relevantPositions.stream().map(p -> p - offSet.getValue()).collect(Collectors.toSet());
-        StringBuffer annotationLine = new StringBuffer();
+        StringBuilder annotationLine = new StringBuilder();
         boolean lineIsAnnotated = false;
 
         for (int i = 0; i < line.length(); i++) {
@@ -102,7 +109,6 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
 
             if (relevantPositions.contains(i) && c != '\t') {
                 annotationLine.append('^');
-                annotationLine.append("");
                 lineIsAnnotated = true;
             } else {
                 annotationLine.append(c == '\t' ? c : ' ');

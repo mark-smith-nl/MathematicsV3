@@ -1,6 +1,7 @@
 package nl.smith.mathematics.service;
 
 import javafx.util.Pair;
+import nl.smith.domain.RawExpression;
 import nl.smith.mathematics.exception.InValidExpressionStringException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,9 +66,9 @@ public class ExpressionDigestionServiceTest {
 
     @DisplayName("Testing digest(String) with invalid arguments")
     @ParameterizedTest
-    @MethodSource("digest_preconditionsNotMet")
-    public void digest_preconditionsNotMet(String text, Set<Pair<String, String>> expectedConstraintViolations) {
-        ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> expressionDigestionService.digest(text));
+    @MethodSource("getRawExpression_preconditionsNotMet")
+    public void getRawExpression_preconditionsNotMet(String text, Set<Pair<String, String>> expectedConstraintViolations) {
+        ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> expressionDigestionService.getRawExpression(text));
 
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(expectedConstraintViolations.size(), constraintViolations.size(), "The number of constraint violations actually thrown is not equal to the specified number.");
@@ -82,20 +83,28 @@ public class ExpressionDigestionServiceTest {
 
     @DisplayName("Testing digest(String) with valid arguments but invalid use of open/close tokens")
     @ParameterizedTest
-    @MethodSource("digest_invalidCloseTag")
-    public void digest_invalidCloseTag(String text, InValidExpressionStringException expectedInValidExpressionStringException) {
-        InValidExpressionStringException exception = assertThrows(InValidExpressionStringException.class, () -> expressionDigestionService.digest(text));
+    @MethodSource("getRawExpression_invalidCloseTag")
+    public void getRawExpression_invalidCloseTag(String text, InValidExpressionStringException expectedInValidExpressionStringException) {
+        InValidExpressionStringException exception = assertThrows(InValidExpressionStringException.class, () -> expressionDigestionService.getRawExpression(text));
 
         assertEquals(expectedInValidExpressionStringException.getSimpelMessage(), exception.getSimpelMessage());
     }
 
     @DisplayName("Testing digest(String) with valid arguments but with uninitialized/empty/blank sibling or subexpressions")
     @ParameterizedTest
-    @MethodSource("digest_uninitializedOrEmptyExpression")
-    public void digest_uninitializedOrEmptyExpression(String text, InValidExpressionStringException expectedInValidExpressionStringException) {
-        InValidExpressionStringException exception = assertThrows(InValidExpressionStringException.class, () -> expressionDigestionService.digest(text));
+    @MethodSource("getRawExpression_uninitializedOrEmptyExpression")
+    public void getRawExpression_uninitializedOrEmptyExpression(String text, InValidExpressionStringException expectedInValidExpressionStringException) {
+        InValidExpressionStringException exception = assertThrows(InValidExpressionStringException.class, () -> expressionDigestionService.getRawExpression(text));
 
         assertEquals(expectedInValidExpressionStringException.getSimpelMessage(), exception.getSimpelMessage());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getRawExpression")
+    public void getRawExpression(String text, int length) {
+        RawExpression rawExpression = expressionDigestionService.getRawExpression(text);
+        assertEquals(text, rawExpression.toString());
+        assertEquals(length, rawExpression.length());
     }
 
     private static Stream<Arguments> getMatchingOpenToken() {
@@ -135,26 +144,26 @@ public class ExpressionDigestionServiceTest {
         );
     }
 
-    private static Stream<Arguments> digest_preconditionsNotMet() {
+    private static Stream<Arguments> getRawExpression_preconditionsNotMet() {
         return Stream.of(
                 // Null text String
-                Arguments.of(null, new HashSet<>(Arrays.asList(
-                        new Pair<>("digest.text", "Please specify an expression.")
+                Arguments.of(null, new HashSet<>(Collections.singletonList(
+                        new Pair<>("getRawExpression.text", "Please specify an expression.")
                 ))),
                 // Empty text string
-                Arguments.of("", new HashSet<>(Arrays.asList(
-                        new Pair<>("digest.text", "Please specify an expression.")
+                Arguments.of("", new HashSet<>(Collections.singletonList(
+                        new Pair<>("getRawExpression.text", "Please specify an expression.")
                 ))),
-                Arguments.of("2+3\t", new HashSet<>(Arrays.asList(
-                        new Pair<>("digest.text", "The provided text has lines with trailing whitespace characters at position(s): 3.")
+                Arguments.of("2+3\t", new HashSet<>(Collections.singletonList(
+                        new Pair<>("getRawExpression.text", "The provided text has lines with trailing whitespace characters at position(s): 3.")
                 ))),
-                Arguments.of("2+3\n+5\t\n", new HashSet<>(Arrays.asList(
-                        new Pair<>("digest.text", "The provided text has lines with trailing whitespace characters at position(s): 6.")
+                Arguments.of("2+3\n+5\t\n", new HashSet<>(Collections.singletonList(
+                        new Pair<>("getRawExpression.text", "The provided text has lines with trailing whitespace characters at position(s): 6.")
                 )))
         );
     }
 
-    private static Stream<Arguments> digest_invalidCloseTag() {
+    private static Stream<Arguments> getRawExpression_invalidCloseTag() {
         return Stream.of(
                 // Unmatched close token at position 6
                 Arguments.of("2 + 3 )",
@@ -170,7 +179,7 @@ public class ExpressionDigestionServiceTest {
         );
     }
 
-    private static Stream<Arguments> digest_uninitializedOrEmptyExpression() {
+    private static Stream<Arguments> getRawExpression_uninitializedOrEmptyExpression() {
         return Stream.of(
                 // Expected expression before position 8
                 Arguments.of("1 + sum(,4+5)", new InValidExpressionStringException("Expected an expression before position 8.\nDid you forget to specify the expression?", "Not specified annotated expression")),
@@ -189,7 +198,18 @@ public class ExpressionDigestionServiceTest {
                 // Blank subexpression at position [9-11]
                 Arguments.of("1 + (   {   } )", new InValidExpressionStringException("Blank expression from [9-11].\nDid you forget to specify the expression?", "Not specified annotated expression")),
                 // Blank subexpression with one subexpression at position [9-11]
-                Arguments.of("1 + (   { 3  } )", new InValidExpressionStringException("Expression is blank and has only one subexpression.\nRemove unnecessary aggregation tokens at position 4 and 15", "Not specified annotated expression"))
+                Arguments.of("1 + (   { 3  } )", new InValidExpressionStringException("Essentially blank expression (contains only subexpressions) from [5-15].\nRemove unnecessary aggregation tokens and blank characters.", "Not specified annotated expression")),
+                // Blank subexpression with one subexpression at position [9-18]
+                Arguments.of("1 + (   { 3  } [4])", new InValidExpressionStringException("Essentially blank expression (contains only subexpressions) from [5-18].\nRemove unnecessary aggregation tokens and blank characters.", "Not specified annotated expression"))
+        );
+    }
+
+    private static Stream<Arguments> getRawExpression() {
+        return Stream.of(
+                Arguments.of("1 + 2", 5),
+                Arguments.of("(1 + 2) * 4", 11),
+                Arguments.of("(1 + 2) * (1 + 3)", 17),
+                Arguments.of("(1 + 2) * (1 + 3) * {6 - 4 / (2 - 4)}", 37)
         );
     }
 

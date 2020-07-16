@@ -1,9 +1,12 @@
 package nl.smith.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class RawExpression {
+
+    private final String text;
 
     private boolean initialized;
 
@@ -11,13 +14,21 @@ public class RawExpression {
     private int startPosition;
 
     /* Not including. */
-    private int endPosition;
+    private int endPosition = -1;
 
     private final StringBuilder value = new StringBuilder();
 
     private RawExpression sibling;
 
     private final Set<RawExpression> subExpressions = new HashSet<>();
+
+    public RawExpression(String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
+    }
 
     public boolean isInitialized() {
         return initialized;
@@ -64,7 +75,43 @@ public class RawExpression {
         return value.toString().matches("\\s*") && subExpressions.isEmpty();
     }
 
-    public boolean hasOneSubExpressionsButNoContent() {
-        return value.toString().matches("\\s*") && subExpressions.size() == 1;
+    public boolean hasSubExpressionsButNoContent() {
+        return value.toString().matches("\\s*") && !subExpressions.isEmpty();
     }
+
+    public int length() {
+        return endPosition - startPosition;
+    }
+
+    @Override
+    public String toString() {
+        if (!initialized) {
+            return "Raw expression has not been initialized.";
+        }
+
+        return text.substring(startPosition, endPosition);
+    }
+
+    public String toSimplifiedString() {
+        if (!initialized) {
+            return "Raw expression has not been initialized.";
+        }
+
+        String simplifiedString = text;
+        simplifiedString.substring(endPosition); // Remove trailing string
+        if (!subExpressions.isEmpty()) {
+            TreeMap<Integer, RawExpression> subExpressionsPositionMap = subExpressions.stream().collect(Collectors.toMap(RawExpression::getStartPosition, Function.identity(), (o1, o2) -> o1, TreeMap::new));
+
+            for (int position : subExpressionsPositionMap.descendingKeySet()) {
+
+                System.out.println("value of " + position + " is " + subExpressionsPositionMap.get(position));
+
+            }
+        }
+
+        return text.substring(startPosition, endPosition);
+    }
+
+
+
 }
