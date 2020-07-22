@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotBlank;
+import javax.xml.stream.events.Characters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,8 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
     private static final char START_SIBLING_CHARACTER = ',';
 
+    private static Set<Character> PREDEFINED_CHARACTERS = new HashSet(Arrays.asList('$', '#', '@', '%'));
+
     public ExpressionDigestionService(TextAnnotationService textAnnotationService) {
         this.textAnnotationService = textAnnotationService;
     }
@@ -39,7 +42,8 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         NORMAL,
         BEGIN_SIBLING,
         BEGIN_SUBEXPRESSION,
-        END_SUBEXPRESSION
+        END_SUBEXPRESSION,
+        PREDEFINED_CHARACTER
     }
 
     @Override
@@ -57,7 +61,6 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
      * Protected for test purposes.
      */
     protected RawExpression getRawExpression(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks String text) {
-        LinkedList<RawExpression> rawExpressionStack = new LinkedList<>();
         RawExpression rawExpression = new RawExpression(text); // Note: the expression has not been initialized.
         RawExpression mainRawExpression = rawExpression;
         LinkedList<Pair<Character, Integer>> openeningAggregationTokenStack = new LinkedList<>();
@@ -67,44 +70,38 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
             char c = text.charAt(position);
             switch (getCharacterType(c)) {
                 case NORMAL:
-                    if (rawExpression.isNotStarted()) {
+                    if (!rawExpression.isStartPositionSet()) {
                         rawExpression.startExpressionAtPosition(position);
                     }
 
-                    rawExpression.addCharacter(c);
                     break;
+                case PREDEFINED_CHARACTER :
+                    String message = String.format("Predefine character found. Please do not use [%s]", PREDEFINED_CHARACTERS.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+                    throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), position));
                 case BEGIN_SIBLING:
                     // Beginning a sibling implicates a previous initialized sibling has been set.
                     assertRawExpressionInitializedAndNotEmpty(rawExpression, position);
-                    rawExpression.setEndPosition(position);
-
-                    RawExpression previousSiblingRawExpression = rawExpression;
-                    rawExpression = new RawExpression(text); // Note: the sibling expressions starts after START_SIBLING_CHARACTER and has not been initialized.
-                    previousSiblingRawExpression.setSibling(rawExpression); // Linking the new sibling expression.
+                    rawExpression = rawExpression.appendSibling(position);
 
                     break;
                 case BEGIN_SUBEXPRESSION:
-                    if (rawExpression.isNotStarted()) {
+                    if (!rawExpression.isStartPositionSet()) {
                         rawExpression.startExpressionAtPosition(position);
                     }
 
-                    RawExpression parentRawExpression = rawExpression;
-                    rawExpression = new RawExpression(text); // Note: the sub expressions starts after the open token character and has not been initialized.
-                    parentRawExpression.addSubExpression(rawExpression);
+                    rawExpression = rawExpression.addSubExpression();
 
                     openeningAggregationTokenStack.push(new Pair<>(c, position));
-                    rawExpressionStack.push(parentRawExpression);
                     break;
                 case END_SUBEXPRESSION:
                     // Validate proper nesting of aggregation tokens.
                     assertTokenStackIsNotEmptyAndClosedTokenMatchesOpenToken(openeningAggregationTokenStack, text, position, c);
                     // Ending a subexpression implicates that the subexpression was initialized.
                     assertRawExpressionInitializedAndNotEmpty(rawExpression, position);
-                    rawExpression.setEndPosition(position);
+                    rawExpression = rawExpression.setEndPosition(position);
 
 
                     openeningAggregationTokenStack.pop(); // Remove the opening token from the token stack.
-                    rawExpression = rawExpressionStack.pop(); // Remove the parent expression) from the stack to continue append the parent.
 
                     break;
             }
@@ -158,6 +155,11 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
                 return CharacterType.END_SUBEXPRESSION;
             }
         }
+
+        if(PREDEFINED_CHARACTERS.contains(c)) {
+            return CharacterType.PREDEFINED_CHARACTER;
+        }
+
         return CharacterType.NORMAL;
     }
 
@@ -167,23 +169,25 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
      *
      *     - The rawExpression has not been initialized
      *     - The rawexpression contains only blank characters
+     *
+     *     If no exception is thrown the expression is eligible for termination.
      * </pre>
      */
     private void assertRawExpressionInitializedAndNotEmpty(RawExpression rawExpression , int position) {
 
-        if (rawExpression.isNotStarted()) {
+        if (!rawExpression.isStartPositionSet()) {
             Set<Integer> positions = new HashSet<>(Collections.singletonList(position));
             String message = String.format("Expected an expression before position %d.%nDid you forget to specify the expression?", position);
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));
         }
 
-        if (rawExpression.isBlank()) {
+        if (rawExpression.isBlank(position)) {
             Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition(), position - 1));
             String message = String.format("Blank expression from [%d-%d].%nDid you forget to specify the expression?", rawExpression.getStartPosition(), position - 1);
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));
         }
 
-        if (rawExpression.hasSubExpressionsButNoContent()) {
+        if (rawExpression.hasSubExpressionsButNoContent(position)) {
             Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition(), position - 1));
             String message = String.format("Essentially blank expression (contains only subexpressions) from [%d-%d].%nRemove unnecessary aggregation tokens and blank characters.", rawExpression.getStartPosition(), position);
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));

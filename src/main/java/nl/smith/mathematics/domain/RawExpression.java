@@ -7,188 +7,215 @@ public class RawExpression {
     private final String text;
 
     /* Absolute position, The first character of the expression is text.charAt(startPosition) (including).
-    * A startPosition -1 denotes that the first character has not been encountered.*/
+     * A startPosition -1 denotes that the first character or a subexpression has not been encountered.*/
     private int startPosition = -1;
 
     /* Absolute position, The last character of the expression is text.charAt(endPosition - 1) (not including).
      * A endPosition -1 denotes that the character that marks the expressions has ended has not been encountered.*/
     private int endPosition = -1;
 
-    private final StringBuilder value = new StringBuilder();
+    private RawExpression parent;
 
     private RawExpression sibling;
 
     private final List<RawExpression> subExpressions = new ArrayList<>();
 
-    public static  final String RAW_EXPRESSION_NOT_STARTED = "Raw expression has not been started. First character has not been encountered.";
-
-    public static  final String RAW_EXPRESSION_NOT_TERMINATED = "Raw expression has not terminated. A character denoting the end of the expression has not been encountered.";
-
     public RawExpression(String text) {
         if (text == null || text.isEmpty()) {
             throw new IllegalArgumentException("Please specify an expression.");
         }
+
+        if (text.matches("\\s*")) {
+            throw new IllegalArgumentException("An expression can not only contain blank characters.");
+        }
+
         this.text = text;
+    }
+
+    private RawExpression(RawExpression rawExpression, boolean isSubExpression) {
+        this(rawExpression.text);
+
+        if (isSubExpression) {
+            parent = rawExpression;
+            rawExpression.subExpressions.add(this);
+        } else {
+            // The new expression is a sibling.
+            rawExpression.sibling = this;
+            parent = rawExpression.parent;
+        }
     }
 
     public String getText() {
         return text;
     }
 
-    public boolean isNotStarted() {
-        return startPosition == -1;
+    public boolean isStartPositionSet() {
+        return startPosition >= 0;
     }
 
-    public boolean isNotTerminated() {
-        return endPosition == -1;
-    }
-
-    public void addCharacter(char c) {
-        if (isNotStarted()) {
-            throw new IllegalStateException(RAW_EXPRESSION_NOT_STARTED);
-        }
-
-        value.append(c);
+    public boolean isEndPositionSet() {
+        return endPosition >= 0;
     }
 
     public int getStartPosition() {
-        if (isNotStarted()) {
-            throw new IllegalStateException(RAW_EXPRESSION_NOT_STARTED);
-        }
+        assertStartPositionSet();
 
         return startPosition;
     }
 
-    public void startExpressionAtPosition(int startPosition) {
-        if (startPosition < 0 || startPosition >= text.length()) {
-            throw new IllegalArgumentException(String.format("Can not set start position. It can not be negative and must be smaller than the length of the original string [0, %d>.", text.length()));
-        }
+    public RawExpression startExpressionAtPosition(int startPosition) {
+        assertStartPositionNotSet();
+        assertEndPositionNotSet();
 
-        if (!isNotStarted()) {
-            throw new IllegalArgumentException("Start position is already set.");
+        if (startPosition < 0 || startPosition >= text.length()) {
+            throw new IllegalArgumentException("Can not set start position. Start position ∊ [0, text.length()>.");
         }
 
         this.startPosition = startPosition;
+
+        return this;
     }
 
     public int getEndPosition() {
-        if (isNotTerminated()) {
-            throw new IllegalStateException(RAW_EXPRESSION_NOT_TERMINATED);
-        }
+        assertStartPositionSet();
+        assertEndPositionSet();
 
         return endPosition;
     }
 
-    public void setEndPosition(int endPosition) {
-        if (isNotStarted()) {
-            throw new IllegalStateException(RAW_EXPRESSION_NOT_STARTED);
-        }
+    public RawExpression setEndPosition(int endPosition) {
+        assertStartPositionSet();
+        assertEndPositionNotSet();
 
-        if (!isNotTerminated()) {
-            throw new IllegalArgumentException("Expression is already terminated.");
+        if (endPosition <= 0 || endPosition > text.length()) {
+            throw new IllegalArgumentException("Can not set end position. End position ∊ <0, text.length].");
         }
 
         this.endPosition = endPosition;
+
+        return parent == null ? this : parent;
     }
 
+    /**
+     * The method returns the subexpression of the terminated expression.
+     * The method throws an error if the expression has not been terminated.
+     */
     public List<RawExpression> getSubExpressions() {
-        if (isNotStarted()) {
-            throw new IllegalStateException(RAW_EXPRESSION_NOT_STARTED);
-        }
+        assertStartPositionSet();
+        assertEndPositionSet();
 
         return subExpressions;
     }
 
-    public void setSibling(RawExpression sibling) {
-        if (isNotTerminated()) {
-            throw new IllegalStateException(RAW_EXPRESSION_NOT_TERMINATED);
-        }
+    public RawExpression appendSibling(int endPosition) {
+        assertStartPositionSet();
+        assertEndPositionNotSet();
 
-        this.sibling = sibling;
+        this.endPosition = endPosition;
+
+        return new RawExpression(this, false);
     }
 
-    public void addSubExpression(RawExpression rawExpression) {
-        if (isNotStarted()) {
-            throw new IllegalStateException(RAW_EXPRESSION_NOT_STARTED);
-        }
+    public RawExpression addSubExpression() {
+        assertStartPositionSet();
+        assertEndPositionNotSet();
 
-        subExpressions.add(rawExpression);
+        return new RawExpression(this, true);
     }
 
+    /* Note method can be called if the endPosition has not been set. */
+    public boolean isBlank(int position) {
+        assertStartPositionSet();
+        assertEndPositionNotSet();
 
-    public boolean isBlank() {
-        return value.toString().matches("\\s*") && subExpressions.isEmpty();
+        return getContent(position).matches("\\s*") && subExpressions.isEmpty();
     }
 
-    public boolean hasSubExpressionsButNoContent() {
-        return value.toString().matches("\\s*") && !subExpressions.isEmpty();
+    public boolean hasSubExpressionsButNoContent(int position) {
+        assertStartPositionSet();
+        assertEndPositionNotSet();
+
+        return getContent(position).matches("\\s*") && !subExpressions.isEmpty();
     }
 
+    /**
+     * The method returns the length of the terminated expression.
+     * The method throws an error if the expression has not been terminated.
+     */
     public int getLength() {
-        if (isNotTerminated()) {
-            throw new IllegalStateException(RAW_EXPRESSION_NOT_TERMINATED);
-        }
+        assertStartPositionSet();
+        assertEndPositionSet();
 
         return endPosition - startPosition;
     }
 
     public int getLengthWithSiblings() {
-        if (isNotTerminated()) {
-            throw new IllegalStateException(RAW_EXPRESSION_NOT_TERMINATED);
-        }
+        assertStartPositionSet();
+        assertEndPositionSet();
 
-        return endPosition - startPosition + (sibling == null ? 0 : 1 + sibling.getLengthWithSiblings());
+        int endPosition = getLastSibling().getEndPosition();
+
+        return endPosition - startPosition;
     }
 
     public RawExpression getNthSibling(int n) {
         if (n < 0 || n >= getDimension()) {
-            throw new IllegalArgumentException(String.format("Can not retrieve %dth sibling. Index should be on the domain [0-%d>.", n, getDimension()));
+            throw new IllegalArgumentException("Can not retrieve Nth sibling. Index should be on the domain [0-dimension>.");
         }
 
         return getSibling(n);
     }
 
+    public RawExpression getLastSibling() {
+        return getSibling(getDimension() - 1);
+    }
+
     private RawExpression getSibling(int n) {
-        return n == 0 ?  this : sibling.getNthSibling(n -1);
-
-    }
-    public int getNumberOfSiblings() {
-        return sibling == null ? 0 : 1 +sibling.getNumberOfSiblings();
+        return n == 0 ? this : sibling.getNthSibling(n - 1);
     }
 
+    /** A raw expression without siblings has a dimension of 1 */
     public int getDimension() {
-        return 1 + getNumberOfSiblings();
+        assertStartPositionSet();
+        assertEndPositionSet();
+
+        if (sibling == null) {
+            return 1;
+        }
+
+        return 1 + sibling.getDimension();
     }
+
     @Override
     public String toString() {
-        if (isNotTerminated()) {
-            return RAW_EXPRESSION_NOT_TERMINATED;
+        if (!isStartPositionSet() || !isEndPositionSet()) {
+            return "Expression is under construction";
         }
 
         return text.substring(startPosition, endPosition);
     }
 
     public String toStringWithSiblings() {
-        if (isNotTerminated()) {
-            return RAW_EXPRESSION_NOT_TERMINATED;
-        }
+        assertStartPositionSet();
+        assertEndPositionSet();
 
-        return text.substring(startPosition, endPosition) + (sibling == null ? "" : ("," + sibling.toStringWithSiblings())) ;
+        int startPosition = getStartPosition();
+        int endPosition = getLastSibling().getEndPosition();
+
+        return text.substring(startPosition, endPosition);
     }
 
     public String toSimplifiedString() {
-        if (isNotTerminated()) {
-            return RAW_EXPRESSION_NOT_TERMINATED;
-        }
+        assertStartPositionSet();
+        assertEndPositionSet();
 
-        String simplifiedString = text;
-        simplifiedString = simplifiedString.substring(0, endPosition); // Remove trailing string
+        String simplifiedString = text.substring(0, endPosition); // Remove trailing string
 
         for (int i = subExpressions.size() - 1; i >= 0; i--) {
             RawExpression subExpression = subExpressions.get(i);
             String tail = simplifiedString.substring(subExpression.endPosition + 1);
             String head = simplifiedString.substring(0, subExpression.startPosition - 1);
-            simplifiedString = head + "$" + i + tail;
+            simplifiedString = head + "${" + i + "}" + tail;
         }
 
         simplifiedString = simplifiedString.substring(startPosition);
@@ -196,4 +223,42 @@ public class RawExpression {
         return simplifiedString;
     }
 
+    private String getContent(int position) {
+        assertStartPositionSet();
+
+        String content = text.substring(0, position); // Remove trailing string
+
+        for (int i = subExpressions.size() - 1; i >= 0; i--) {
+            RawExpression subExpression = subExpressions.get(i);
+            String tail = content.substring(subExpression.endPosition + 1);
+            String head = content.substring(0, subExpression.startPosition - 1);
+            content = head + tail;
+        }
+
+        return content.substring(startPosition);
+    }
+
+    private void assertStartPositionSet() {
+        if (!isStartPositionSet()) {
+            throw new IllegalStateException("Raw expression has not been started.");
+        }
+    }
+
+    private void assertStartPositionNotSet() {
+        if (isStartPositionSet()) {
+            throw new IllegalStateException("Raw expression has already been started.");
+        }
+    }
+
+    private void assertEndPositionSet() {
+        if (!isEndPositionSet()) {
+            throw new IllegalStateException("Raw expression has not been terminated.");
+        }
+    }
+
+    private void assertEndPositionNotSet() {
+        if (isEndPositionSet()) {
+            throw new IllegalStateException("Raw expression has already been terminated.");
+        }
+    }
 }

@@ -77,11 +77,6 @@ class IsLargerThanValidatorTest {
         }
     }
 
-    @Test
-    void doIt() {
-        methodContainer.validatedMethodUsingLargerThanAnnotationOnPrimitiveParameter(5);
-    }
-
     private static Stream<Arguments> numbers_isLargerThan() {
         return Stream.of(
                 Arguments.of("44", "Value 44(java.lang.String) is not a number or the assumption (44) > 4 is not true"),

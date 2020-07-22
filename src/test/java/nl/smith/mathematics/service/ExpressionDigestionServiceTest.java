@@ -223,7 +223,7 @@ public class ExpressionDigestionServiceTest {
         System.out.println(mainRawExpression.getText().length());
         System.out.println(mainRawExpression.getLengthWithSiblings());
         System.out.println(mainRawExpression.getDimension());
-        System.out.println(mainRawExpression.getNumberOfSiblings());
+        //System.out.println(mainRawExpression.getNumberOfSiblings());
 
         System.out.println();
 
