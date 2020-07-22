@@ -34,8 +34,8 @@ class TextWithoutReservedCharactersValidatorTest {
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
-            assertEquals("The provided text has reserved characters at position(s): 5, 8.\n" +
-                    "Do not use the characters in the set {#, $} since they have a special meaning.\n" +
+            assertEquals("The provided text has reserved characters at position(s): 2, 5, 8, 10.\n" +
+                    "Do not use the characters in the set {@, !, #, $, %, &, =, ?} since they have a special meaning.\n" +
                     "Text:\n" +
                     "1+%2*$a+#4?", constraintViolation.getMessage());
 

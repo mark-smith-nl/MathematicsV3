@@ -14,7 +14,7 @@ public @interface TextWithoutReservedCharacters {
 
   String message() default "";
 
-  char[] reservedCharacters() default {'$', '#'};
+  char[] reservedCharacters() default {'$', '#', '?', '@', '&', '%', '!', '='};
 
   @SuppressWarnings("unused")
   Class<?>[] groups() default {};

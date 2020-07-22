@@ -60,7 +60,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
     /**
      * Protected for test purposes.
      */
-    protected RawExpression getRawExpression(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks @TextWithoutReservedCharacters(reservedCharacters = {'$', '#'}) String text) {
+    protected RawExpression getRawExpression(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks @TextWithoutReservedCharacters String text) {
         RawExpression rawExpression = new RawExpression(text); // Note: the expression has not been initialized.
         RawExpression mainRawExpression = rawExpression;
         LinkedList<Pair<Character, Integer>> openeningAggregationTokenStack = new LinkedList<>();

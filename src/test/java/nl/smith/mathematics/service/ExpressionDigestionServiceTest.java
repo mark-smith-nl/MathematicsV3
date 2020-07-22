@@ -159,6 +159,13 @@ public class ExpressionDigestionServiceTest {
                 ))),
                 Arguments.of("2+3\n+5\t\n", new HashSet<>(Collections.singletonList(
                         new Pair<>("getRawExpression.text", "The provided text has lines with trailing whitespace characters at position(s): 6.")
+
+                ))),
+                Arguments.of("2+3!@#$%&?", new HashSet<>(Collections.singletonList(
+                        new Pair<>("getRawExpression.text", "The provided text has reserved characters at position(s): 3, 4, 5, 6, 7, 8, 9.\n" +
+                                "Do not use the characters in the set {@, !, #, $, %, &, =, ?} since they have a special meaning.\n" +
+                                "Text:\n" +
+                                "2+3!@#$%&?")
                 )))
         );
     }
