@@ -2,11 +2,11 @@ package nl.smith.mathematics.validator;
 
 import nl.smith.mathematics.annotation.constraint.LineWithoutNewLinesAndTrailingBlanks;
 import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
+import nl.smith.mathematics.annotation.constraint.TextWithoutReservedCharacters;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public class TextValidation {
 
             boolean isValid = true;
 
-            if (s != null && !s.isEmpty() && !s.matches("\\s*") ) {
+            if (s != null && !s.isEmpty() && !s.matches("\\s*")) {
                 isValid = !(s.matches("\n"));
 
                 if (isValid) {
@@ -62,6 +62,48 @@ public class TextValidation {
                         String.format("The provided text has lines with trailing whitespace characters at position(s): %s.", positionsIllegalLineEndings.stream().map(String::valueOf).collect(Collectors.joining(", "))))
                         .addConstraintViolation();
             }
+            return isValid;
+        }
+    }
+
+    public static class TextWithoutReservedCharactersValidator implements ConstraintValidator<TextWithoutReservedCharacters, String> {
+
+        private Set<Character> reservedCharacters = new HashSet<>();
+
+        @Override
+        public void initialize(TextWithoutReservedCharacters constraintAnnotation) {
+            for (char predefinedCharacter : constraintAnnotation.reservedCharacters()) {
+                reservedCharacters.add(predefinedCharacter);
+            }
+
+        }
+
+        @Override
+        public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
+            boolean isValid = true;
+
+            if (s != null) {
+                Set<Integer> positions = new HashSet<>();
+
+                for (int position = 0; position < s.length(); position++) {
+                    if (reservedCharacters.contains(s.charAt(position))) {
+                        positions.add(position);
+                    }
+                }
+
+                if (!positions.isEmpty()) {
+                    isValid = false;
+
+                    constraintValidatorContext.disableDefaultConstraintViolation();
+                    constraintValidatorContext.buildConstraintViolationWithTemplate(
+                            String.format("The provided text has reserved characters at position(s): %s.%nDo not use the characters in the set {%s} since they have a special meaning.%nText:%n%s",
+                                    positions.stream().map(String::valueOf).collect(Collectors.joining(", ")),
+                                    reservedCharacters.stream().map(String::valueOf).collect(Collectors.joining(", ")),
+                                    s))
+                            .addConstraintViolation();
+                }
+            }
+
             return isValid;
         }
     }

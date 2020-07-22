@@ -1,4 +1,4 @@
-package nl.smith.mathematics.validator;
+package nl.smith.mathematics.validator.mathematicalfunctionargument;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNaturalNumber;
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;

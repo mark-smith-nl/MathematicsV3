@@ -1,6 +1,7 @@
 package nl.smith.mathematics.service;
 
 import javafx.util.Pair;
+import nl.smith.mathematics.annotation.constraint.TextWithoutReservedCharacters;
 import nl.smith.mathematics.domain.RawExpression;
 import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
 import nl.smith.mathematics.exception.InValidExpressionStringException;
@@ -8,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotBlank;
-import javax.xml.stream.events.Characters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,7 +60,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
     /**
      * Protected for test purposes.
      */
-    protected RawExpression getRawExpression(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks String text) {
+    protected RawExpression getRawExpression(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks @TextWithoutReservedCharacters(reservedCharacters = {'$', '#'}) String text) {
         RawExpression rawExpression = new RawExpression(text); // Note: the expression has not been initialized.
         RawExpression mainRawExpression = rawExpression;
         LinkedList<Pair<Character, Integer>> openeningAggregationTokenStack = new LinkedList<>();

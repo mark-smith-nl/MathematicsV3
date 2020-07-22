@@ -1,4 +1,4 @@
-package nl.smith.mathematics.validator;
+package nl.smith.mathematics.validator.mathematicalfunctionargument;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsSmallerThan;
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
@@ -50,9 +50,9 @@ class IsSmallerThanValidatorTest {
     @MethodSource({"numbers_isSmallerThan"})
     void isSmallerThan(Object number, String expectedConstraintMessage) {
         if (expectedConstraintMessage == null) {
-            methodContainer.validatedMethodUsingSmallerThanAnnotation(number);
+            methodContainer.validatedMethodUsingIsSmallerThanAnnotation(number);
         } else {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingSmallerThanAnnotation(number));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsSmallerThanAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
@@ -66,9 +66,9 @@ class IsSmallerThanValidatorTest {
     @MethodSource({"numbers_isSmallerThanOrEqualsTo"})
     void isSmallerThanOrEqualsTo(Object number, String expectedConstraintMessage) {
         if (expectedConstraintMessage == null) {
-            methodContainer.validatedMethodUsingSmallerThanOrEqualsToAnnotation(number);
+            methodContainer.validatedMethodUsingIsSmallerThanOrEqualsToAnnotation(number);
         } else {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingSmallerThanOrEqualsToAnnotation(number));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsSmallerThanOrEqualsToAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
@@ -121,10 +121,10 @@ class IsSmallerThanValidatorTest {
     @Validated
     public static class MethodContainer {
 
-        public void validatedMethodUsingSmallerThanAnnotation(@IsSmallerThan("4") Object argument) {
+        public void validatedMethodUsingIsSmallerThanAnnotation(@IsSmallerThan("4") Object argument) {
         }
 
-        public void validatedMethodUsingSmallerThanOrEqualsToAnnotation(@IsSmallerThan(value = "4", includingBoundary = true) Object argument) {
+        public void validatedMethodUsingIsSmallerThanOrEqualsToAnnotation(@IsSmallerThan(value = "4", includingBoundary = true) Object argument) {
         }
 
     }

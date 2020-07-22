@@ -1,4 +1,4 @@
-package nl.smith.mathematics.validator;
+package nl.smith.mathematics.validator.mathematicalfunctionargument;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsBetween;
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
@@ -52,9 +52,9 @@ class IsBetweenValidatorTest {
     @MethodSource({"numbers_isBetweenIncludingBoundaries"})
     void isBetweenIncludingBoundaries(Object number, String expectedConstraintMessage) {
         if (expectedConstraintMessage == null) {
-            methodContainer.validatedMethodUsingisBetweenAnnotationIncludingBoundaries(number);
+            methodContainer.validatedMethodUsingIsBetweenAnnotationIncludingBoundaries(number);
         } else {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingisBetweenAnnotationIncludingBoundaries(number));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsBetweenAnnotationIncludingBoundaries(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
@@ -68,9 +68,9 @@ class IsBetweenValidatorTest {
     @MethodSource({"numbers_isBetweenExcludingBoundaries"})
     void isBetweenExcludingBoundaries(Object number, String expectedConstraintMessage) {
         if (expectedConstraintMessage == null) {
-            methodContainer.validatedMethodUsingisBetweenAnnotationExcludingBoundaries(number);
+            methodContainer.validatedMethodUsingIsBetweenAnnotationExcludingBoundaries(number);
         } else {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingisBetweenAnnotationExcludingBoundaries(number));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsBetweenAnnotationExcludingBoundaries(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
@@ -84,9 +84,9 @@ class IsBetweenValidatorTest {
     @MethodSource({"numbers_isBetweenIncludingLowerBoundary"})
     void isBetweenIncludingLowerBoundary(Object number, String expectedConstraintMessage) {
         if (expectedConstraintMessage == null) {
-            methodContainer.validatedMethodUsingisBetweenAnnotationIncludingLowerBoundary(number);
+            methodContainer.validatedMethodUsingIsBetweenAnnotationIncludingLowerBoundary(number);
         } else {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingisBetweenAnnotationIncludingLowerBoundary(number));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsBetweenAnnotationIncludingLowerBoundary(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
@@ -99,9 +99,9 @@ class IsBetweenValidatorTest {
     @ParameterizedTest
     @MethodSource({"numbers_isBetweenIncludingUpperBoundary"})
     void isBetweenIncludingUpperBoundary(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage == null) {methodContainer.validatedMethodUsingisBetweenAnnotationIncludingUpperBoundary(number);
+        if (expectedConstraintMessage == null) {methodContainer.validatedMethodUsingIsBetweenAnnotationIncludingUpperBoundary(number);
         } else {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingisBetweenAnnotationIncludingUpperBoundary(number));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsBetweenAnnotationIncludingUpperBoundary(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
@@ -226,16 +226,16 @@ class IsBetweenValidatorTest {
     @Validated
     public static class MethodContainer {
 
-        public void validatedMethodUsingisBetweenAnnotationIncludingBoundaries(@IsBetween(floor = "0", includingFloor = true, ceiling = "100", includingCeiling = true) Object argument) {
+        public void validatedMethodUsingIsBetweenAnnotationIncludingBoundaries(@IsBetween(floor = "0", includingFloor = true, ceiling = "100", includingCeiling = true) Object argument) {
         }
 
-        public void validatedMethodUsingisBetweenAnnotationExcludingBoundaries(@IsBetween(floor = "0", ceiling = "100") Object argument) {
+        public void validatedMethodUsingIsBetweenAnnotationExcludingBoundaries(@IsBetween(floor = "0", ceiling = "100") Object argument) {
         }
 
-        public void validatedMethodUsingisBetweenAnnotationIncludingLowerBoundary(@IsBetween(floor = "0", includingFloor = true, ceiling = "100") Object argument) {
+        public void validatedMethodUsingIsBetweenAnnotationIncludingLowerBoundary(@IsBetween(floor = "0", includingFloor = true, ceiling = "100") Object argument) {
         }
 
-        public void validatedMethodUsingisBetweenAnnotationIncludingUpperBoundary(@IsBetween(floor = "0", ceiling = "100", includingCeiling = true) Object argument) {
+        public void validatedMethodUsingIsBetweenAnnotationIncludingUpperBoundary(@IsBetween(floor = "0", ceiling = "100", includingCeiling = true) Object argument) {
         }
     }
 }

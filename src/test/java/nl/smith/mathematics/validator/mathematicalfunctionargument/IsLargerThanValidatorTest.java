@@ -1,11 +1,10 @@
-package nl.smith.mathematics.validator;
+package nl.smith.mathematics.validator.mathematicalfunctionargument;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsLargerThan;
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -51,9 +50,9 @@ class IsLargerThanValidatorTest {
     @MethodSource({"numbers_isLargerThan"})
     void isLargerThan(Object number, String expectedConstraintMessage) {
         if (expectedConstraintMessage == null) {
-            methodContainer.validatedMethodUsingLargerThanAnnotation(number);
+            methodContainer.validatedMethodUsingIsLargerThanAnnotation(number);
         } else {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingLargerThanAnnotation(number));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsLargerThanAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
@@ -66,9 +65,9 @@ class IsLargerThanValidatorTest {
     @MethodSource({"numbers_isLargerThanOrEqualsTo"})
     void isLargerThanOrEqualsTo(Object number, String expectedConstraintMessage) {
         if (expectedConstraintMessage == null) {
-            methodContainer.validatedMethodUsingLargerThanOrEqualsToAnnotation(number);
+            methodContainer.validatedMethodUsingIsLargerThanOrEqualsToAnnotation(number);
         } else {
-            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingLargerThanOrEqualsToAnnotation(number));
+            ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsLargerThanOrEqualsToAnnotation(number));
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
@@ -129,11 +128,9 @@ class IsLargerThanValidatorTest {
     @Validated
     public static class MethodContainer {
 
-        public void validatedMethodUsingLargerThanAnnotation(@IsLargerThan("4") Object argument) {}
+        public void validatedMethodUsingIsLargerThanAnnotation(@IsLargerThan("4") Object argument) {}
 
-        public void validatedMethodUsingLargerThanAnnotationOnPrimitiveParameter(@IsLargerThan("4") int argument) {}
-
-        public void validatedMethodUsingLargerThanOrEqualsToAnnotation(@IsLargerThan(value = "4", includingBoundary = true) Object argument) {}
+        public void validatedMethodUsingIsLargerThanOrEqualsToAnnotation(@IsLargerThan(value = "4", includingBoundary = true) Object argument) {}
 
     }
 }
