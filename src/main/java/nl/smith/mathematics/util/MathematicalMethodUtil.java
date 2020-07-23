@@ -25,7 +25,7 @@ public class MathematicalMethodUtil {
 
         if (clazz.getSuperclass() == RecursiveFunctionContainer.class) {
             TypeVariable<? extends Class<?>>[] typeParameters = clazz.getTypeParameters();
-            // Note: There should be two typeparameters, each with one boundary.
+            // Note: There should be two type parameters, each with one boundary.
             // The first parameter denotes the number type: it should extend number.
             // The second parameter is the concrete service class needed to bidirectional inject the services.
             if (typeParameters.length == 2) {
@@ -69,7 +69,7 @@ public class MathematicalMethodUtil {
         // There should not be any declared type parameters.
         if (method.getTypeParameters().length == 0) {
             Type genericReturnType = method.getGenericReturnType();
-            // Only generic or geneic return types are allowed.
+            // Only generic or generic return types are allowed.
             boolean isGenericArray = GenericArrayType.class.isAssignableFrom(genericReturnType.getClass());
             boolean isTypeVariable = TypeVariable.class.isAssignableFrom(genericReturnType.getClass());
 
@@ -154,7 +154,7 @@ public class MathematicalMethodUtil {
         Type genericReturnType = mathematicalFunctionMethodMapping.getMethod().getGenericReturnType();
 
         if (GenericArrayType.class.isAssignableFrom(genericReturnType.getClass())) {
-            return ((GenericArrayType) genericReturnType).getTypeName();
+            return genericReturnType.getTypeName();
         }
 
         return ((TypeVariable) genericReturnType).getName();
@@ -166,7 +166,7 @@ public class MathematicalMethodUtil {
 
         return Stream.of(mathematicalFunctionMethodMapping.getMethod().getGenericParameterTypes()).map(genericParameterType -> {
             if (GenericArrayType.class.isAssignableFrom(genericParameterType.getClass())) {
-                return ((GenericArrayType) genericParameterType).getTypeName();
+                return genericParameterType.getTypeName();
             }
 
             return ((TypeVariable) genericParameterType).getName();

@@ -27,15 +27,15 @@ public abstract class GoniometricFunctions<N extends Number, S extends Goniometr
   //TODO Implement Modulo
   public abstract N sin(@NotNull N angle);
 
-  @MathematicalFunction (description = "The cosinus of an angle")
-  //TODO Test omplementations
+  @MathematicalFunction (description = "The cosines of an angle")
+  //TODO Test implementations
   //TODO Implement Modulo
   //TODO Change implementation cos(x) = f(sin(x))
   public abstract N cos(@NotNull N angle);
 
 
   @MathematicalFunction (description = "The tangent of an angle")
-  //TODO Test omplementations
+  //TODO Test implementations
   public abstract N tan(@NotNull N angle);
 
 

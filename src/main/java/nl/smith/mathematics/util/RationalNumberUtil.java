@@ -38,11 +38,11 @@ public class RationalNumberUtil {
         CONSTANT_FRACTIONAL_PART,
         REPEATING_FRACTIONAL_PART,
         SIGN_EXPONENTIAL_PART,
-        POSITIVE_EXPONENTIAL_PART;
+        POSITIVE_EXPONENTIAL_PART
     }
 
-    public static final Pattern NUMBER_PATTERN = Pattern.compile("((\\-)?([1-9]\\d*)(\\.(\\d*)(([1-9])|(\\[(\\d*[1-9]\\d*)\\]R)))?(E\\[(\\-)?(\\d{2})\\])?)" +
-            "|(0)|((\\-)?0(\\.(\\d*)(([1-9])|(\\[(\\d*[1-9]\\d*)\\]R)))(E\\[(\\-)?(\\d{2})\\])?)");
+    public static final Pattern NUMBER_PATTERN = Pattern.compile("((-)?([1-9]\\d*)(\\.(\\d*)(([1-9])|(\\[(\\d*[1-9]\\d*)]R)))?(E\\[(-)?(\\d{2})])?)" +
+            "|(0)|((-)?0(\\.(\\d*)(([1-9])|(\\[(\\d*[1-9]\\d*)]R)))(E\\[(-)?(\\d{2})])?)");
 
     private RationalNumberUtil() {
         throw new IllegalStateException(String.format("Can not instantiate %s", this.getClass().getCanonicalName()));
@@ -146,7 +146,7 @@ public class RationalNumberUtil {
             }
 
             LOGGER.debug("Inspected number {}", numberString);
-            numberComponents.entrySet().forEach(e -> LOGGER.debug(String.format("%s ---> %s", e.getKey().name(), e.getValue())));
+            numberComponents.forEach((key, value) -> LOGGER.debug(String.format("%s ---> %s", key.name(), value)));
             return numberComponents;
         }
 

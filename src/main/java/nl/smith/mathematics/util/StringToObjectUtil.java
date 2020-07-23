@@ -1,8 +1,5 @@
 package nl.smith.mathematics.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,8 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StringToObjectUtil {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(StringToObjectUtil.class);
 
     private static final String FACTORY_METHOD_NAME = "valueOf";
 
@@ -50,7 +45,7 @@ public class StringToObjectUtil {
                     message = e.getMessage();
                 }
 
-                throw new IllegalStateException(String.format("Can not invoke method %s.%s(%s) using %s.\n Errormessage: %s", clazz.getCanonicalName(), FACTORY_METHOD_NAME, arguments, stringValue, message));
+                throw new IllegalStateException(String.format("Can not invoke method %s.%s(%s) using %s.%n Errormessage: %s", clazz.getCanonicalName(), FACTORY_METHOD_NAME, arguments, stringValue, message));
             }
         }
 

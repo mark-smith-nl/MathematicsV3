@@ -22,11 +22,11 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class IsNaturalNumberValidatorTest {
@@ -54,7 +54,9 @@ class IsNaturalNumberValidatorTest {
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingNotNullAndIsNaturalNumberAnnotation(null));
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
-        ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+        Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+        assertTrue(constraintViolationOption.isPresent());
+        ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
         assertEquals("No argument specified", constraintViolation.getMessage());
     }
 
@@ -64,7 +66,9 @@ class IsNaturalNumberValidatorTest {
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingNotNullAndIsNaturalNumberAnnotation("a string"));
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
-        ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+        Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+        assertTrue(constraintViolationOption.isPresent());
+        ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
         assertEquals("Value is not a natural number: 'a string'", constraintViolation.getMessage());
     }
 
@@ -82,7 +86,9 @@ class IsNaturalNumberValidatorTest {
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingNotNullAndIsNaturalNumberAnnotation(notNaturalNumber));
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
-        ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+        Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+        assertTrue(constraintViolationOption.isPresent());
+        ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
         assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
     }
 

@@ -1,8 +1,5 @@
 package nl.smith.mathematics.domain;
 
-
-import nl.smith.mathematics.numbertype.RationalNumber;
-
 import java.util.LinkedList;
 
 public class ExpressionStack {
@@ -46,6 +43,10 @@ public class ExpressionStack {
     public String toString() {
         StringBuilder value = new StringBuilder();
 
+        if (stackElements.isEmpty()) {
+            throw new IllegalStateException("Expression stack is empty");
+        }
+
         if (!stackElements.peek().getStackElementType().isLastElementCandidate()) {
             value.append("<Expecting more elements>").append("\n");
         }
@@ -57,14 +58,4 @@ public class ExpressionStack {
         return value.toString();
     }
 
-    public static void main(String[] args) {
-        ExpressionStack expressionStack = new ExpressionStack(new StackElement<Character>('-', StackElement.StackElementType.UNARY_OPERATOR));
-        System.out.print(expressionStack
-                .push(new StackElement<RationalNumber>(new RationalNumber(1, 7), StackElement.StackElementType.NUMBER))
-                .push(new StackElement<Character>('*', StackElement.StackElementType.BINARY_OPERATOR))
-                .push(new StackElement<Character>('-', StackElement.StackElementType.UNARY_OPERATOR))
-                .push(new StackElement<String>("Speed", StackElement.StackElementType.VARIABLE))
-                .push(new StackElement<Character>('s', StackElement.StackElementType.VARIABLE)));
-        System.out.println(String.format("Mijn naam is %-10s. Ik woon in Geldermalsen.", "Mark"));
-    }
 }

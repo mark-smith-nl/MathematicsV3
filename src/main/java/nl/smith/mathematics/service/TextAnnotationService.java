@@ -27,7 +27,7 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
 
     private static final String SIBLING_BEAN_NAME = "TEXTANNOTATIONSERVICE";
 
-    private static char endOfLineCharacter = (char) 182;
+    private static final char endOfLineCharacter = (char) 182;
 
     private boolean showEndOfLine = true;
 

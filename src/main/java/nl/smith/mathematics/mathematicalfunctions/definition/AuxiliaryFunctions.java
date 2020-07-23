@@ -15,7 +15,7 @@ public abstract class AuxiliaryFunctions<N extends Number, S extends AuxiliaryFu
         super(AuxiliaryFunctions.class);
     }
 
-    //TODO Test omplementations
+    //TODO Test implementations
     @MathematicalFunction(description = "Faculty of a number")
     public abstract N faculty(@NotNull
                               @IsNaturalNumber

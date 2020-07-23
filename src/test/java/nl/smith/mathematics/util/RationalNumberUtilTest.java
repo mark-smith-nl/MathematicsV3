@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RationalNumberUtilTest {
 
-    private static String[] NUMBERS = {"0",
+    private static final String[] NUMBERS = {"0",
             "1", "2", "3", "4", "5", "6", "7", "8", "9",
             "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9",
             "10", "20", "30", "40", "50", "60", "70", "80", "90",
@@ -25,7 +25,7 @@ public class RationalNumberUtilTest {
             "10.01", "10.02", "10.03", "10.04", "10.05", "10.06", "10.07", "10.08", "10.09",
             "0.[1]R", "0.[01]R", "0.[10]R", "0.[001]R"};
 
-    private static String[] NOT_NUMBERS = {"-0", "00", "+0",
+    private static final String[] NOT_NUMBERS = {"-0", "00", "+0",
             "01", "02", "03", "04", "05", "06", "07", "08", "09",
             "+1", "+2", "+3", "+4", "+5", "+6", "+7", "+8", "+9", "+0",
             "+10", "+20", "+30", "+40", "+50", "+60", "+70", "+80", "+90",

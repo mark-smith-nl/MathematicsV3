@@ -236,7 +236,7 @@ public class ExpressionDigestionServiceTest {
 
         for (int i = 0; i < mainRawExpression.getDimension(); i++) {
             RawExpression rawExpression = mainRawExpression.getNthSibling(i);
-            System.out.println(String.format("Index %d. Number of subExpressions %d, Lengte %d, Start %s End %d.", i, rawExpression.getSubExpressions().size(), rawExpression.getLength(), rawExpression.getStartPosition(), rawExpression.getEndPosition()));
+            System.out.println(String.format("Index %d. Number of subExpressions %d, Length %d, Start %s End %d.", i, rawExpression.getSubExpressions().size(), rawExpression.getLength(), rawExpression.getStartPosition(), rawExpression.getEndPosition()));
         }
 
     }

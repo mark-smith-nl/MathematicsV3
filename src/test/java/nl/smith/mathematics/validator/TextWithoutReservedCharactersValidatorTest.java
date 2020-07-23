@@ -9,10 +9,10 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests the {@link TextWithoutReservedCharacters} constraint used on a validated service method argument
@@ -33,7 +33,9 @@ class TextWithoutReservedCharactersValidatorTest {
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
-            ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+        Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+        assertTrue(constraintViolationOption.isPresent());
+        ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
             assertEquals("The provided text has reserved characters at position(s): 2, 5, 8, 10.\n" +
                     "Do not use the characters in the set {@, !, #, $, %, &, =, ?} since they have a special meaning.\n" +
                     "Text:\n" +
@@ -47,7 +49,9 @@ class TextWithoutReservedCharactersValidatorTest {
 
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
-        ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+        Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+        assertTrue(constraintViolationOption.isPresent());
+        ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
         assertEquals("The provided text has reserved characters at position(s): 2, 10.\n" +
                 "Do not use the characters in the set {@, %, &, ?} since they have a special meaning.\n" +
                 "Text:\n" +

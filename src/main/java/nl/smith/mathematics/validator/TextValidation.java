@@ -68,7 +68,7 @@ public class TextValidation {
 
     public static class TextWithoutReservedCharactersValidator implements ConstraintValidator<TextWithoutReservedCharacters, String> {
 
-        private Set<Character> reservedCharacters = new HashSet<>();
+        private final Set<Character> reservedCharacters = new HashSet<>();
 
         @Override
         public void initialize(TextWithoutReservedCharacters constraintAnnotation) {

@@ -20,13 +20,15 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Tests the {@link nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNumber} constraint used on a validated service method argument */
+/**
+ * Tests the {@link nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNumber} constraint used on a validated service method argument
+ */
 @SpringBootTest
 class IsNumberValidatorTest {
 
@@ -54,7 +56,9 @@ class IsNumberValidatorTest {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsNumberAnnotation(argument));
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
-            ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+            Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+            assertTrue(constraintViolationOption.isPresent());
+            ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         } else {
             methodContainer.validatedMethodUsingIsNumberAnnotation(argument);
@@ -65,10 +69,10 @@ class IsNumberValidatorTest {
     @Test
     void isNumberUsingPrimitiveUsingPrimitiveNumberTypes() {
         methodContainer.validatedMethodUsingIsNumberAnnotationWithPrimitiveIntArgument(4);
-        methodContainer.validatedMethodUsingIsNumberAnnotationWithPrimitiveLongArgument(4l);
+        methodContainer.validatedMethodUsingIsNumberAnnotationWithPrimitiveLongArgument(4L);
         methodContainer.validatedMethodUsingIsNumberAnnotationWithPrimitiveDoubleArgument(4.3);
         methodContainer.validatedMethodUsingIsNumberAnnotationWithPrimitiveFloatArgument(4.3f);
-     }
+    }
 
     @DisplayName("Checking if a method's primitive argument is a number using primitive non number types")
     @Test
@@ -76,13 +80,17 @@ class IsNumberValidatorTest {
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsNumberAnnotationWithPrimitiveBooleanArgument(true));
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
-        ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+        Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+        assertTrue(constraintViolationOption.isPresent());
+        ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
         assertEquals("Value(java.lang.Boolean) true is not a number", constraintViolation.getMessage());
 
         exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsNumberAnnotationWithPrimitiveCharArgument('a'));
         constraintViolations = exception.getConstraintViolations();
         assertEquals(1, constraintViolations.size());
-        constraintViolation = constraintViolations.stream().findFirst().get();
+        constraintViolationOption = constraintViolations.stream().findFirst();
+        assertTrue(constraintViolationOption.isPresent());
+        constraintViolation = constraintViolationOption.get();
         assertEquals("Value(java.lang.Character) a is not a number", constraintViolation.getMessage());
     }
 
@@ -106,19 +114,26 @@ class IsNumberValidatorTest {
     @Validated
     public static class MethodContainer {
 
-        public void validatedMethodUsingIsNumberAnnotation(@IsNumber Object argument) {}
+        public void validatedMethodUsingIsNumberAnnotation(@IsNumber Object argument) {
+        }
 
-        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveIntArgument(@IsNumber int argument) {}
+        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveIntArgument(@IsNumber int argument) {
+        }
 
-        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveLongArgument(@IsNumber long argument) {}
+        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveLongArgument(@IsNumber long argument) {
+        }
 
-        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveDoubleArgument(@IsNumber double argument) {}
+        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveDoubleArgument(@IsNumber double argument) {
+        }
 
-        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveFloatArgument(@IsNumber float argument) {}
+        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveFloatArgument(@IsNumber float argument) {
+        }
 
-        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveBooleanArgument(@IsNumber boolean argument) {}
+        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveBooleanArgument(@IsNumber boolean argument) {
+        }
 
-        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveCharArgument(@IsNumber char argument) {}
+        public void validatedMethodUsingIsNumberAnnotationWithPrimitiveCharArgument(@IsNumber char argument) {
+        }
 
     }
 }

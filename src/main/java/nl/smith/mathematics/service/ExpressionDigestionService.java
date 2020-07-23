@@ -2,7 +2,6 @@ package nl.smith.mathematics.service;
 
 import javafx.util.Pair;
 import nl.smith.mathematics.annotation.constraint.TextWithoutReservedCharacters;
-import nl.smith.mathematics.domain.ExpressionStack;
 import nl.smith.mathematics.domain.RawExpression;
 import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
 import nl.smith.mathematics.exception.InValidExpressionStringException;
@@ -10,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,7 +61,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
     protected RawExpression getRawExpression(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks @TextWithoutReservedCharacters String text) {
         RawExpression rawExpression = new RawExpression(text); // Note: the expression has not been initialized.
         RawExpression mainRawExpression = rawExpression;
-        LinkedList<Pair<Character, Integer>> openeningAggregationTokenStack = new LinkedList<>();
+        LinkedList<Pair<Character, Integer>> openingAggregationTokenStack = new LinkedList<>();
 
         int position;
         for (position = 0; position < text.length(); position++) {
@@ -88,23 +86,23 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
                     rawExpression = rawExpression.addSubExpression();
 
-                    openeningAggregationTokenStack.push(new Pair<>(c, position));
+                    openingAggregationTokenStack.push(new Pair<>(c, position));
                     break;
                 case END_SUBEXPRESSION:
                     // Validate proper nesting of aggregation tokens.
-                    assertTokenStackIsNotEmptyAndClosedTokenMatchesOpenToken(openeningAggregationTokenStack, text, position, c);
+                    assertTokenStackIsNotEmptyAndClosedTokenMatchesOpenToken(openingAggregationTokenStack, text, position, c);
                     // Ending a subexpression implicates that the subexpression was initialized.
                     assertRawExpressionInitializedAndNotEmpty(rawExpression, position);
                     rawExpression = rawExpression.setEndPosition(position);
 
 
-                    openeningAggregationTokenStack.pop(); // Remove the opening token from the token stack.
+                    openingAggregationTokenStack.pop(); // Remove the opening token from the token stack.
 
                     break;
             }
         }
 
-        assertTokenStackIsEmpty(openeningAggregationTokenStack, text);
+        assertTokenStackIsEmpty(openingAggregationTokenStack, text);
         assertRawExpressionInitializedAndNotEmpty(rawExpression, position);
         rawExpression.setEndPosition(position);
 
@@ -160,8 +158,8 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
      * <pre>
      *     Method throws an exception in the following cases:
      *
-     *     - The rawExpression has not been initialized
-     *     - The rawexpression contains only blank characters
+     *     - The raw expression has not been initialized
+     *     - The raw expression contains only blank characters
      *
      *     If no exception is thrown the expression is eligible for termination.
      * </pre>

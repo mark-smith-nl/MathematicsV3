@@ -11,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotEmpty;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,7 @@ public class MethodRunnerService {
     private final Map<Class<? extends Number>, Set<MathematicalFunctionMethodMapping>> mathematicalMethodsByNumberType = new HashMap<>();
 
     /** Maps to store basis arithmetic methods for adding subtracting multiplying and dividing (+, -, *, /) grouped bu number type. */
-    private Map<Class<? extends Number>, Map<Character, Method>> basicArithmeticMethodsByNumberType = new HashMap<>();
+    private final Map<Class<? extends Number>, Map<Character, Method>> basicArithmeticMethodsByNumberType = new HashMap<>();
 
     public MethodRunnerService(@NotEmpty Set<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> recursiveFunctionContainers) {
         LOGGER.info("Retrieved {} recursive function containers with duplicates.", recursiveFunctionContainers.size());
@@ -50,7 +49,7 @@ public class MethodRunnerService {
 
         numberTypes = Collections.unmodifiableSet(functionContainersByNumberType.keySet());
 
-        numberType = numberTypes.size() == 1 ? new ArrayList<Class<? extends Number>>(numberTypes).get(0) : null;
+        numberType = numberTypes.size() == 1 ? new ArrayList<>(numberTypes).get(0) : null;
 
         LOGGER.info("\nSpecified number types: {}\nUsed number type: {}\n", numberTypes.stream().map(c -> c.getSimpleName()).sorted().collect(Collectors.joining(", ")), numberType == null ? "Number type not defined" : numberType.getSimpleName());
 
@@ -153,9 +152,8 @@ public class MethodRunnerService {
         if (mathematicalFunctionMethodMapping.isVararg()) {
             int numberOfExplicitlyDeclaredParameters = mathematicalFunctionMethodMapping.getParameterCount() - 1;
 
-            for (int i = 0; i < numberOfExplicitlyDeclaredParameters; i++) {
-                parameters[i] = arguments[i];
-            }
+            if (numberOfExplicitlyDeclaredParameters >= 0)
+                System.arraycopy(arguments, 0, parameters, 0, numberOfExplicitlyDeclaredParameters);
 
             int numberOfVarArgParameters = arguments.length - numberOfExplicitlyDeclaredParameters;
             Object varArgParameters = Array.newInstance(numberType, numberOfVarArgParameters);

@@ -37,7 +37,7 @@ public class CharacterPositionsInRangeValidator implements ConstraintValidator<C
                 List<String> lines = (List<String>) value[0];
                 lines.forEach(l -> maximumPosition.setValue(maximumPosition.getValue() + l.length()));
             } else {
-                // An exception is thrown. A constraint violation is not raised. Inproper use of annotations.
+                // An exception is thrown. A constraint violation is not raised. Improper use of annotations.
                 throw new IllegalStateException("First method argument should be of type String or List<string>.");
             }
 
@@ -47,7 +47,7 @@ public class CharacterPositionsInRangeValidator implements ConstraintValidator<C
             } else if (value[1] instanceof Set<?>) {
                 positions = (Set<Integer>) value[1];
             } else {
-                // An exception is thrown. A constraint violation is not raised. Inproper use of annotations.
+                // An exception is thrown. A constraint violation is not raised. Improper use of annotations.
                 throw new IllegalStateException("Second method argument should be of type int[] or Set<Integer>.");
             }
 

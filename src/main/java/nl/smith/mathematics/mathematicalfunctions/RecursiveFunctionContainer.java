@@ -5,8 +5,6 @@ import nl.smith.mathematics.annotation.MathematicalFunctionContainer;
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsLargerThan;
 import nl.smith.mathematics.service.RecursiveValidatedService;
 import org.apache.logging.log4j.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotEmpty;
 import java.lang.reflect.Modifier;
@@ -81,7 +79,7 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
 
         if (duplicateMathematicalMethods.isEmpty()) {
             Set<MathematicalFunctionMethodMapping> mathematicalFunctionMethodMappings = new HashSet<>();
-            mathematicalMethodsBySignature.values().forEach(e -> e.forEach(mathematicalFunctionMethodMappings::add));
+            mathematicalMethodsBySignature.values().forEach(e -> mathematicalFunctionMethodMappings.addAll(e));
             return mathematicalFunctionMethodMappings;
         }
 
@@ -113,12 +111,12 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
     }
 
     public Optional<MathematicalFunctionMethodMapping> getMathematicalFunctionMethodMapping(@NotEmpty String mathematicalFunctionName, @IsLargerThan("0") int parameterCount) {
-        List<MathematicalFunctionMethodMapping> mathematicaFunctionsWithIdenticalNames = mathematicalFunctionMethodMappings.stream().filter(m -> mathematicalFunctionName.equals(m.getName())).collect(Collectors.toList());
+        List<MathematicalFunctionMethodMapping> mathematicalFunctionsWithIdenticalNames = mathematicalFunctionMethodMappings.stream().filter(m -> mathematicalFunctionName.equals(m.getName())).collect(Collectors.toList());
 
-        MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping = mathematicaFunctionsWithIdenticalNames.stream().filter(mf -> !mf.isVararg()).filter(mf -> mf.getParameterCount() == parameterCount).findFirst().orElse(null);
+        MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping = mathematicalFunctionsWithIdenticalNames.stream().filter(mf -> !mf.isVararg()).filter(mf -> mf.getParameterCount() == parameterCount).findFirst().orElse(null);
 
         if (mathematicalFunctionMethodMapping == null) {
-            mathematicalFunctionMethodMapping = mathematicaFunctionsWithIdenticalNames.stream().filter(mf -> mf.isVararg()).filter(mf -> mf.getParameterCount() <= parameterCount).findFirst().orElse(null);
+            mathematicalFunctionMethodMapping = mathematicalFunctionsWithIdenticalNames.stream().filter(mf -> mf.isVararg()).filter(mf -> mf.getParameterCount() <= parameterCount).findFirst().orElse(null);
         }
 
         return Optional.ofNullable(mathematicalFunctionMethodMapping);

@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MathematicalFunctionMethodMappingUtilTest {
 
-    private Class<AbstractExampleRecursiveFunctionContainer> clazz = AbstractExampleRecursiveFunctionContainer.class;
+    private final Class<AbstractExampleRecursiveFunctionContainer> clazz = AbstractExampleRecursiveFunctionContainer.class;
 
     @Test
     void checkGenericsEnclosingClass_nullArgument() {
@@ -42,7 +42,7 @@ class MathematicalFunctionMethodMappingUtilTest {
 
     @Test
     void checkModifiers_privateMethod() throws NoSuchMethodException {
-        Method method = clazz.getDeclaredMethod("two", new Class<?>[]{Number.class});
+        Method method = clazz.getDeclaredMethod("two", Number.class);
         IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
                 MathematicalMethodUtil.checkModifiers(method));
 
@@ -51,7 +51,7 @@ class MathematicalFunctionMethodMappingUtilTest {
 
     @Test
     void checkModifiers_concreteMethod() throws NoSuchMethodException {
-        Method method = clazz.getDeclaredMethod("three", new Class<?>[]{Number.class});
+        Method method = clazz.getDeclaredMethod("three", Number.class);
         IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
                 MathematicalMethodUtil.checkModifiers(method));
 
@@ -67,7 +67,7 @@ class MathematicalFunctionMethodMappingUtilTest {
 
     @Test
     void checkReturnType_notGenericReturnType() throws NoSuchMethodException {
-        Method method = clazz.getDeclaredMethod("four", new Class<?>[]{BigDecimal.class});
+        Method method = clazz.getDeclaredMethod("four", BigDecimal.class);
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> MathematicalMethodUtil.checkReturnType(method));
 
         assertEquals("The return type of AbstractExampleRecursiveFunctionContainer.four is not valid.\n" +
@@ -76,7 +76,7 @@ class MathematicalFunctionMethodMappingUtilTest {
 
     @Test
     void checkReturnType() throws NoSuchMethodException {
-        Method method = clazz.getDeclaredMethod("five", new Class<?>[]{Number.class});
+        Method method = clazz.getDeclaredMethod("five", Number.class);
 
         MathematicalMethodUtil.checkReturnType(method);
     }

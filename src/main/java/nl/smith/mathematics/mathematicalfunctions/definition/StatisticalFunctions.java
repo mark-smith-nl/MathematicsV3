@@ -6,7 +6,7 @@ import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 
 import javax.validation.constraints.NotNull;
 
-@MathematicalFunctionContainer(name = "Statistical methods", description = "Statistical methods: mean, standard deviation, maimum, minimum")
+@MathematicalFunctionContainer(name = "Statistical methods", description = "Statistical methods: mean, standard deviation, maximum, minimum")
 public abstract class StatisticalFunctions<N extends Number, S extends StatisticalFunctions<?, ?>> extends RecursiveFunctionContainer<N, S> {
 
     public StatisticalFunctions() {
@@ -15,32 +15,32 @@ public abstract class StatisticalFunctions<N extends Number, S extends Statistic
 
     @MathematicalFunction(description = "Sum of a set of numbers")
     //TODO Add constraint
-    //TODO Test omplementations
+    //TODO Test implementations
     public abstract N sum(N ... numbers);
 
     @MathematicalFunction(description = "Product of a set of numbers")
     //TODO Add constraint
-    //TODO Test omplementations
+    //TODO Test implementations
     public abstract N prod(@NotNull N ... numbers);
 
     @MathematicalFunction(description = "Average of a set of numbers")
     //TODO Add constraint
-    //TODO Test omplementations
+    //TODO Test implementations
     public abstract N average(N ... numbers);
 
     @MathematicalFunction(description = "Standard deviation of a set of numbers")
     //TODO Add constraint
-    //TODO Test omplementations
+    //TODO Test implementations
     public abstract N deviation(N ... numbers);
 
     @MathematicalFunction(description = "Standard deviation of a set of numbers")
     //TODO Add constraint
-    //TODO Test omplementations
+    //TODO Test implementations
     public abstract N keyNumber(N number, N ... numbers);
 
     @MathematicalFunction(description = "SQUARE")
     //TODO Add constraint
-    //TODO Test omplementations
+    //TODO Test implementations
     public abstract N[] square(N ... numbers);
 
 }

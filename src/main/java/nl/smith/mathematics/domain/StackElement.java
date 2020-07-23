@@ -1,7 +1,5 @@
 package nl.smith.mathematics.domain;
 
-import nl.smith.mathematics.numbertype.RationalNumber;
-
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,7 +15,8 @@ public class StackElement<T> {
         BINARY_OPERATOR(Character.class, false, false),
         NUMBER(Number.class, true, true),
         COMPOUND_EXPRESSION(ExpressionStack.class, true, true),
-        VARIABLE(String.class, true, true);
+        VARIABLE(String.class, true, true),
+        FUNCTION(String.class, true, false);
 
         private final Class<?> valueType;
 
@@ -60,7 +59,7 @@ public class StackElement<T> {
         }
 
         if (!stackElementType.getValueType().isAssignableFrom(value.getClass())) {
-            throw new IllegalStateException(String.format("A stack element of type %s(%s) can not have a value of type %s.", stackElementType, value.getClass()));
+            throw new IllegalStateException(String.format("A stack element of type %s(%s) can not have a value of type %s.", stackElementType, stackElementType.valueType, value.getClass()));
         }
 
         this.value = value;

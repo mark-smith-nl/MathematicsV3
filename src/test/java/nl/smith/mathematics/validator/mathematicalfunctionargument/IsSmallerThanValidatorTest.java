@@ -19,11 +19,11 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /** Tests the {@link nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsSmallerThan} constraint used on a validated service method argument */
 @SpringBootTest
@@ -42,7 +42,7 @@ class IsSmallerThanValidatorTest {
     public void init() {
         RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
         LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
-        RationalNumberOutputType.set(outputType);;
+        RationalNumberOutputType.set(outputType);
     }
 
     @DisplayName("Checking if a validated number service method argument is smaller than a specified value")
@@ -56,7 +56,9 @@ class IsSmallerThanValidatorTest {
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
-            ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+            Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+            assertTrue(constraintViolationOption.isPresent());
+            ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         }
     }
@@ -72,7 +74,9 @@ class IsSmallerThanValidatorTest {
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
-            ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+            Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+            assertTrue(constraintViolationOption.isPresent());
+            ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         }
     }

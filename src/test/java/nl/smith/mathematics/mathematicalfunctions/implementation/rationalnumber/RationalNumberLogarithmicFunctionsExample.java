@@ -10,14 +10,14 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static nl.smith.mathematics.configuration.constant.NumberConstant.rationalValueOf;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContainerExample<RationalNumberLogarithmicFunctions> {
@@ -35,7 +35,9 @@ class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContain
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
-            ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+            Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+            assertTrue(constraintViolationOption.isPresent());
+            ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         } else {
             RationalNumber functionValue = functionContainer().exp(argument);
@@ -64,7 +66,9 @@ class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContain
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
-            ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+            Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+            assertTrue(constraintViolationOption.isPresent());
+            ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         } else {
             //TaylorDegreeOfPolynom.set(100);

@@ -24,8 +24,4 @@ class BigDecimalExampleRecursiveFunctionContainerTest extends RecursiveFunctionC
         assertEquals("Description AbstractExampleRecursiveFunctionContainer", functionContainer().getDescription());
     }
 
-    @Test
-    void getMathematicalFunctions() throws NoSuchMethodException {
-        }
-
 }

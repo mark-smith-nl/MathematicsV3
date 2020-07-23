@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * Null values are not stored. Adding a property with a null value results in the removal of the property. */
 public class UserSystemContext {
 
-    private static ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
 
     public static void setValue(String propertyName, Object value) {
         if (value == null) {
@@ -46,13 +46,13 @@ public class UserSystemContext {
     public static <T> Map<String, T> getValueOfTypes(Class<T> clazz) {
         return (Map<String, T>) getMap().entrySet().stream()
                 .filter(e -> clazz.isAssignableFrom(e.getValue().getClass()))
-                .collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static <T> Optional<T> getSingleValueOfType(Class<T> clazz) {
         Map<String, T> valuesOfType = (Map<String, T>) getMap().entrySet().stream()
                 .filter(e -> clazz.isAssignableFrom(e.getValue().getClass()))
-                .collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if (valuesOfType.isEmpty()) {
             return Optional.empty();

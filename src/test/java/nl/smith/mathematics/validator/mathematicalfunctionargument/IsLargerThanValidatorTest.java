@@ -19,11 +19,11 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /** Tests the {@link nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsLargerThan} constraint used on a validated service method argument */
 @SpringBootTest
@@ -56,7 +56,9 @@ class IsLargerThanValidatorTest {
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
-            ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+            Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+            assertTrue(constraintViolationOption.isPresent());
+            ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         } }
 
@@ -71,7 +73,9 @@ class IsLargerThanValidatorTest {
 
             Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
             assertEquals(1, constraintViolations.size());
-            ConstraintViolation<?> constraintViolation = constraintViolations.stream().findFirst().get();
+            Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
+            assertTrue(constraintViolationOption.isPresent());
+            ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
             assertEquals(expectedConstraintMessage, constraintViolation.getMessage());
         }
     }

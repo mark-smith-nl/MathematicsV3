@@ -24,7 +24,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T>{
 
         integerValueOf(String propertyname) {
             clazz = Integer.class;
-            numberConstant = new NumberConstant<Integer>(propertyname, clazz);
+            numberConstant = new NumberConstant<>(propertyname, clazz);
         }
 
         public Integer get() {
@@ -51,7 +51,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T>{
 
         rationalValueOf(String propertyname) {
             clazz = RationalNumber.class;
-            numberConstant = new NumberConstant<RationalNumber>(propertyname, clazz);
+            numberConstant = new NumberConstant<>(propertyname, clazz);
         }
 
         public RationalNumber get() {
@@ -78,7 +78,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T>{
 
         bigDecimalValueOf(String propertyname) {
             clazz = BigDecimal.class;
-            numberConstant = new NumberConstant<BigDecimal>(propertyname, clazz);
+            numberConstant = new NumberConstant<>(propertyname, clazz);
         }
 
         public BigDecimal get() {

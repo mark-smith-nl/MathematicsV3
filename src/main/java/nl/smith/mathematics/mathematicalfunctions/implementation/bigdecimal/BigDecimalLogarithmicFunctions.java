@@ -88,6 +88,6 @@ public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDeci
     //TODO Tests
     @Override
     public BigDecimal sqrt(BigDecimal number) {
-        return power(number, new BigDecimal(0.5));
+        return power(number, new BigDecimal("0.5"));
     }
 }

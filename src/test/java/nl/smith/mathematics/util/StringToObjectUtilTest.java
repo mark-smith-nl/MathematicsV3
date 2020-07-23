@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StringToObjectUtilTest {
 
-    @DisplayName("Trying to retrieve a corresponding wrapper class for a primitve class")
+    @DisplayName("Trying to retrieve a corresponding wrapper class for a primitive class")
     @ParameterizedTest
     @MethodSource("classes")
     void getPrimitiveClassToWrapperClass(Class<?> clazz, Class<?> expectedClass) {
