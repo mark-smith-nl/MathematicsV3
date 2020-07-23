@@ -28,6 +28,8 @@ public class ExpressionStack {
 
             if (previousStackElementType == StackElement.StackElementType.UNARY_OPERATOR && !stackElementType.isNumeric()) {
                 throw new IllegalArgumentException("After a unary operator an element was expected that resolves into a number.");
+            } else if (previousStackElementType == StackElement.StackElementType.FUNCTION && stackElementType != StackElement.StackElementType.COMPOUND_EXPRESSION) {
+                throw new IllegalArgumentException("After a function(name) a compound expression was expected.");
             } else if (previousStackElementType.isNumeric() && stackElementType != StackElement.StackElementType.BINARY_OPERATOR) {
                 throw new IllegalArgumentException("After an elements that resolves to a number a binary operator was expected.");
             } else if (previousStackElementType == StackElement.StackElementType.BINARY_OPERATOR && stackElementType == StackElement.StackElementType.BINARY_OPERATOR) {
