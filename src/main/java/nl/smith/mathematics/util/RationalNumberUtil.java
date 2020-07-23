@@ -41,8 +41,8 @@ public class RationalNumberUtil {
         POSITIVE_EXPONENTIAL_PART;
     }
 
-    public static final Pattern NUMBER_PATTERN = Pattern.compile("((\\-)?([1-9]\\d*)(\\.(\\d*)(([1-9])|(\\{(\\d*[1-9]\\d*)\\}R)))?(E\\[(\\-)?(\\d{2})\\])?)" +
-            "|(0)|((\\-)?0(\\.(\\d*)(([1-9])|(\\{(\\d*[1-9]\\d*)\\}R)))(E\\[(\\-)?(\\d{2})\\])?)");
+    public static final Pattern NUMBER_PATTERN = Pattern.compile("((\\-)?([1-9]\\d*)(\\.(\\d*)(([1-9])|(\\[(\\d*[1-9]\\d*)\\]R)))?(E\\[(\\-)?(\\d{2})\\])?)" +
+            "|(0)|((\\-)?0(\\.(\\d*)(([1-9])|(\\[(\\d*[1-9]\\d*)\\]R)))(E\\[(\\-)?(\\d{2})\\])?)");
 
     private RationalNumberUtil() {
         throw new IllegalStateException(String.format("Can not instantiate %s", this.getClass().getCanonicalName()));
@@ -77,7 +77,7 @@ public class RationalNumberUtil {
         }
 
         if (numberComponents.get(NumberComponent.POSITIVE_EXPONENTIAL_PART) != null) {
-            BigInteger exponent = BigInteger.TEN.pow(Integer.valueOf(numberComponents.get(NumberComponent.POSITIVE_EXPONENTIAL_PART)));
+            BigInteger exponent = BigInteger.TEN.pow(Integer.parseInt(numberComponents.get(NumberComponent.POSITIVE_EXPONENTIAL_PART)));
             if (numberComponents.get(NumberComponent.SIGN_EXPONENTIAL_PART) == null) {
                 numerator = numerator.multiply(exponent);
             } else {
@@ -146,7 +146,7 @@ public class RationalNumberUtil {
             }
 
             LOGGER.debug("Inspected number {}", numberString);
-            numberComponents.entrySet().stream().forEach(e -> LOGGER.debug(String.format("%s ---> %s", e.getKey().name(), e.getValue())));
+            numberComponents.entrySet().forEach(e -> LOGGER.debug(String.format("%s ---> %s", e.getKey().name(), e.getValue())));
             return numberComponents;
         }
 

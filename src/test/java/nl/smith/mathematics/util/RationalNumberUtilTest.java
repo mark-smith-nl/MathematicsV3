@@ -23,7 +23,7 @@ public class RationalNumberUtilTest {
             "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9",
             "0.01", "0.02", "0.03", "0.04", "0.05", "0.06", "0.07", "0.08", "0.09",
             "10.01", "10.02", "10.03", "10.04", "10.05", "10.06", "10.07", "10.08", "10.09",
-            "0.{1}R", "0.{01}R", "0.{10}R", "0.{001}R"};
+            "0.[1]R", "0.[01]R", "0.[10]R", "0.[001]R"};
 
     private static String[] NOT_NUMBERS = {"-0", "00", "+0",
             "01", "02", "03", "04", "05", "06", "07", "08", "09",
@@ -32,7 +32,7 @@ public class RationalNumberUtilTest {
             "+0.1", "+0.2", "+0.3", "+0.4", "+0.5", "+0.6", "+0.7", "+0.8", "+0.9",
             "00.1", "00.2", "00.3", "00.4", "00.5", "00.6", "00.7", "00.8", "00.9",
             "0.10", "0.20", "0.30", "0.40", "0.50", "0.60", "0.70", "0.80", "0.90",
-            "0.{0}R", "0.{00}R", "00.{0}R", "0.{00}R"};
+            "0.[0]R", "0.[00]R", "00.[0]R", "0.[00]R"};
 
     @DisplayName("Testing null and empty arguments")
     @ParameterizedTest
@@ -130,7 +130,7 @@ public class RationalNumberUtilTest {
                         RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "1")),
                 Arguments.of("2432902008176640000", Map.of(
                         RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "2432902008176640000")),
-                Arguments.of("-1.0{1}R", Map.of(
+                Arguments.of("-1.0[1]R", Map.of(
                         RationalNumberUtil.NumberComponent.SIGN_PART, "-",
                         RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "1",
                         RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "0",
@@ -139,7 +139,7 @@ public class RationalNumberUtilTest {
                         RationalNumberUtil.NumberComponent.SIGN_PART, "-",
                         RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "123",
                         RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "456")),
-                Arguments.of("-234.567{8901}R", Map.of(
+                Arguments.of("-234.567[8901]R", Map.of(
                         RationalNumberUtil.NumberComponent.SIGN_PART, "-",
                         RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "234",
                         RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "567",
@@ -170,7 +170,7 @@ public class RationalNumberUtilTest {
                         RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "234",
                         RationalNumberUtil.NumberComponent.SIGN_EXPONENTIAL_PART, "-",
                         RationalNumberUtil.NumberComponent.POSITIVE_EXPONENTIAL_PART, "00")),
-                Arguments.of("-11.234{765}RE[-00]", Map.of(
+                Arguments.of("-11.234[765]RE[-00]", Map.of(
                         RationalNumberUtil.NumberComponent.SIGN_PART, "-",
                         RationalNumberUtil.NumberComponent.POSITIVE_INTEGER_PART, "11",
                         RationalNumberUtil.NumberComponent.CONSTANT_FRACTIONAL_PART, "234",
@@ -187,10 +187,10 @@ public class RationalNumberUtilTest {
                 Arguments.of("Hello world", null, new IllegalArgumentException(RationalNumberUtil.NOT_A_NUMBER_MESSAGE)),
                 Arguments.of(" 1", null, new IllegalArgumentException(RationalNumberUtil.NOT_A_NUMBER_MESSAGE)),
                 Arguments.of("01", null, new IllegalArgumentException(RationalNumberUtil.NOT_A_NUMBER_MESSAGE)),
-                Arguments.of("12.345{6789}R", new RationalNumber(10287037, 833250), null),
-                Arguments.of("-12.345{6789}R", new RationalNumber(-10287037, 833250), null),
-                Arguments.of("12.345{6789}RE[02]", new RationalNumber(1028703700, 833250), null),
-                Arguments.of("0.{142857}R", new RationalNumber(1, 7), null),
+                Arguments.of("12.345[6789]R", new RationalNumber(10287037, 833250), null),
+                Arguments.of("-12.345[6789]R", new RationalNumber(-10287037, 833250), null),
+                Arguments.of("12.345[6789]RE[02]", new RationalNumber(1028703700, 833250), null),
+                Arguments.of("0.[142857]R", new RationalNumber(1, 7), null),
                 Arguments.of("0.23", new RationalNumber(23, 100), null),
                 Arguments.of("0.23E[01]", new RationalNumber(23, 10), null),
                 Arguments.of("0.23E[-01]", new RationalNumber(23, 1000), null),
@@ -205,7 +205,7 @@ public class RationalNumberUtilTest {
                 Arguments.of(RationalNumberUtil.getRationalNumber("2.5"), 2),
                 Arguments.of(RationalNumberUtil.getRationalNumber("2.6"), 2),
                 Arguments.of(RationalNumberUtil.getRationalNumber("2.6"), 2),
-                Arguments.of(RationalNumberUtil.getRationalNumber("2.6{1}R"), 2),
+                Arguments.of(RationalNumberUtil.getRationalNumber("2.6[1]R"), 2),
                 Arguments.of(RationalNumberUtil.getRationalNumber("-2.6"), -2),
                 Arguments.of(new RationalNumber(Integer.MAX_VALUE), Integer.MAX_VALUE),
                 Arguments.of(new RationalNumber(Integer.MIN_VALUE), Integer.MIN_VALUE)

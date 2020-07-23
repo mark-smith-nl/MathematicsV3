@@ -111,7 +111,7 @@ public class ExpressionDigestionServiceTest {
         return Stream.of(
                 Arguments.of(')', '(', null),
                 Arguments.of('}', '{', null),
-                Arguments.of(']', '[', null),
+                Arguments.of(']', ' ', new IllegalArgumentException("Character ']' is not a close token.")),
                 Arguments.of('(', ' ', new IllegalArgumentException("Character '(' is not a close token.")),
                 Arguments.of('{', ' ', new IllegalArgumentException("Character '{' is not a close token.")),
                 Arguments.of('[', ' ', new IllegalArgumentException("Character '[' is not a close token.")),
@@ -123,7 +123,7 @@ public class ExpressionDigestionServiceTest {
         return Stream.of(
                 Arguments.of('(', ')', null),
                 Arguments.of('{', '}', null),
-                Arguments.of('[', ']', null),
+                Arguments.of('[', ' ', new IllegalArgumentException("Character '[' is not an open token.")),
                 Arguments.of(')', ' ', new IllegalArgumentException("Character ')' is not an open token.")),
                 Arguments.of('}', ' ', new IllegalArgumentException("Character '}' is not an open token.")),
                 Arguments.of(']', ' ', new IllegalArgumentException("Character ']' is not an open token.")),
@@ -135,10 +135,10 @@ public class ExpressionDigestionServiceTest {
         return Stream.of(
                 Arguments.of('(', ExpressionDigestionService.CharacterType.BEGIN_SUBEXPRESSION),
                 Arguments.of('{', ExpressionDigestionService.CharacterType.BEGIN_SUBEXPRESSION),
-                Arguments.of('[', ExpressionDigestionService.CharacterType.BEGIN_SUBEXPRESSION),
+                Arguments.of('[', ExpressionDigestionService.CharacterType.NORMAL),
                 Arguments.of(')', ExpressionDigestionService.CharacterType.END_SUBEXPRESSION),
                 Arguments.of('}', ExpressionDigestionService.CharacterType.END_SUBEXPRESSION),
-                Arguments.of(']', ExpressionDigestionService.CharacterType.END_SUBEXPRESSION),
+                Arguments.of(']', ExpressionDigestionService.CharacterType.NORMAL),
                 Arguments.of(',', ExpressionDigestionService.CharacterType.BEGIN_SIBLING),
                 Arguments.of('A', ExpressionDigestionService.CharacterType.NORMAL)
         );
@@ -179,9 +179,9 @@ public class ExpressionDigestionServiceTest {
                 Arguments.of("2 + 3 *\n\t\t\t4+9)+8",
                         new InValidExpressionStringException("Missing matching open token '(' for ')' at position 14.\nDid you forget to begin the subexpression?", "Not specified annotated expression")),
                 // Wrong close token at position 13
-                Arguments.of("2 + 3 * (6 - 2] + 4",
-                        new InValidExpressionStringException("Wrong open token '(' for closing token ']' at position 14.\nYou should close the subexpression with ')' instead of ']'.", "Not specified annotated expression")),
-                Arguments.of("2 + {3 * [ (6 -2) + 4",
+                Arguments.of("2 + 3 * (6 - 2} + 4",
+                        new InValidExpressionStringException("Wrong open token '(' for closing token '}' at position 14.\nYou should close the subexpression with ')' instead of '}'.", "Not specified annotated expression")),
+                Arguments.of("2 + {3 * ( (6 -2) + 4",
                         new InValidExpressionStringException("Encountered unmatched open tokens at positions 4, 9.\nDid you forget to close some subexpressions?", "Not specified annotated expression"))
         );
     }
@@ -207,7 +207,7 @@ public class ExpressionDigestionServiceTest {
                 // Blank subexpression with one subexpression at position [9-11]
                 Arguments.of("1 + (   { 3  } )", new InValidExpressionStringException("Essentially blank expression (contains only subexpressions) from [5-15].\nRemove unnecessary aggregation tokens and blank characters.", "Not specified annotated expression")),
                 // Blank subexpression with one subexpression at position [9-18]
-                Arguments.of("1 + (   { 3  } [4])", new InValidExpressionStringException("Essentially blank expression (contains only subexpressions) from [5-18].\nRemove unnecessary aggregation tokens and blank characters.", "Not specified annotated expression"))
+                Arguments.of("1 + (   { 3  } (4))", new InValidExpressionStringException("Essentially blank expression (contains only subexpressions) from [5-18].\nRemove unnecessary aggregation tokens and blank characters.", "Not specified annotated expression"))
         );
     }
 

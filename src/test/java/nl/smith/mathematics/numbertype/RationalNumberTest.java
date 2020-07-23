@@ -548,8 +548,8 @@ public class RationalNumberTest {
                 Arguments.of("12.345", new RationalNumber(12345, 1000)),
                 Arguments.of("-12.345", new RationalNumber(-12345, 1000)),
                 Arguments.of("345E[12]", new RationalNumber(345000000000000L)),
-                Arguments.of("0.{142857}R", new RationalNumber(1, 7)),
-                Arguments.of("0.12{345}R", new RationalNumber(12345345 - 12345, 1000000000 - 1000000))
+                Arguments.of("0.[142857]R", new RationalNumber(1, 7)),
+                Arguments.of("0.12[345]R", new RationalNumber(12345345 - 12345, 1000000000 - 1000000))
         );
     }
 

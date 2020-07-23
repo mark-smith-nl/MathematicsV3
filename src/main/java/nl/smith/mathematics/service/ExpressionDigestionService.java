@@ -26,8 +26,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
     private static final Set<Pair<Character, Character>> AGGREGATION_TOKEN_PAIRS = new HashSet<>(Arrays.asList(
             new Pair<>('(', ')'),
-            new Pair<>('{', '}'),
-            new Pair<>('[', ']')));
+            new Pair<>('{', '}')));
 
     private static final char START_SIBLING_CHARACTER = ',';
 
