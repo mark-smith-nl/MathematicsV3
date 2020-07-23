@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotEmpty;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,9 @@ public class MethodRunnerService {
 
     private final Map<Class<? extends Number>, Set<MathematicalFunctionMethodMapping>> mathematicalMethodsByNumberType = new HashMap<>();
 
+    /** Maps to store basis arithmetic methods for adding subtracting multiplying and dividing (+, -, *, /) grouped bu number type. */
+    private Map<Class<? extends Number>, Map<Character, Method>> basicArithmeticMethodsByNumberType = new HashMap<>();
+
     public MethodRunnerService(@NotEmpty Set<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer>> recursiveFunctionContainers) {
         LOGGER.info("Retrieved {} recursive function containers with duplicates.", recursiveFunctionContainers.size());
         removeDuplicateRecursiveFunctionContainers(recursiveFunctionContainers);
@@ -51,6 +55,8 @@ public class MethodRunnerService {
         LOGGER.info("\nSpecified number types: {}\nUsed number type: {}\n", numberTypes.stream().map(c -> c.getSimpleName()).sorted().collect(Collectors.joining(", ")), numberType == null ? "Number type not defined" : numberType.getSimpleName());
 
         buildMathematicalMethodsByNumberType();
+
+        buildBasicArithmeticMethodsByNumberType();
     }
 
     // Since all function containers are recursive and thus have siblings, duplicate containers have to be removed.
@@ -88,6 +94,14 @@ public class MethodRunnerService {
                     .collect(Collectors.joining("\n"));
 
             throw new IllegalStateException("Duplicate mathematical method references found in multiple classes.\n" + error);
+        });
+    }
+
+    private void buildBasicArithmeticMethodsByNumberType() {
+        numberTypes.forEach(numberType -> {
+            Map<Character, Method> arithmeticMethods = new HashMap<>();
+            basicArithmeticMethodsByNumberType.put(numberType, arithmeticMethods);
+
         });
     }
 

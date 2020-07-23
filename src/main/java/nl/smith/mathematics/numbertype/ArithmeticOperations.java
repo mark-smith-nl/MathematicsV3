@@ -2,7 +2,7 @@ package nl.smith.mathematics.numbertype;
 
 import java.math.BigInteger;
 
-public abstract class ArithmeticFunctions<T extends Number> extends Number {
+public abstract class ArithmeticOperations<T extends Number> extends Number {
 
 
     public abstract T add(long augend) ;

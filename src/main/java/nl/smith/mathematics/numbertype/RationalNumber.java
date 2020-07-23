@@ -20,7 +20,7 @@ import static nl.smith.mathematics.configuration.constant.NumberConstant.integer
  * <p>
  * Note: Unless specified (see: {@link RationalNumberNormalize)} numbers are not normalized by default i.e. 2/10 will not be converted to 1/5.
  */
-public class RationalNumber extends ArithmeticFunctions<RationalNumber> implements Comparable<RationalNumber> {
+public class RationalNumber extends ArithmeticOperations<RationalNumber> implements Comparable<RationalNumber> {
 
     public static final RationalNumber ZERO = new RationalNumber(BigInteger.ZERO, BigInteger.ONE);
 
