@@ -2,6 +2,7 @@ package nl.smith.mathematics.service;
 
 import javafx.util.Pair;
 import nl.smith.mathematics.annotation.constraint.TextWithoutReservedCharacters;
+import nl.smith.mathematics.domain.ExpressionStack;
 import nl.smith.mathematics.domain.RawExpression;
 import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
 import nl.smith.mathematics.exception.InValidExpressionStringException;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,8 +30,6 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
             new Pair<>('[', ']')));
 
     private static final char START_SIBLING_CHARACTER = ',';
-
-    private static Set<Character> PREDEFINED_CHARACTERS = new HashSet(Arrays.asList('$', '#', '@', '%'));
 
     public ExpressionDigestionService(TextAnnotationService textAnnotationService) {
         this.textAnnotationService = textAnnotationService;
@@ -58,6 +58,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
     }
 
     /**
+     * Method to build a raw expression tree.
      * Protected for test purposes.
      */
     protected RawExpression getRawExpression(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks @TextWithoutReservedCharacters String text) {
@@ -75,9 +76,6 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
                     }
 
                     break;
-                case PREDEFINED_CHARACTER :
-                    String message = String.format("Predefine character found. Please do not use [%s]", PREDEFINED_CHARACTERS.stream().map(String::valueOf).collect(Collectors.joining(", ")));
-                    throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), position));
                 case BEGIN_SIBLING:
                     // Beginning a sibling implicates a previous initialized sibling has been set.
                     assertRawExpressionInitializedAndNotEmpty(rawExpression, position);
@@ -156,10 +154,6 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
             }
         }
 
-        if(PREDEFINED_CHARACTERS.contains(c)) {
-            return CharacterType.PREDEFINED_CHARACTER;
-        }
-
         return CharacterType.NORMAL;
     }
 
@@ -183,7 +177,9 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
         if (rawExpression.isBlank(position)) {
             Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition(), position - 1));
-            String message = String.format("Blank expression from [%d-%d].%nDid you forget to specify the expression?", rawExpression.getStartPosition(), position - 1);
+            String message = String.format("Blank expression from [%d-%d].%nDid you forget to specify the expression?",
+                    rawExpression.getStartPosition(),
+                    position - 1);
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));
         }
 
