@@ -12,7 +12,7 @@ import java.util.stream.Stream;
  */
 public class MathematicalMethodUtil {
 
-    private static final String ERROR_MESSAGE_NULL_MESSAGE = "Please specify a method.";
+    private static final String ERROR_MESSAGE_NULL_ARGUMENT = "Please specify a method.";
 
     private MathematicalMethodUtil() {
         throw new IllegalStateException(String.format("Can not instantiate %s", this.getClass().getCanonicalName()));
@@ -49,7 +49,7 @@ public class MathematicalMethodUtil {
 
     public static void checkModifiers(Method method) {
         if (method == null) {
-            throw new IllegalStateException(ERROR_MESSAGE_NULL_MESSAGE);
+            throw new IllegalStateException(ERROR_MESSAGE_NULL_ARGUMENT);
         }
 
         int modifier = method.getModifiers();
@@ -63,7 +63,7 @@ public class MathematicalMethodUtil {
 
     public static void checkReturnType(Method method) {
         if (method == null) {
-            throw new IllegalStateException(ERROR_MESSAGE_NULL_MESSAGE);
+            throw new IllegalStateException(ERROR_MESSAGE_NULL_ARGUMENT);
         }
 
         boolean valid = false;
@@ -110,7 +110,7 @@ public class MathematicalMethodUtil {
      */
     public static void checkArguments(Method method) {
         if (method == null) {
-            throw new IllegalStateException(ERROR_MESSAGE_NULL_MESSAGE);
+            throw new IllegalStateException(ERROR_MESSAGE_NULL_ARGUMENT);
         }
 
         boolean valid = false;

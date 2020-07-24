@@ -1,24 +1,19 @@
 package nl.smith.mathematics.domain;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import javax.validation.constraints.NotNull;
 
-public class StackElement<T> {
+public class StackElement<EVT> {
 
-    private final T value;
+    private final EVT value;
 
-    private final StackElementType stackElementType;
+    public final StackElementType stackElementType;
 
     public enum StackElementType {
-        UNARY_OPERATOR(Character.class, false, false),
-        BINARY_OPERATOR(Character.class, false, false),
-        NUMBER(Number.class, true, true),
-        COMPOUND_EXPRESSION(ExpressionStack.class, true, true),
-        VARIABLE(String.class, true, true),
-        FUNCTION(String.class, true, false);
-
-        private final Class<?> valueType;
+        UNARY_OPERATOR(false, false),
+        BINARY_OPERATOR(false, false),
+        NUMBER(true, true),
+        COMPOUND_EXPRESSION(true, true),
+        NAME(true, true);
 
         /**
          * Digestion of the StackElement value of this type results in a number
@@ -28,16 +23,11 @@ public class StackElement<T> {
         /**
          * Flag to indicate that this could be the last element of an expression stack.
          */
-        private final boolean isLastElementCandidate;
+        private final boolean lastElementCandidate;
 
-        StackElementType(Class<?> valueType, boolean isNumeric, boolean isLastElementCandidate) {
-            this.valueType = valueType;
+        StackElementType(boolean isNumeric, boolean lastElementCandidate) {
             this.isNumeric = isNumeric;
-            this.isLastElementCandidate = isLastElementCandidate;
-        }
-
-        public Class<?> getValueType() {
-            return valueType;
+            this.lastElementCandidate = lastElementCandidate;
         }
 
         public boolean isNumeric() {
@@ -45,33 +35,61 @@ public class StackElement<T> {
         }
 
         public boolean isLastElementCandidate() {
-            return isLastElementCandidate;
+            return lastElementCandidate;
         }
 
-        public static Set<StackElementType> getNumberTypes() {
-            return Stream.of(StackElementType.values()).filter(t -> t.isNumeric).collect(Collectors.toSet());
-        }
     }
 
-    public StackElement(T value, StackElementType stackElementType) {
-        if (value == null || stackElementType == null) {
-            throw new IllegalStateException("Please specify a value and type for the stack element.");
-        }
-
-        if (!stackElementType.getValueType().isAssignableFrom(value.getClass())) {
-            throw new IllegalStateException(String.format("A stack element of type %s(%s) can not have a value of type %s.", stackElementType, stackElementType.valueType, value.getClass()));
-        }
-
+    private StackElement(EVT value, StackElementType stackElementType) {
         this.value = value;
         this.stackElementType = stackElementType;
     }
 
-    public T getValue() {
+    public EVT getValue() {
         return value;
     }
 
     public StackElementType getStackElementType() {
         return stackElementType;
+    }
+
+
+    public static StackElement<?> createStackElement(@NotNull Object elementValue, @NotNull StackElement.StackElementType stackElementType) {
+        switch (stackElementType) {
+            case UNARY_OPERATOR:
+                if (elementValue instanceof Character) {
+                    return new StackElement<>((Character) elementValue, StackElement.StackElementType.UNARY_OPERATOR);
+                }
+                break;
+            case NAME:
+                if (elementValue instanceof String) {
+                    return new StackElement<>((String) elementValue, StackElement.StackElementType.NAME);
+                }
+                break;
+            case BINARY_OPERATOR:
+                if (elementValue instanceof Character) {
+                    return new StackElement<>((Character) elementValue, StackElement.StackElementType.BINARY_OPERATOR);
+                }
+                break;
+            case COMPOUND_EXPRESSION:
+                if (elementValue instanceof ExpressionStack) {
+                    return new StackElement<>((ExpressionStack<?>) elementValue, StackElementType.COMPOUND_EXPRESSION);
+                }
+                break;
+            case NUMBER:
+                if (elementValue instanceof Number) {
+                    throw new IllegalArgumentException("Wrong method: Please use createNumberStackElement(@NotNull N elementValue) instead of createStackElement(@NotNull Object elementValue, @NotNull StackElement.StackElementType stackElementType).");
+                }
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("Can not create stack element(%s, %s).%nUnknown element type.", elementValue, stackElementType));
+        }
+
+        throw new IllegalArgumentException(String.format("Can not create stack element(%s, %s).%nElement type and element value do not match.", elementValue, stackElementType));
+    }
+
+    public static <N extends Number> StackElement<N> createNumberStackElement(@NotNull N elementValue) {
+        return new StackElement<>(elementValue, StackElement.StackElementType.NUMBER);
     }
 
 }

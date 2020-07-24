@@ -1,16 +1,36 @@
 package nl.smith.mathematics.domain;
 
+import nl.smith.mathematics.numbertype.RationalNumber;
+
 import java.util.LinkedList;
 
-public class ExpressionStack {
+public class ExpressionStack<N extends Number> {
 
     private final LinkedList<StackElement<?>> stackElements = new LinkedList<>();
 
-    public ExpressionStack(StackElement<?> stackElement) {
-        push(stackElement);
+    public ExpressionStack(Object elementValue, StackElement.StackElementType stackElementType) {
+        push(StackElement.createStackElement(elementValue, stackElementType));
     }
 
-    public ExpressionStack push(StackElement<?> stackElement) {
+    public LinkedList<StackElement<?>> getStackElements() {
+        return stackElements;
+    }
+
+    public ExpressionStack(N elementValue) {
+        push(StackElement.createNumberStackElement(elementValue));
+    }
+
+    public ExpressionStack add(Object elementValue, StackElement.StackElementType stackElementType) {
+        push(StackElement.createStackElement(elementValue, stackElementType));
+        return this;
+    }
+
+    public ExpressionStack add(N elementValue) {
+        push(StackElement.createNumberStackElement(elementValue));
+        return this;
+    }
+
+    private void push(StackElement<?> stackElement) {
         if (stackElement == null) {
             throw new IllegalArgumentException("Please specify a stack element.");
         }
@@ -23,21 +43,37 @@ public class ExpressionStack {
             StackElement.StackElementType previousStackElementType = stackElements.peek().getStackElementType();
             StackElement.StackElementType stackElementType = stackElement.getStackElementType();
 
-            if (previousStackElementType == StackElement.StackElementType.UNARY_OPERATOR && !stackElementType.isNumeric()) {
-                throw new IllegalArgumentException("After a unary operator an element was expected that resolves into a number.");
-            } else if (previousStackElementType == StackElement.StackElementType.FUNCTION && stackElementType != StackElement.StackElementType.COMPOUND_EXPRESSION) {
-                throw new IllegalArgumentException("After a function(name) a compound expression was expected.");
-            } else if (previousStackElementType.isNumeric() && stackElementType != StackElement.StackElementType.BINARY_OPERATOR) {
-                throw new IllegalArgumentException("After an elements that resolves to a number a binary operator was expected.");
-            } else if (previousStackElementType == StackElement.StackElementType.BINARY_OPERATOR && stackElementType == StackElement.StackElementType.BINARY_OPERATOR) {
-                throw new IllegalArgumentException("After a binary element another binary operator was not expected.");
+            switch (previousStackElementType) {
+                case UNARY_OPERATOR:
+                    if (!stackElementType.isNumeric()) {
+                        throw new IllegalArgumentException("After a unary operator a number, compound expression or variable was expected.");
+                    }
+                    break;
+                case NAME:
+                    if (stackElementType != StackElement.StackElementType.BINARY_OPERATOR && stackElementType != StackElement.StackElementType.COMPOUND_EXPRESSION) {
+                        throw new IllegalArgumentException("After a name a binary operator or a compound expression was expected.");
+                    }
+                    break;
+                case NUMBER:
+                case COMPOUND_EXPRESSION:
+                    if (stackElementType != StackElement.StackElementType.BINARY_OPERATOR) {
+                        throw new IllegalArgumentException("After a number of compound expression a binary operator was expected.");
+                    }
+                    break;
             }
         }
 
         stackElements.push(stackElement);
-
-        return this;
     }
+
+    public boolean expectingStackElement() {
+        if (stackElements.isEmpty()) {
+            throw new IllegalStateException("Expression stack is empty");
+        }
+
+        return !stackElements.peek().getStackElementType().isLastElementCandidate();
+    }
+
 
     @Override
     public String toString() {
@@ -58,4 +94,9 @@ public class ExpressionStack {
         return value.toString();
     }
 
+
+    public static void main(String[] args) {
+        new ExpressionStack<RationalNumber>(new RationalNumber(1, 5));
+        System.out.println("Yes");
+    }
 }
