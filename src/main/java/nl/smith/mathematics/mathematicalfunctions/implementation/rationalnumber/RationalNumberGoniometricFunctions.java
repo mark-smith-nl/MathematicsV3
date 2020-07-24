@@ -11,7 +11,7 @@ import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 
 public class RationalNumberGoniometricFunctions extends GoniometricFunctions<RationalNumber, RationalNumberGoniometricFunctions> {
 
-    private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERGONIOMETRICFUNCTIONS";
+    private final static String SIBLING_BEAN_NAME = "RATIONAL_NUMBER_GONIOMETRIC_FUNCTIONS";
 
     @Override
     public String getSiblingBeanName() {

@@ -12,6 +12,8 @@ import java.util.stream.Stream;
  */
 public class MathematicalMethodUtil {
 
+    private static final String ERROR_MESSAGE_NULL_MESSAGE = "Please specify a method.";
+
     private MathematicalMethodUtil() {
         throw new IllegalStateException(String.format("Can not instantiate %s", this.getClass().getCanonicalName()));
     }
@@ -47,7 +49,7 @@ public class MathematicalMethodUtil {
 
     public static void checkModifiers(Method method) {
         if (method == null) {
-            throw new IllegalStateException("Please specify a method.");
+            throw new IllegalStateException(ERROR_MESSAGE_NULL_MESSAGE);
         }
 
         int modifier = method.getModifiers();
@@ -61,7 +63,7 @@ public class MathematicalMethodUtil {
 
     public static void checkReturnType(Method method) {
         if (method == null) {
-            throw new IllegalStateException("Please specify a method.");
+            throw new IllegalStateException(ERROR_MESSAGE_NULL_MESSAGE);
         }
 
         boolean valid = false;
@@ -76,7 +78,7 @@ public class MathematicalMethodUtil {
             if (isGenericArray || isTypeVariable) {
                 if (isGenericArray) {
                     GenericArrayType genericArrayType = (GenericArrayType) genericReturnType;
-                    TypeVariable typeVariable = (TypeVariable) genericArrayType.getGenericComponentType();
+                    TypeVariable<?> typeVariable = (TypeVariable<?>) genericArrayType.getGenericComponentType();
 
                     if (typeVariable.getBounds().length == 1) {
                         valid = typeVariable.getBounds()[0] == Number.class;
@@ -84,7 +86,7 @@ public class MathematicalMethodUtil {
                 }
 
                 if (isTypeVariable) {
-                    TypeVariable typeVariable = (TypeVariable) genericReturnType;
+                    TypeVariable<?> typeVariable = (TypeVariable<?>) genericReturnType;
 
                     if (typeVariable.getBounds().length == 1) {
                         valid = typeVariable.getBounds()[0] == Number.class;
@@ -94,7 +96,7 @@ public class MathematicalMethodUtil {
         }
 
         if (!valid) {
-            throw new IllegalStateException(String.format("The return type of %s.%s is not valid.\n" +
+            throw new IllegalStateException(String.format("The return type of %s.%s is not valid.%n" +
                             "It should be: T or T[] with <T extends %s>",
                     method.getDeclaringClass().getSimpleName(),
                     method.getName(),
@@ -108,7 +110,7 @@ public class MathematicalMethodUtil {
      */
     public static void checkArguments(Method method) {
         if (method == null) {
-            throw new IllegalStateException("Please specify a method.");
+            throw new IllegalStateException(ERROR_MESSAGE_NULL_MESSAGE);
         }
 
         boolean valid = false;
@@ -150,27 +152,13 @@ public class MathematicalMethodUtil {
                 getMathematicalMethodGenericParameterTypesAsString(mathematicalFunctionMethodMapping) + ")";
     }
 
-    private static String getMathematicalMethodGenericReturnTypeAsString(MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping) {
-        Type genericReturnType = mathematicalFunctionMethodMapping.getMethod().getGenericReturnType();
-
-        if (GenericArrayType.class.isAssignableFrom(genericReturnType.getClass())) {
-            return genericReturnType.getTypeName();
-        }
-
-        return ((TypeVariable) genericReturnType).getName();
-
-    }
-
     private static String getMathematicalMethodGenericParameterTypesAsString(MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping) {
-        Type[] genericParameterTypes = mathematicalFunctionMethodMapping.getMethod().getGenericParameterTypes();
-
         return Stream.of(mathematicalFunctionMethodMapping.getMethod().getGenericParameterTypes()).map(genericParameterType -> {
             if (GenericArrayType.class.isAssignableFrom(genericParameterType.getClass())) {
                 return genericParameterType.getTypeName();
             }
 
-            return ((TypeVariable) genericParameterType).getName();
+            return ((TypeVariable<?>) genericParameterType).getName();
         }).collect(Collectors.joining(", "));
-
     }
 }

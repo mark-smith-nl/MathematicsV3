@@ -8,16 +8,6 @@ public class NumberUtil {
         throw new IllegalStateException(String.format("Can not instantiate %s", this.getClass().getCanonicalName()));
     }
 
-    public static boolean isNumber(Object o) {
-        boolean isValid = true;
-
-        if (o != null) {
-            isValid = Number.class.isAssignableFrom(o.getClass());
-        }
-
-        return isValid;
-    }
-
     /**
      * Method to convert a specified string value to a corresponding instance of the specified class.
      *

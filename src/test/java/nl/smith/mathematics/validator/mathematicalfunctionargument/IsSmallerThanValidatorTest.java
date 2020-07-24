@@ -25,7 +25,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** Tests the {@link nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsSmallerThan} constraint used on a validated service method argument */
+/**
+ * Tests the {@link nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsSmallerThan} constraint used on a validated service method argument
+ */
 @SpringBootTest
 class IsSmallerThanValidatorTest {
 
@@ -126,9 +128,11 @@ class IsSmallerThanValidatorTest {
     public static class MethodContainer {
 
         public void validatedMethodUsingIsSmallerThanAnnotation(@IsSmallerThan("4") Object argument) {
+            LOGGER.debug("Calling method validatedMethodUsingIsSmallerThanAnnotation with argument {}.", argument);
         }
 
         public void validatedMethodUsingIsSmallerThanOrEqualsToAnnotation(@IsSmallerThan(value = "4", includingBoundary = true) Object argument) {
+            LOGGER.debug("Calling method validatedMethodUsingIsSmallerThanOrEqualsToAnnotation with argument {}.", argument);
         }
 
     }

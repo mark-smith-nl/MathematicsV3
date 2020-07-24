@@ -2,6 +2,8 @@ package nl.smith.mathematics.validator;
 
 import nl.smith.mathematics.annotation.constraint.TextWithoutReservedCharacters;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest
 class TextWithoutReservedCharactersValidatorTest {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(TextWithoutReservedCharactersValidatorTest.class);
 
     private final MethodContainer methodContainer;
 
@@ -69,9 +73,9 @@ class TextWithoutReservedCharactersValidatorTest {
     public static class MethodContainer {
 
         public void validatedMethodUsingTextWithoutReservedCharactersNoCharactersSpecified(@TextWithoutReservedCharacters() String text) {
-        }
+            LOGGER.debug("Calling method validatedMethodUsingTextWithoutReservedCharactersNoCharactersSpecified");}
 
         public void validatedMethodUsingTextWithoutReservedCharactersCharactersSpecified(@TextWithoutReservedCharacters(reservedCharacters = {'@', '%', '&', '?'}) String text) {
-        }
+            LOGGER.debug("Calling method validatedMethodUsingTextWithoutReservedCharactersCharactersSpecified");}
     }
 }

@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 @Component
 public class MathematicsApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(MathematicsApplicationListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MathematicsApplicationListener.class);
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {

@@ -79,7 +79,7 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
 
         if (duplicateMathematicalMethods.isEmpty()) {
             Set<MathematicalFunctionMethodMapping> mathematicalFunctionMethodMappings = new HashSet<>();
-            mathematicalMethodsBySignature.values().forEach(e -> mathematicalFunctionMethodMappings.addAll(e));
+            mathematicalMethodsBySignature.values().forEach(mathematicalFunctionMethodMappings::addAll);
             return mathematicalFunctionMethodMappings;
         }
 
@@ -116,7 +116,7 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
         MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping = mathematicalFunctionsWithIdenticalNames.stream().filter(mf -> !mf.isVararg()).filter(mf -> mf.getParameterCount() == parameterCount).findFirst().orElse(null);
 
         if (mathematicalFunctionMethodMapping == null) {
-            mathematicalFunctionMethodMapping = mathematicalFunctionsWithIdenticalNames.stream().filter(mf -> mf.isVararg()).filter(mf -> mf.getParameterCount() <= parameterCount).findFirst().orElse(null);
+            mathematicalFunctionMethodMapping = mathematicalFunctionsWithIdenticalNames.stream().filter(MathematicalFunctionMethodMapping::isVararg).filter(mf -> mf.getParameterCount() <= parameterCount).findFirst().orElse(null);
         }
 
         return Optional.ofNullable(mathematicalFunctionMethodMapping);

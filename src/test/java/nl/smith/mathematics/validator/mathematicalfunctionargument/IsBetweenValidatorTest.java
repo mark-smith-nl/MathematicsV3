@@ -105,7 +105,8 @@ class IsBetweenValidatorTest {
     @ParameterizedTest
     @MethodSource({"numbers_isBetweenIncludingUpperBoundary"})
     void isBetweenIncludingUpperBoundary(Object number, String expectedConstraintMessage) {
-        if (expectedConstraintMessage == null) {methodContainer.validatedMethodUsingIsBetweenAnnotationIncludingUpperBoundary(number);
+        if (expectedConstraintMessage == null) {
+            methodContainer.validatedMethodUsingIsBetweenAnnotationIncludingUpperBoundary(number);
         } else {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> methodContainer.validatedMethodUsingIsBetweenAnnotationIncludingUpperBoundary(number));
 
@@ -235,15 +236,19 @@ class IsBetweenValidatorTest {
     public static class MethodContainer {
 
         public void validatedMethodUsingIsBetweenAnnotationIncludingBoundaries(@IsBetween(floor = "0", includingFloor = true, ceiling = "100", includingCeiling = true) Object argument) {
+            LOGGER.debug("Calling method validatedMethodUsingIsBetweenAnnotationIncludingBoundaries with argument {}.", argument);
         }
 
         public void validatedMethodUsingIsBetweenAnnotationExcludingBoundaries(@IsBetween(floor = "0", ceiling = "100") Object argument) {
+            LOGGER.debug("Calling method validatedMethodUsingIsBetweenAnnotationExcludingBoundaries with argument {}.", argument);
         }
 
         public void validatedMethodUsingIsBetweenAnnotationIncludingLowerBoundary(@IsBetween(floor = "0", includingFloor = true, ceiling = "100") Object argument) {
+            LOGGER.debug("Calling method validatedMethodUsingIsBetweenAnnotationIncludingLowerBoundary with argument {}.", argument);
         }
 
         public void validatedMethodUsingIsBetweenAnnotationIncludingUpperBoundary(@IsBetween(floor = "0", ceiling = "100", includingCeiling = true) Object argument) {
+            LOGGER.debug("Calling method validatedMethodUsingIsBetweenAnnotationIncludingUpperBoundary with argument {}.", argument);
         }
     }
 }

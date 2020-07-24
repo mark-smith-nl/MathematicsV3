@@ -114,6 +114,8 @@ class IsNaturalNumberValidatorTest {
     @Validated
     public static class MethodContainer {
 
-        public void validatedMethodUsingNotNullAndIsNaturalNumberAnnotation(@NotNull(message = "No argument specified") @IsNaturalNumber Object argument) {}
+        public void validatedMethodUsingNotNullAndIsNaturalNumberAnnotation(@NotNull(message = "No argument specified") @IsNaturalNumber Object argument) {
+            LOGGER.debug("Calling method validatedMethodUsingNotNullAndIsNaturalNumberAnnotation");
+        }
    }
 }

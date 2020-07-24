@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 public class RationalNumberArithmeticFunctions extends ArithmeticFunctions<RationalNumber, RationalNumberArithmeticFunctions> {
 
-    private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERARITHMETICFUNCTIONS";
+    private final static String SIBLING_BEAN_NAME = "RATIONAL_NUMBER_ARITHMETIC_FUNCTIONS";
 
     @Override
     public String getSiblingBeanName() {

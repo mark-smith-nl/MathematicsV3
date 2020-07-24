@@ -132,9 +132,13 @@ class IsLargerThanValidatorTest {
     @Validated
     public static class MethodContainer {
 
-        public void validatedMethodUsingIsLargerThanAnnotation(@IsLargerThan("4") Object argument) {}
+        public void validatedMethodUsingIsLargerThanAnnotation(@IsLargerThan("4") Object argument) {
+            LOGGER.debug("Calling method validatedMethodUsingIsLargerThanAnnotation");
+        }
 
-        public void validatedMethodUsingIsLargerThanOrEqualsToAnnotation(@IsLargerThan(value = "4", includingBoundary = true) Object argument) {}
+        public void validatedMethodUsingIsLargerThanOrEqualsToAnnotation(@IsLargerThan(value = "4", includingBoundary = true) Object argument) {
+            LOGGER.debug("Calling method validatedMethodUsingIsLargerThanOrEqualsToAnnotation");
+        }
 
     }
 }

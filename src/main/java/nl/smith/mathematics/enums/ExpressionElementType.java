@@ -3,8 +3,8 @@ package nl.smith.mathematics.enums;
 public enum ExpressionElementType {
 
     NUMBER,
-    BINARYOPERATOR,
-    UNARYOPERATOR,
+    BINARY_OPERATOR,
+    UNARY_OPERATOR,
     NAME,
     EXPRESSION
 

@@ -14,7 +14,7 @@ import static nl.smith.mathematics.configuration.constant.NumberConstant.integer
 
 public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDecimal, BigDecimalLogarithmicFunctions> {
 
-    private final static String SIBLING_BEAN_NAME = "BIGDECIMALLOGARITHMICFUNCTIONS";
+    private final static String SIBLING_BEAN_NAME = "BIG_DECIMAL_LOGARITHMIC_FUNCTIONS";
 
     @Override
     public String getSiblingBeanName() {

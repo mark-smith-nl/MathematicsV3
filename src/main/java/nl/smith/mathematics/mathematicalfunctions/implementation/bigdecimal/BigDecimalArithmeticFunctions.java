@@ -11,7 +11,7 @@ import static nl.smith.mathematics.configuration.constant.NumberConstant.integer
 
 public class BigDecimalArithmeticFunctions extends ArithmeticFunctions<BigDecimal, BigDecimalArithmeticFunctions> {
 
-	private final static String SIBLING_BEAN_NAME = "BIGDECIMALARITHMETICFUNCTIONS";
+	private final static String SIBLING_BEAN_NAME = "BIG_DECIMAL_ARITHMETIC_FUNCTIONS";
 
 	@Override
 	public String getSiblingBeanName() {

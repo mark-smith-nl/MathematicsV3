@@ -98,9 +98,9 @@ class IsNumberValidatorTest {
         return Stream.of(
                 Arguments.of("44", "Value(java.lang.String) 44 is not a number"),
 
-                Arguments.of(Integer.valueOf(100), null),
-                Arguments.of(Long.valueOf(100), null),
-                Arguments.of(Double.valueOf(100.1), null),
+                Arguments.of(100, null),
+                Arguments.of(100L, null),
+                Arguments.of(100.1, null),
                 Arguments.of(Float.valueOf("100.1"), null),
                 Arguments.of(new BigInteger("100"), null),
                 Arguments.of(new BigDecimal("100"), null),
@@ -115,25 +115,25 @@ class IsNumberValidatorTest {
     public static class MethodContainer {
 
         public void validatedMethodUsingIsNumberAnnotation(@IsNumber Object argument) {
-        }
+            LOGGER.debug("Calling method validatedMethodUsingIsNumberAnnotation");}
 
         public void validatedMethodUsingIsNumberAnnotationWithPrimitiveIntArgument(@IsNumber int argument) {
-        }
+            LOGGER.debug("Calling method validatedMethodUsingIsNumberAnnotationWithPrimitiveIntArgument");}
 
         public void validatedMethodUsingIsNumberAnnotationWithPrimitiveLongArgument(@IsNumber long argument) {
-        }
+            LOGGER.debug("Calling method validatedMethodUsingIsNumberAnnotationWithPrimitiveLongArgument");}
 
         public void validatedMethodUsingIsNumberAnnotationWithPrimitiveDoubleArgument(@IsNumber double argument) {
-        }
+            LOGGER.debug("Calling method validatedMethodUsingIsNumberAnnotationWithPrimitiveDoubleArgument");}
 
         public void validatedMethodUsingIsNumberAnnotationWithPrimitiveFloatArgument(@IsNumber float argument) {
-        }
+            LOGGER.debug("Calling method validatedMethodUsingIsNumberAnnotationWithPrimitiveFloatArgument");}
 
         public void validatedMethodUsingIsNumberAnnotationWithPrimitiveBooleanArgument(@IsNumber boolean argument) {
-        }
+            LOGGER.debug("Calling method validatedMethodUsingIsNumberAnnotationWithPrimitiveBooleanArgument");}
 
         public void validatedMethodUsingIsNumberAnnotationWithPrimitiveCharArgument(@IsNumber char argument) {
-        }
+            LOGGER.debug("Calling method validatedMethodUsingIsNumberAnnotationWithPrimitiveCharArgument");}
 
     }
 }

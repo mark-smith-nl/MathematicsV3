@@ -12,7 +12,7 @@ import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 
 public class RationalNumberStatisticalFunctions extends StatisticalFunctions<RationalNumber, RationalNumberStatisticalFunctions> {
 
-	private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERSTATISTICALFUNCTIONS";
+	private final static String SIBLING_BEAN_NAME = "RATIONAL_NUMBER_STATISTICAL_FUNCTIONS";
 
 	@Override
 	public String getSiblingBeanName() {

@@ -19,13 +19,13 @@
     </form>
     <br>
     <form method="get" action="valueOfUsingString">
-        <input name="rationalNumber" title="Rationalnumber using string format" value="12.345{6789}RE[02]" maxlength="20" size="20">
+        <input name="rationalNumber" title="Rational number using string format" value="12.345{6789}RE[02]" maxlength="20" size="20">
         <input name="scale" title="Scale. Number of decimals after the decimal point" value="150" maxlength="3" size="3">
         <input type="submit" value="Output RationalNumber in different forms">
     </form>
     <br>
 </div>
-Rationalnumber string format pattern: <div th:text="${T(nl.smith.mathematics.util.RationalNumberUtil).NUMBER_PATTERN.toString()}"></div>
+Rational number string format pattern: <div th:text="${T(nl.smith.mathematics.util.RationalNumberUtil).NUMBER_PATTERN.toString()}"></div>
 </body>
 
 </html>

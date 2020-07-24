@@ -24,6 +24,7 @@ public class StringToObjectUtil {
         }
 
         if (clazz.isPrimitive()) {
+            getPrimitiveClassToWrapperClass(clazz);
             clazz = (Class<T>) getPrimitiveClassToWrapperClass(clazz);
         }
 
@@ -45,7 +46,7 @@ public class StringToObjectUtil {
                     message = e.getMessage();
                 }
 
-                throw new IllegalStateException(String.format("Can not invoke method %s.%s(%s) using %s.%n Errormessage: %s", clazz.getCanonicalName(), FACTORY_METHOD_NAME, arguments, stringValue, message));
+                throw new IllegalStateException(String.format("Can not invoke method %s.%s(%s) using %s.%n Error message: %s", clazz.getCanonicalName(), FACTORY_METHOD_NAME, arguments, stringValue, message));
             }
         }
 

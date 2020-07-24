@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class RecursiveFunctionContainerExample<S extends RecursiveFunctionContainer<?, ?>> {
@@ -19,7 +22,9 @@ public class RecursiveFunctionContainerExample<S extends RecursiveFunctionContai
 
     // System under test (SUT)
     protected S functionContainer() {
-        return functionContainerAndSiblingBeans.values().stream().findFirst().get();
+        Optional<S> recursiveFunctionContainerOfSpecifiedTypeOption = functionContainerAndSiblingBeans.values().stream().findFirst();
+        assertTrue(recursiveFunctionContainerOfSpecifiedTypeOption.isPresent());
+        return recursiveFunctionContainerOfSpecifiedTypeOption.get();
     }
 
     @BeforeEach

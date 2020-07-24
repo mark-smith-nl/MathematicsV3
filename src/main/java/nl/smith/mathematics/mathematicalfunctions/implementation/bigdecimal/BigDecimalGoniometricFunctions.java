@@ -13,7 +13,7 @@ import static nl.smith.mathematics.configuration.constant.NumberConstant.integer
 
 public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDecimal, BigDecimalGoniometricFunctions> {
 
-    private static final String SIBLING_BEAN_NAME = "BIGDECIMALGONIOMETRICFUNCTIONS";
+    private static final String SIBLING_BEAN_NAME = "BIG_DECIMAL_GONIOMETRIC_FUNCTIONS";
 
     @Override
     public String getSiblingBeanName() {

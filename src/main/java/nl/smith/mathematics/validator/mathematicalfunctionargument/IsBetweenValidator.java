@@ -29,11 +29,12 @@ public class IsBetweenValidator implements ConstraintValidator<IsBetween, Object
         boolean isValid = true;
 
         if (o != null) {
-            if (NumberUtil.isNumber(o)) {
-                Number floor = NumberUtil.valueOf(this.floorAsString, (Class<Number>) o.getClass());
-                Number ceiling = NumberUtil.valueOf(this.ceilingAsString, (Class<Number>) o.getClass());
-                isValid = (includingFloor ? ((Comparable) o).compareTo(floor) >= 0 :  ((Comparable) o).compareTo(floor) > 0) &&
-                (includingCeiling ? ((Comparable) o).compareTo(ceiling) <= 0 :  ((Comparable) o).compareTo(ceiling) < 0);
+            if (o instanceof Number) {
+                Number number = (Number) o;
+                Number floor = NumberUtil.valueOf(this.floorAsString, number.getClass());
+                Number ceiling = NumberUtil.valueOf(this.ceilingAsString, number.getClass());
+                isValid = (includingFloor ? ((Comparable) o).compareTo(floor) >= 0 : ((Comparable) o).compareTo(floor) > 0) &&
+                        (includingCeiling ? ((Comparable) o).compareTo(ceiling) <= 0 : ((Comparable) o).compareTo(ceiling) < 0);
             } else {
                 isValid = false;
             }

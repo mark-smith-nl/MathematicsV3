@@ -24,8 +24,9 @@ public class IsSmallerThanValidator implements ConstraintValidator<IsSmallerThan
         boolean isValid = true;
 
         if (o != null) {
-            if (NumberUtil.isNumber(o)) {
-                Number thresholdValue = NumberUtil.valueOf(this.value, (Class<Number>) o.getClass());
+            if (o instanceof Number) {
+                Number number = (Number) o;
+                Number thresholdValue = NumberUtil.valueOf(this.value, number.getClass());
                 isValid = includingBoundary ? ((Comparable) o).compareTo(thresholdValue) <= 0 :  ((Comparable) o).compareTo(thresholdValue) < 0;
             } else {
                 isValid = false;

@@ -8,7 +8,7 @@ import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 
 public class RationalNumberAuxiliaryFunctions extends AuxiliaryFunctions<RationalNumber, RationalNumberAuxiliaryFunctions> {
 
-    private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERAUXILIARYFUNCTIONS";
+    private final static String SIBLING_BEAN_NAME = "RATIONAL_NUMBER_AUXILIARY_FUNCTIONS";
 
     @Override
     public String getSiblingBeanName() {

@@ -9,7 +9,7 @@ import static java.math.BigDecimal.ONE;
 
 public class BigDecimalAuxiliaryFunctions extends AuxiliaryFunctions<BigDecimal, BigDecimalAuxiliaryFunctions> {
 
-	private final static String SIBLING_BEAN_NAME = "BIGDECIMALAUXILIARYFUNCTIONS";
+	private final static String SIBLING_BEAN_NAME = "BIG_DECIMAL_AUXILIARY_FUNCTIONS";
 
 	@Override
 	public String getSiblingBeanName() {

@@ -11,7 +11,7 @@ import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 
 public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<RationalNumber, RationalNumberLogarithmicFunctions> {
 
-    private final static String SIBLING_BEAN_NAME = "RATIONALNUMBERLOGARITHMICFUNCTIONS";
+    private final static String SIBLING_BEAN_NAME = "RATIONAL_NUMBER_LOGARITHMIC_FUNCTIONS";
 
     @Override
     public String getSiblingBeanName() {

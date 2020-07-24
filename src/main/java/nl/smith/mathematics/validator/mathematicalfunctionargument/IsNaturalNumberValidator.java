@@ -2,7 +2,6 @@ package nl.smith.mathematics.validator.mathematicalfunctionargument;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsNaturalNumber;
 import nl.smith.mathematics.numbertype.ArithmeticOperations;
-import nl.smith.mathematics.util.NumberUtil;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -17,13 +16,15 @@ public class IsNaturalNumberValidator implements ConstraintValidator<IsNaturalNu
         boolean isValid = true;
 
         if (o != null) {
-            if (NumberUtil.isNumber(o)) {
-                Class<Number> clazz = (Class<Number>) o.getClass();
-                if (clazz.equals(BigInteger.class)) { // TODO empty why?
-                } else if (clazz.equals(BigDecimal.class)) {
+            if (o instanceof Number) {
+                Number number = (Number) o;
+                Class<? extends Number> clazz = number.getClass();
+                if (clazz.equals(BigDecimal.class)) {
                     isValid = ((BigDecimal) o).divideAndRemainder(BigDecimal.ONE)[1].compareTo(BigDecimal.ZERO) == 0;
                 } else if (ArithmeticOperations.class.isAssignableFrom(o.getClass())) {
-                    isValid = ((ArithmeticOperations) o).isNaturalNumber();
+                    isValid = ((ArithmeticOperations<?>) o).isNaturalNumber();
+                } else {
+                    isValid = clazz.equals(BigInteger.class);
                 }
             } else {
                 isValid = false;

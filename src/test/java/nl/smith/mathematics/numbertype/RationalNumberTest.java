@@ -103,10 +103,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("getNormalizedComponents")
-    void getNormalizedComponents(BigInteger numerator, BigInteger denominator, BigInteger expectedNumerator, BigInteger expectedDenominator, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void getNormalizedComponents(BigInteger numerator, BigInteger denominator, BigInteger expectedNumerator, BigInteger expectedDenominator, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> RationalNumber.getNormalizedComponents(numerator, denominator));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             BigInteger[] normalizedComponents = RationalNumber.getNormalizedComponents(numerator, denominator);
             assertEquals(expectedNumerator, normalizedComponents[0]);
@@ -124,10 +124,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("addUsingBigInteger")
-    void addUsingBigInteger(RationalNumber rationalNumber, BigInteger augend, RationalNumber expectedResult, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void addUsingBigInteger(RationalNumber rationalNumber, BigInteger augend, RationalNumber expectedResult, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.add(augend));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             RationalNumber result = rationalNumber.add(augend);
 
@@ -137,10 +137,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("addUsingRationalNumber")
-    void add(RationalNumber rationalNumber, RationalNumber augend, RationalNumber expectedResult, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void add(RationalNumber rationalNumber, RationalNumber augend, RationalNumber expectedResult, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.add(augend));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             RationalNumber result = rationalNumber.add(augend);
 
@@ -158,10 +158,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("subtractUsingBigInteger")
-    void subtractUsingBigInteger(RationalNumber rationalNumber, BigInteger subtrahend, RationalNumber expectedResult, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void subtractUsingBigInteger(RationalNumber rationalNumber, BigInteger subtrahend, RationalNumber expectedResult, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.subtract(subtrahend));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             RationalNumber result = rationalNumber.subtract(subtrahend);
 
@@ -171,10 +171,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("subtractUsingRationalNumber")
-    void subtractUsingRationalNumber(RationalNumber rationalNumber, RationalNumber subtrahend, RationalNumber expectedResult, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void subtractUsingRationalNumber(RationalNumber rationalNumber, RationalNumber subtrahend, RationalNumber expectedResult, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.subtract(subtrahend));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             RationalNumber result = rationalNumber.subtract(subtrahend);
 
@@ -192,10 +192,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("multiplyUsingBigInteger")
-    void multiplyUsingBigInteger(RationalNumber rationalNumber, BigInteger multiplicand, RationalNumber expectedResult, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void multiplyUsingBigInteger(RationalNumber rationalNumber, BigInteger multiplicand, RationalNumber expectedResult, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.multiply(multiplicand));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             RationalNumber result = rationalNumber.multiply(multiplicand);
 
@@ -205,10 +205,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("multiplyUsingRationalNumber")
-    void multiplyUsingRationalNumber(RationalNumber rationalNumber, RationalNumber multiplicand, RationalNumber expectedResult, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void multiplyUsingRationalNumber(RationalNumber rationalNumber, RationalNumber multiplicand, RationalNumber expectedResult, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.multiply(multiplicand));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             RationalNumber result = rationalNumber.multiply(multiplicand);
 
@@ -218,10 +218,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("divideUsingLong")
-    void divideUsingLong(RationalNumber rationalNumber, long divisor, RationalNumber expectedResult, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void divideUsingLong(RationalNumber rationalNumber, long divisor, RationalNumber expectedResult, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.divide(divisor));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             RationalNumber result = rationalNumber.divide(divisor);
 
@@ -231,10 +231,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("divideUsingBigInteger")
-    void divideUsingBigInteger(RationalNumber rationalNumber, BigInteger divisor, RationalNumber expectedResult, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void divideUsingBigInteger(RationalNumber rationalNumber, BigInteger divisor, RationalNumber expectedResult, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.divide(divisor));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             RationalNumber result = rationalNumber.divide(divisor);
 
@@ -244,10 +244,10 @@ public class RationalNumberTest {
 
     @ParameterizedTest
     @MethodSource("divideUsingRationalNumber")
-    void divideUsingRationalNumber(RationalNumber rationalNumber, RationalNumber divisor, RationalNumber expectedResult, String expectedErrormessage) {
-        if (expectedErrormessage != null) {
+    void divideUsingRationalNumber(RationalNumber rationalNumber, RationalNumber divisor, RationalNumber expectedResult, String expectedErrorMessage) {
+        if (expectedErrorMessage != null) {
             ArithmeticException exception = assertThrows(ArithmeticException.class, () -> rationalNumber.divide(divisor));
-            assertEquals(expectedErrormessage, exception.getMessage());
+            assertEquals(expectedErrorMessage, exception.getMessage());
         } else {
             RationalNumber result = rationalNumber.divide(divisor);
 

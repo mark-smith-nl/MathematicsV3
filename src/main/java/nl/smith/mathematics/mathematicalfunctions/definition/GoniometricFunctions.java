@@ -23,7 +23,7 @@ public abstract class GoniometricFunctions<N extends Number, S extends Goniometr
    *
    */
   @MathematicalFunction (description = "The sinus of an angle")
-  //TODO Test omplementations
+  //TODO Test implementations
   //TODO Implement Modulo
   public abstract N sin(@NotNull N angle);
 

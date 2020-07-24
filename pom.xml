@@ -64,9 +64,9 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Start Only for deveopment. Remove this -->
+        <!-- Start Only for development. Remove this -->
 
-        <!-- End Only for deveopment. Remove this -->
+        <!-- End Only for development. Remove this -->
 
     </dependencies>
 

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class ExpressionDigestionService extends RecursiveValidatedService<ExpressionDigestionService> {
 
-    private static final String SIBLING_BEAN_NAME = "EXPRESSIONDIGESTIONSERVICE";
+    private static final String SIBLING_BEAN_NAME = "EXPRESSION_DIGESTION_SERVICE";
 
     private final TextAnnotationService textAnnotationService;
 
@@ -211,8 +211,8 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         }
     }
 
-    private void assertTokenStackIsEmpty(LinkedList<Pair<Character, Integer>> openeningAggregationTokenStack, String text) {
-        Set<Integer> positions = openeningAggregationTokenStack.stream().map(Pair::getValue).collect(Collectors.toSet());
+    private void assertTokenStackIsEmpty(LinkedList<Pair<Character, Integer>> openingAggregationTokenStack, String text) {
+        Set<Integer> positions = openingAggregationTokenStack.stream().map(Pair::getValue).collect(Collectors.toSet());
 
         if (!positions.isEmpty()) {
             String message = String.format("Encountered unmatched open tokens at positions %s.%nDid you forget to close some subexpressions?", positions.stream().sorted().map(Object::toString).collect(Collectors.joining(", ")));

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class TextAnnotationService extends RecursiveValidatedService<TextAnnotationService> {
 
-    private static final String SIBLING_BEAN_NAME = "TEXTANNOTATIONSERVICE";
+    private static final String SIBLING_BEAN_NAME = "TEXT_ANNOTATION_SERVICE";
 
     private static final char endOfLineCharacter = (char) 182;
 
