@@ -13,15 +13,18 @@ public abstract class ArithmeticFunctions<N extends Number, S extends Arithmetic
         super(ArithmeticFunctions.class);
     }
 
+    @MathematicalFunction(name = "-", description = "Negate number")
+    public abstract N minus(@NotNull N number);
+
     @MathematicalFunction(name = "+", description = "Sum of two numbers")
-    public abstract N sum(@NotNull N number, @NotNull N augend);
+    public abstract N plus(@NotNull N number, @NotNull N augend);
 
     @MathematicalFunction(name = "-", description = "Subtraction of two numbers")
-    public abstract N subtract(@NotNull N number, @NotNull N subtrahend);
+    public abstract N minus(@NotNull N number, @NotNull N subtrahend);
 
     @MathematicalFunction(name = "*", description = "Multiplication of two numbers")
-    public abstract N multiply(@NotNull N number, @NotNull N multiplicand);
+    public abstract N multiplyBy(@NotNull N number, @NotNull N multiplicand);
 
     @MathematicalFunction(name = "/", description = "Division of two numbers")
-    public abstract N divide(@NotNull N number, @NotNull N divisor);
+    public abstract N divideBy(@NotNull N number, @NotNull N divisor);
 }

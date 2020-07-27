@@ -21,24 +21,28 @@ public class RationalNumberArithmeticFunctions extends ArithmeticFunctions<Ratio
         return new RationalNumberArithmeticFunctions();
     }
 
+    @Override
+    public RationalNumber minus(@NotNull RationalNumber number) {
+        return number.negate();
+    }
 
     @Override
-    public RationalNumber sum(@NotNull RationalNumber number, @NotNull RationalNumber augend) {
+    public RationalNumber plus(@NotNull RationalNumber number, @NotNull RationalNumber augend) {
         return number.add(augend);
     }
 
     @Override
-    public RationalNumber subtract(@NotNull RationalNumber number, @NotNull RationalNumber subtrahend) {
+    public RationalNumber minus(@NotNull RationalNumber number, @NotNull RationalNumber subtrahend) {
         return number.subtract(subtrahend);
     }
 
     @Override
-    public RationalNumber multiply(@NotNull RationalNumber number, @NotNull RationalNumber multiplicand) {
+    public RationalNumber multiplyBy(@NotNull RationalNumber number, @NotNull RationalNumber multiplicand) {
         return number.multiply(multiplicand);
     }
 
     @Override
-    public RationalNumber divide(@NotNull RationalNumber number, @NotNull RationalNumber divisor) {
+    public RationalNumber divideBy(@NotNull RationalNumber number, @NotNull RationalNumber divisor) {
         return number.divide(divisor);
     }
 }

@@ -24,24 +24,28 @@ public class BigDecimalArithmeticFunctions extends ArithmeticFunctions<BigDecima
 		return new BigDecimalArithmeticFunctions();
 	}
 
+	@Override
+	public BigDecimal minus(@NotNull BigDecimal number) {
+		return number.negate();
+	}
 
 	@Override
-	public BigDecimal sum(@NotNull BigDecimal number, @NotNull BigDecimal augend) {
+	public BigDecimal plus(@NotNull BigDecimal number, @NotNull BigDecimal augend) {
 		return number.add(augend);
 	}
 
 	@Override
-	public BigDecimal subtract(@NotNull BigDecimal number, @NotNull BigDecimal subtrahend) {
+	public BigDecimal minus(@NotNull BigDecimal number, @NotNull BigDecimal subtrahend) {
 		return number.subtract(subtrahend);
 	}
 
 	@Override
-	public BigDecimal multiply(@NotNull BigDecimal number, @NotNull BigDecimal multiplicand) {
+	public BigDecimal multiplyBy(@NotNull BigDecimal number, @NotNull BigDecimal multiplicand) {
 		return number.multiply(multiplicand);
 	}
 
 	@Override
-	public BigDecimal divide(@NotNull BigDecimal number, @NotNull BigDecimal divisor) {
+	public BigDecimal divideBy(@NotNull BigDecimal number, @NotNull BigDecimal divisor) {
 		return number.divide(divisor, Scale.get(), RoundingMode.get());
 	}
 

@@ -221,24 +221,4 @@ public class ExpressionDigestionServiceTest {
         );
     }
 
-
-    @Test
-    public void doIt() {
-        RawExpression mainRawExpression = expressionDigestionService.getRawExpression("(1 + 2) * (1 + 3) * {6 - 4 / (2 - 4)}, 1 + sum(1, 2, 3) + 4, 3 + 4, 2 * average(6 * 7)");
-        //                                                                             0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-        //                                                                                       1         2         3         4         5         6         7         8         9
-        System.out.println(mainRawExpression.getText().length());
-        System.out.println(mainRawExpression.getLengthWithSiblings());
-        System.out.println(mainRawExpression.getDimension());
-        //System.out.println(mainRawExpression.getNumberOfSiblings());
-
-        System.out.println();
-
-        for (int i = 0; i < mainRawExpression.getDimension(); i++) {
-            RawExpression rawExpression = mainRawExpression.getNthSibling(i);
-            System.out.println(String.format("Index %d. Number of subExpressions %d, Length %d, Start %s End %d.", i, rawExpression.getSubExpressions().size(), rawExpression.getLength(), rawExpression.getStartPosition(), rawExpression.getEndPosition()));
-        }
-
-    }
-
 }
