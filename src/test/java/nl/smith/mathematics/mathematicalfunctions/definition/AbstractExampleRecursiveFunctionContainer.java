@@ -7,7 +7,7 @@ import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import java.math.BigDecimal;
 
 @MathematicalFunctionContainer(name = "Name AbstractExampleRecursiveFunctionContainer", description = "Description AbstractExampleRecursiveFunctionContainer")
-public abstract class AbstractExampleRecursiveFunctionContainer<N extends Number, S extends AbstractExampleRecursiveFunctionContainer> extends RecursiveFunctionContainer<N, S> {
+public abstract class AbstractExampleRecursiveFunctionContainer<N extends Number, S extends AbstractExampleRecursiveFunctionContainer<N, ?>> extends RecursiveFunctionContainer<N, S> {
 
     public AbstractExampleRecursiveFunctionContainer() {
         super(AbstractExampleRecursiveFunctionContainer.class);

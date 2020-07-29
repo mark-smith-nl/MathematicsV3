@@ -7,7 +7,7 @@ import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import javax.validation.constraints.NotNull;
 
 @MathematicalFunctionContainer(name = "Arithmetic functions", description = "Arithmetic methods: add, subtract, multiply and divide")
-public abstract class ArithmeticFunctions<N extends Number, S extends ArithmeticFunctions<?, ?>> extends RecursiveFunctionContainer<N, S> {
+public abstract class ArithmeticFunctions<N extends Number, S extends ArithmeticFunctions<N, ?>> extends RecursiveFunctionContainer<N, S> {
 
     public ArithmeticFunctions() {
         super(ArithmeticFunctions.class);

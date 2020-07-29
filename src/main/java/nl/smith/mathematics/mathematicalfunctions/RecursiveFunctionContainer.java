@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class RecursiveFunctionContainer<N extends Number, S extends RecursiveFunctionContainer> extends RecursiveValidatedService<S> {
+public abstract class RecursiveFunctionContainer<N extends Number, S extends RecursiveFunctionContainer<N, ?>> extends RecursiveValidatedService<S> {
 
     /** The annotation that describes the container. */
     protected final MathematicalFunctionContainer annotation;
@@ -72,7 +72,7 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
                 .filter(m -> Modifier.isPublic(m.getModifiers()))
                 .filter(m -> Modifier.isAbstract(m.getModifiers()))
                 .filter(m -> m.getAnnotation(MathematicalFunction.class) != null)
-                .map(m -> new MathematicalFunctionMethodMapping(this, m))
+                .map(m -> new MathematicalFunctionMethodMapping<N>(this, m))
                 .collect(Collectors.groupingBy(MathematicalFunctionMethodMapping::getSignature));
 
         Map<String, List<MathematicalFunctionMethodMapping>> duplicateMathematicalMethods = mathematicalMethodsBySignature.entrySet().stream().filter(e -> e.getValue().size() > 1).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

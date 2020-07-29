@@ -10,9 +10,10 @@ import static nl.smith.mathematics.util.MathematicalMethodUtil.*;
 /**
  * Class to store information about a method annotated with @{@link nl.smith.mathematics.annotation.MathematicalFunction}
  */
-public class MathematicalFunctionMethodMapping {
+public class MathematicalFunctionMethodMapping<N extends Number> {
 
-    private final RecursiveFunctionContainer<? extends Number, ?> container;
+    /** The (function container) object in which the method resides. */
+    private final RecursiveFunctionContainer<N, ? extends RecursiveFunctionContainer<N, ?>> container;
 
     private final String name;
 
@@ -26,7 +27,7 @@ public class MathematicalFunctionMethodMapping {
 
     private final boolean isVararg;
 
-    public MathematicalFunctionMethodMapping(RecursiveFunctionContainer<? extends Number, ?> container, Method method) {
+    public MathematicalFunctionMethodMapping(RecursiveFunctionContainer<N, ? extends RecursiveFunctionContainer<N, ?>> container, Method method) {
         this.container = container;
 
         checkGenericsEnclosingClass(method.getDeclaringClass());
@@ -44,7 +45,7 @@ public class MathematicalFunctionMethodMapping {
         signature = getMathematicalMethodSignature(this);
     }
 
-    public RecursiveFunctionContainer<? extends Number, ?> getContainer() {
+    public RecursiveFunctionContainer<N, ? extends RecursiveFunctionContainer<N, ?>> getContainer() {
         return container;
     }
 
