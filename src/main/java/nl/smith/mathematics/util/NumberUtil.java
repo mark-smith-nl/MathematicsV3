@@ -1,11 +1,13 @@
 package nl.smith.mathematics.util;
 
+import static java.lang.String.format;
+
 public class NumberUtil {
 
     private static final String NUMBER_FACTORY_METHOD_NAME = "valueOf";
 
     private NumberUtil() {
-        throw new IllegalStateException(String.format("Can not instantiate %s", this.getClass().getCanonicalName()));
+        throw new IllegalStateException(format("Can not instantiate %s", this.getClass().getCanonicalName()));
     }
 
     /**
@@ -27,7 +29,7 @@ public class NumberUtil {
         }
 
         if (!Number.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException(String.format("Can not determine number value.\nSpecified class %s does not extend %s", clazz.getCanonicalName(), Number.class.getCanonicalName()));
+            throw new IllegalArgumentException(format("Can not determine number value.\nSpecified class %s does not extend %s", clazz.getCanonicalName(), Number.class.getCanonicalName()));
         }
 
         return StringToObjectUtil.valueOf(stringNumber, clazz);

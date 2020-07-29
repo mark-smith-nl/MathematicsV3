@@ -13,6 +13,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+
 @Service
 @Validated
 public class MethodRunnerService {
@@ -132,7 +134,7 @@ public class MethodRunnerService {
         MathematicalFunctionMethodMapping<N> mathematicalFunctionMethodMapping = getMathematicalFunctionMethodMapping(functionContainersByNumberType.get(numberType), mathematicalMethodName, arguments.length);
 
         if (arguments[0].getClass() != numberType) {
-            throw new IllegalStateException(String.format("Wrong type of number class.%nThe number type of the %s instance is set to %s while the arguments for the method invocation are of type %s.%nBoth types should be equal.",
+            throw new IllegalStateException(format("Wrong type of number class.%nThe number type of the %s instance is set to %s while the arguments for the method invocation are of type %s.%nBoth types should be equal.",
                     this.getClass().getCanonicalName(), numberType.getCanonicalName(), arguments[0].getClass().getCanonicalName()));
         }
 
@@ -140,7 +142,7 @@ public class MethodRunnerService {
     }
 
     private MathematicalFunctionMethodMapping getMathematicalFunctionMethodMapping(List<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer<?, ?>>> recursiveFunctionContainers, String mathematicalMethodName, int parameterCount) {
-        String errorMessage = String.format("Can not find a method %s accepting %d argument(s) of type %s.", mathematicalMethodName, parameterCount, numberType.getCanonicalName());
+        String errorMessage = format("Can not find a method %s accepting %d argument(s) of type %s.", mathematicalMethodName, parameterCount, numberType.getCanonicalName());
         ObjectWrapper<MathematicalFunctionMethodMapping> wrapper = new ObjectWrapper.NotNullObjectWrapper<>(null, MathematicalFunctionMethodMapping.class, errorMessage);
         recursiveFunctionContainers.forEach(c -> c.getMathematicalFunctionMethodMapping(mathematicalMethodName, parameterCount).ifPresent(wrapper::setValue));
 

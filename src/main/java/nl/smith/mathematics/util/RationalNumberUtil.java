@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.String.format;
+
 /** Utility to inspect a string to determine if it could be transformed into a {@link nl.smith.mathematics.numbertype.RationalNumber}
  *
  * <pre>
@@ -45,7 +47,7 @@ public class RationalNumberUtil {
             "|(0)|((-)?0(\\.(\\d*)(([1-9])|(\\[(\\d*[1-9]\\d*)]R)))(E\\[(-)?(\\d{2})])?)");
 
     private RationalNumberUtil() {
-        throw new IllegalStateException(String.format("Can not instantiate %s", this.getClass().getCanonicalName()));
+        throw new IllegalStateException(format("Can not instantiate %s", this.getClass().getCanonicalName()));
     }
 
     public static void assertIsNumber(String numberString) {
@@ -146,7 +148,7 @@ public class RationalNumberUtil {
             }
 
             LOGGER.debug("Inspected number {}", numberString);
-            numberComponents.forEach((key, value) -> LOGGER.debug(String.format("%s ---> %s", key.name(), value)));
+            numberComponents.forEach((key, value) -> LOGGER.debug(format("%s ---> %s", key.name(), value)));
             return numberComponents;
         }
 

@@ -137,10 +137,16 @@ public class ExpressionStack<N extends Number> {
         }
 
         return substituteVariables(variables).
-                substituteUnaryOperators(variables);
+                substituteUnaryOperators();
     }
 
     private ExpressionStack<N> substituteVariables(Map<String, N> variables) {
+        if (getState() != State.CLOSED) {
+            throw new IllegalStateException(format("Can not substitute variables in an expression stack when it is in state %s.", getState()));
+        }
+
+        ExpressionStack<N> digestedExpressionStack = new ExpressionStack<>();
+
         Set<String> unknownVariables = new TreeSet<>();
         for (int i = stackElements.size() - 1; i >= 0; i--) {
             StackElement<?> stackElement = stackElements.get(i);
@@ -150,19 +156,26 @@ public class ExpressionStack<N extends Number> {
                 if (number == null) {
                     unknownVariables.add(variableName);
                 } else{
-                    stackElements.set(i, new NumberStackElement<>(number));
+                    digestedExpressionStack.addNumber(number);
                 }
 
+            } else {
+                digestedExpressionStack.push(stackElement);
             }
         }
 
         if (!unknownVariables.isEmpty()) {
             throw new IllegalStateException(format("Unknown variable(s) '%s'.", unknownVariables.stream().collect(Collectors.joining("', '"))));
         }
-        return this;
+
+        return digestedExpressionStack.close();
     }
 
-    private ExpressionStack<N> substituteUnaryOperators(Map<String, N> variables) {
+    private ExpressionStack<N> substituteUnaryOperators() {
+        if (getState() != State.CLOSED) {
+            throw new IllegalStateException(format("Can not substitute unary operator/value pairs in an expression stack when it is in state %s.", getState()));
+        }
+
         ExpressionStack<N> digestedExpressionStack = new ExpressionStack<>();
 
         int i = stackElements.size();
@@ -190,6 +203,17 @@ public class ExpressionStack<N extends Number> {
         }
 
         return digestedExpressionStack.close();
+    }
+
+    private ExpressionStack<N> substituteBinaryOperators() {
+        if (getState() != State.CLOSED) {
+            throw new IllegalStateException(format("Can not substitute binary operator/value set pairs in an expression stack when it is in state %s.", getState()));
+        }
+
+        ExpressionStack<N> digestedExpressionStack = new ExpressionStack<>();
+
+        // TODO implment
+        return digestedExpressionStack;
     }
 
     private static boolean isValidStackSequence(Class<?> previousStackElementClass, Class<?> stackElementClass) {
@@ -258,28 +282,6 @@ public class ExpressionStack<N extends Number> {
     @Override
     public String toString() {
         return toStringBuilder(0).toString();
-    }
-
-    public static void main(String[] args) {
-        LinkedList<String> list = new LinkedList();
-
-        list.push("Mark");// 4
-        list.push("Tom");// 3
-        list.push("Frank");// 2
-        list.push("Petra");// 1
-        list.push("Smith");// 1
-        list.push("Karel"); // 0
-        System.out.println();
-        list.forEach(System.out::println);
-        System.out.println();
-
-        int i = list.size() - 1;
-        while (i >= 0) {
-            if (list.get(i).equals("Petra")) {
-
-            }
-        }
-
     }
 
 }

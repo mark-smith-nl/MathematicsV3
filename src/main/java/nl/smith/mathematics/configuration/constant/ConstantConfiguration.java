@@ -8,6 +8,8 @@ import org.springframework.util.StringUtils;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import static java.lang.String.format;
+
 /**
  * Default values for all implementing classes are specified in {@link ConstantConfiguration#PROPERTY_FILE_NAME}.
  * The specified values are associated with the thread in which the value is set.
@@ -60,7 +62,7 @@ public abstract class ConstantConfiguration<T> {
             }
         }
         if (StringUtils.isEmpty(value)) {
-            throw new IllegalStateException(String.format("\nNo default value specified for property %s." +
+            throw new IllegalStateException(format("\nNo default value specified for property %s." +
                     "\nPlease specify this value as a system property -D%1$s=<value>" +
                     "\nor specify it as %1$s=<value> in file %2$s.", propertyName, PROPERTY_FILE_NAME));
         }

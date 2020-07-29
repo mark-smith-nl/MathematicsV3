@@ -1,7 +1,10 @@
 package nl.smith.mathematics.domain;
 
+import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type;
 import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.numbertype.RationalNumber;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,11 +12,13 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static nl.smith.mathematics.domain.ExpressionStack.State.CLOSED;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.TEN;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +38,11 @@ class ExpressionStackTest {
 
     @Mock
     private MathematicalFunctionMethodMapping<RationalNumber> addMethodMapping;
+
+    @BeforeEach
+    public void init() {
+        RationalNumberOutputType.set(Type.COMPONENTS);
+    }
 
     @Test
     public void initialState() {
@@ -93,14 +103,14 @@ class ExpressionStackTest {
 
     @Test
     public void setSibling_expressionStackStateClosed_siblingStateClosed() {
-        when(siblingExpressionStack.getState()).thenReturn(ExpressionStack.State.CLOSED);
+        when(siblingExpressionStack.getState()).thenReturn(CLOSED);
         expressionStack.addNumber(ONE).close().setSibling(siblingExpressionStack);
         assertSame(siblingExpressionStack, expressionStack.getSibling());
     }
 
     @Test
     public void getDimension() {
-        when(siblingExpressionStack.getState()).thenReturn(ExpressionStack.State.CLOSED);
+        when(siblingExpressionStack.getState()).thenReturn(CLOSED);
         when(siblingExpressionStack.getDimension()).thenReturn(3);
         expressionStack.addNumber(ONE).close().setSibling(siblingExpressionStack);
 
@@ -150,9 +160,15 @@ class ExpressionStackTest {
                 .addVariableName("B") // index: 2
                 .addBinaryOperator(addMethodMapping) // index: 1
                 .addVariableName("B") // index: 0
-                .close().digest(Map.of("A", new RationalNumber(1, 3), "B", new RationalNumber(2, 3), "Z", new RationalNumber(1, 7)));
+                .close()
+                .digest(Map.of("A", new RationalNumber(1, 3), "B", new RationalNumber(2, 3), "Z", new RationalNumber(1, 7)));
 
+        assertEquals(7, expressionStack.size());
+
+        assertFalse(expressionStack == digestedExpressionStack);
         assertEquals(7, digestedExpressionStack.size());
+        assertEquals(CLOSED, digestedExpressionStack.getState());
+
         StackElement<?> stackElement = digestedExpressionStack.stackElements.get(0);
         assertEquals(StackElement.NumberStackElement.class, stackElement.getClass());
         assertEquals(new RationalNumber(2, 3), stackElement.getValue());
@@ -169,17 +185,29 @@ class ExpressionStackTest {
 
     @Test
     public void digest_unaryOperators() {
+        RationalNumber rationalNumberOneDivideBySeven = new RationalNumber(1, 7);
+        RationalNumber rationalNumberTwoDivideByThirteen = new RationalNumber(2, 13);
+
         when(negateMethodMapping.getParameterCount()).thenReturn(1);
-        when(negateMethodMapping.invokeWithNumbers(eq(new RationalNumber(1, 7)))).thenReturn(new RationalNumber(1, 7));
+        when(negateMethodMapping.invokeWithNumbers(eq(rationalNumberOneDivideBySeven))).thenReturn(rationalNumberOneDivideBySeven.negate());
+        when(negateMethodMapping.invokeWithNumbers(eq(rationalNumberTwoDivideByThirteen))).thenReturn(rationalNumberTwoDivideByThirteen.negate());
         when(addMethodMapping.getParameterCount()).thenReturn(2);
-        ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.addUnaryOperator(negateMethodMapping) // index: 3
-                .addNumber(new RationalNumber(1, 7)) // index: 2
-                .addBinaryOperator(addMethodMapping) // index: 1
-                .addNumber(new RationalNumber(2, 7)) // index: 0
+        ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.addUnaryOperator(negateMethodMapping) // index: 4
+                .addNumber(rationalNumberOneDivideBySeven) // index: 3
+                .addBinaryOperator(addMethodMapping) // index: 2
+                .addUnaryOperator(negateMethodMapping) // index: 1
+                .addNumber(rationalNumberTwoDivideByThirteen) // index: 0
                 .close()
                 .digest(Collections.emptyMap());
 
+        assertEquals(5, expressionStack.size());
+
+        assertFalse(expressionStack == digestedExpressionStack);
         assertEquals(3, digestedExpressionStack.size());
+        assertEquals(CLOSED, digestedExpressionStack.getState());
+
+        assertEquals(rationalNumberTwoDivideByThirteen.negate(), digestedExpressionStack.stackElements.get(0).getValue());
+        assertEquals(rationalNumberOneDivideBySeven.negate(), digestedExpressionStack.stackElements.get(2).getValue());
     }
 
     private static Stream<Arguments> digest_illegalState() {

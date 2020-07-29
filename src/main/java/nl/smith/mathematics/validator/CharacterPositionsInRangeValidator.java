@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.lang.String.format;
+
 @SupportedValidationTarget(ValidationTarget.PARAMETERS)
 public class CharacterPositionsInRangeValidator implements ConstraintValidator<CharacterPositionsInRange, Object[]> {
 
@@ -60,7 +62,7 @@ public class CharacterPositionsInRangeValidator implements ConstraintValidator<C
                     isValid = false;
                     constraintValidatorContext.disableDefaultConstraintViolation();
                     constraintValidatorContext.buildConstraintViolationWithTemplate(
-                            String.format("Supplied positions contain values(%s) larger than or equal to the size of the provided string (%d).",
+                            format("Supplied positions contain values(%s) larger than or equal to the size of the provided string (%d).",
                                     positions.stream().sorted().map(String::valueOf).collect(Collectors.joining(", ")),
                                     maximumPosition.getValue() + 1))
                             .addParameterNode(1).addConstraintViolation();

@@ -7,6 +7,8 @@ import java.lang.reflect.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+
 /**
  * Utility to check if @{@link MathematicalFunctionMethodMapping} annotated methods use and return the correct value types.
  */
@@ -15,7 +17,7 @@ public class MathematicalMethodUtil {
     private static final String ERROR_MESSAGE_NULL_ARGUMENT = "Please specify a method.";
 
     private MathematicalMethodUtil() {
-        throw new IllegalStateException(String.format("Can not instantiate %s", this.getClass().getCanonicalName()));
+        throw new IllegalStateException(format("Can not instantiate %s", this.getClass().getCanonicalName()));
     }
 
     public static void checkGenericsEnclosingClass(Class<?> clazz) {
@@ -39,7 +41,7 @@ public class MathematicalMethodUtil {
         }
 
         if (!valid) {
-            throw new IllegalStateException(String.format("Improper use of generics.\n" +
+            throw new IllegalStateException(format("Improper use of generics.\n" +
                             "Define your class as public abstract <N extends %s, S extends %s> extends %s<N, S>",
                     Number.class.getSimpleName(),
                     clazz.getSimpleName(),
@@ -55,7 +57,7 @@ public class MathematicalMethodUtil {
         int modifier = method.getModifiers();
 
         if (!Modifier.isPublic(modifier) || !Modifier.isAbstract(modifier)) {
-            throw new IllegalStateException(String.format("The method %s.%s should be public and abstract.",
+            throw new IllegalStateException(format("The method %s.%s should be public and abstract.",
                     method.getDeclaringClass().getCanonicalName(),
                     method.getName()));
         }
@@ -96,7 +98,7 @@ public class MathematicalMethodUtil {
         }
 
         if (!valid) {
-            throw new IllegalStateException(String.format("The return type of %s.%s is not valid.%n" +
+            throw new IllegalStateException(format("The return type of %s.%s is not valid.%n" +
                             "It should be: T or T[] with <T extends %s>",
                     method.getDeclaringClass().getSimpleName(),
                     method.getName(),
@@ -135,7 +137,7 @@ public class MathematicalMethodUtil {
         }
 
         if (!valid) {
-            throw new IllegalStateException(String.format("The argument types of %s.%s are not valid.\n" +
+            throw new IllegalStateException(format("The argument types of %s.%s are not valid.\n" +
                             "It should be: T or T[] with <T extends %s>",
                     method.getDeclaringClass().getSimpleName(),
                     method.getName(),

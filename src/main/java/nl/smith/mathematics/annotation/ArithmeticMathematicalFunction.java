@@ -9,17 +9,23 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 /*
   @author mark
- * Annotation to mark a method as a mathematical function.
+ * Annotation to mark a method as an arithmetic function.
  * This annotation should be placed on abstract generic public methods.
  * The method should return the specified generic return type or a generic array of the specified generic return type.
  * A list of the specified generic return type is not accepted.
  * The method should accept at least one argument. All parameters should be of the specified generic return type.
  * Varargs are accepted as (the last) argument.
  */
-public @interface MathematicalFunction {
+public @interface ArithmeticMathematicalFunction {
 
-	String name() default "";
+	char symbol();
 
 	String description();
 
+	Priority priority();
+
+	enum Priority {
+		HIGH,
+		LOW
+	}
 }

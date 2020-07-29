@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.String.format;
 import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
 
 /**
@@ -409,7 +410,7 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
                 }
                 break;
             default:
-                result = String.format("toString(%s) is not implemented", outputType.name());
+                result = format("toString(%s) is not implemented", outputType.name());
         }
 
         return result;

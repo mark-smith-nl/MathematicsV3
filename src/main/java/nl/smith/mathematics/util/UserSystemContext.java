@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+
 /** Utility to store thread specific key value pairs in a map and associate them with a specific thread.
  * This class is intended to store user specific properties which can be retrieved anywhere in the thread.
  * Null values are not stored. Adding a property with a null value results in the removal of the property. */
@@ -40,7 +42,7 @@ public class UserSystemContext {
             return (Optional<T>) value;
         }
 
-        throw new IllegalArgumentException(String.format("Value for property %s was not found or was not of type %s", propertyName, clazz.getCanonicalName()));
+        throw new IllegalArgumentException(format("Value for property %s was not found or was not of type %s", propertyName, clazz.getCanonicalName()));
 
     }
     public static <T> Map<String, T> getValueOfTypes(Class<T> clazz) {
@@ -62,7 +64,7 @@ public class UserSystemContext {
             return  Optional.of(valuesOfType.entrySet().iterator().next().getValue());
         }
 
-        throw new IllegalArgumentException(String.format("Multiple properties found of type %s", clazz.getCanonicalName()));
+        throw new IllegalArgumentException(format("Multiple properties found of type %s", clazz.getCanonicalName()));
     }
 
     public static Set<String> getPropertyNames() {

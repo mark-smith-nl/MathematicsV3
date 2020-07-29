@@ -11,6 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+
 public class TextValidation {
 
     public static List<Integer> getPositionsIllegalLineEndings(String s) {
@@ -59,7 +61,7 @@ public class TextValidation {
                 isValid = false;
                 constraintValidatorContext.disableDefaultConstraintViolation();
                 constraintValidatorContext.buildConstraintViolationWithTemplate(
-                        String.format("The provided text has lines with trailing whitespace characters at position(s): %s.", positionsIllegalLineEndings.stream().map(String::valueOf).collect(Collectors.joining(", "))))
+                        format("The provided text has lines with trailing whitespace characters at position(s): %s.", positionsIllegalLineEndings.stream().map(String::valueOf).collect(Collectors.joining(", "))))
                         .addConstraintViolation();
             }
             return isValid;
@@ -96,7 +98,7 @@ public class TextValidation {
 
                     constraintValidatorContext.disableDefaultConstraintViolation();
                     constraintValidatorContext.buildConstraintViolationWithTemplate(
-                            String.format("The provided text has reserved characters at position(s): %s.%nDo not use the characters in the set {%s} since they have a special meaning.%nText:%n%s",
+                            format("The provided text has reserved characters at position(s): %s.%nDo not use the characters in the set {%s} since they have a special meaning.%nText:%n%s",
                                     positions.stream().map(String::valueOf).collect(Collectors.joining(", ")),
                                     reservedCharacters.stream().map(String::valueOf).collect(Collectors.joining(", ")),
                                     s))

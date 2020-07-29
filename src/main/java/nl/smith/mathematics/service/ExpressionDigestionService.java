@@ -12,6 +12,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+
 /**
  * Service to interpret a mathematical expression string.
  */
@@ -119,7 +121,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
             }
         }
 
-        throw new IllegalArgumentException(String.format("Character '%c' is not a close token.", c));
+        throw new IllegalArgumentException(format("Character '%c' is not a close token.", c));
     }
 
     /**
@@ -131,7 +133,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
                 return atp.getValue();
             }
         }
-        throw new IllegalArgumentException(String.format("Character '%c' is not an open token.", c));
+        throw new IllegalArgumentException(format("Character '%c' is not an open token.", c));
     }
 
     /**
@@ -168,13 +170,13 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
         if (!rawExpression.isStartPositionSet()) {
             Set<Integer> positions = new HashSet<>(Collections.singletonList(position));
-            String message = String.format("Expected an expression before position %d.%nDid you forget to specify the expression?", position);
+            String message = format("Expected an expression before position %d.%nDid you forget to specify the expression?", position);
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));
         }
 
         if (rawExpression.isBlank(position)) {
             Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition(), position - 1));
-            String message = String.format("Blank expression from [%d-%d].%nDid you forget to specify the expression?",
+            String message = format("Blank expression from [%d-%d].%nDid you forget to specify the expression?",
                     rawExpression.getStartPosition(),
                     position - 1);
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));
@@ -182,7 +184,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
         if (rawExpression.hasSubExpressionsButNoContent(position)) {
             Set<Integer> positions = new HashSet<>(Arrays.asList(rawExpression.getStartPosition(), position - 1));
-            String message = String.format("Essentially blank expression (contains only subexpressions) from [%d-%d].%nRemove unnecessary aggregation tokens and blank characters.", rawExpression.getStartPosition(), position);
+            String message = format("Essentially blank expression (contains only subexpressions) from [%d-%d].%nRemove unnecessary aggregation tokens and blank characters.", rawExpression.getStartPosition(), position);
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(rawExpression.getText(), positions));
         }
     }
@@ -191,7 +193,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         Pair<Character, Integer> openingAggregationTokenPair = openingAggregationTokenStack.peek();
         char openingAggregationToken;
         if (openingAggregationTokenPair == null) {
-            String message = String.format("Missing matching open token '%c' for '%c' at position %d.%nDid you forget to begin the subexpression?",
+            String message = format("Missing matching open token '%c' for '%c' at position %d.%nDid you forget to begin the subexpression?",
                     getMatchingOpenToken(closeToken),
                     closeToken,
                     currentPosition
@@ -202,7 +204,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         }
 
         if (getMatchingCloseToken(openingAggregationToken) != closeToken) {
-            String message = String.format("Wrong open token '%c' for closing token '%c' at position %d.%nYou should close the subexpression with '%c' instead of '%2$c'.",
+            String message = format("Wrong open token '%c' for closing token '%c' at position %d.%nYou should close the subexpression with '%c' instead of '%2$c'.",
                     openingAggregationToken,
                     closeToken,
                     currentPosition,
@@ -215,7 +217,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         Set<Integer> positions = openingAggregationTokenStack.stream().map(Pair::getValue).collect(Collectors.toSet());
 
         if (!positions.isEmpty()) {
-            String message = String.format("Encountered unmatched open tokens at positions %s.%nDid you forget to close some subexpressions?", positions.stream().sorted().map(Object::toString).collect(Collectors.joining(", ")));
+            String message = format("Encountered unmatched open tokens at positions %s.%nDid you forget to close some subexpressions?", positions.stream().sorted().map(Object::toString).collect(Collectors.joining(", ")));
             throw new InValidExpressionStringException(message, textAnnotationService.getAnnotatedText(text, positions));
         }
     }
