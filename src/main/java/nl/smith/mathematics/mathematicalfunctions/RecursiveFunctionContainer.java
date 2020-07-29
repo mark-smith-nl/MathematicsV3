@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+
 public abstract class RecursiveFunctionContainer<N extends Number, S extends RecursiveFunctionContainer<N, ?>> extends RecursiveValidatedService<S> {
 
     /** The annotation that describes the container. */
@@ -36,19 +38,19 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
 
     private MathematicalFunctionContainer getAnnotationFromGenericSuperClass(Class<? extends RecursiveFunctionContainer> mathematicalFunctionContainerClass) {
         if (mathematicalFunctionContainerClass == null) {
-            throw new IllegalStateException(String.format("Please specify an abstract mathematical function container class to extract the %s annotation from.",
+            throw new IllegalStateException(format("Please specify an abstract mathematical function container class to extract the %s annotation from.",
                     MathematicalFunctionContainer.class.getCanonicalName()));
         }
 
         if (mathematicalFunctionContainerClass.getSuperclass() != RecursiveFunctionContainer.class) {
-            throw new IllegalStateException(String.format("Incorrect class hierarchy.\nSpecified class %s should directly extend %s.",
+            throw new IllegalStateException(format("Incorrect class hierarchy.\nSpecified class %s should directly extend %s.",
                     mathematicalFunctionContainerClass.getCanonicalName(),
                     RecursiveFunctionContainer.class.getCanonicalName()));
         }
 
         MathematicalFunctionContainer annotation = mathematicalFunctionContainerClass.getAnnotation(MathematicalFunctionContainer.class);
         if (annotation == null) {
-            throw new IllegalStateException(String.format("Please annotate your class %s with %s.",
+            throw new IllegalStateException(format("Please annotate your class %s with %s.",
                     mathematicalFunctionContainerClass.getCanonicalName(),
                     MathematicalFunctionContainer.class.getCanonicalName()));
         }
@@ -84,11 +86,11 @@ public abstract class RecursiveFunctionContainer<N extends Number, S extends Rec
         }
 
         List<String> errors = new ArrayList<>();
-        errors.add(String.format("\nMultiple colliding mathematical method references found in enclosing class %s.", mathematicalFunctionContainerClass.getCanonicalName()));
-        errors.add(String.format("Please specify the correct mathematical function name in the annotation (%s.name) annotating your methods.", MathematicalFunction.class.getCanonicalName()));
+        errors.add(format("\nMultiple colliding mathematical method references found in enclosing class %s.", mathematicalFunctionContainerClass.getCanonicalName()));
+        errors.add(format("Please specify the correct mathematical function name in the annotation (%s.name) annotating your methods.", MathematicalFunction.class.getCanonicalName()));
         duplicateMathematicalMethods.forEach((s, values) -> {
-            errors.add(String.format("The signature %s references the following Java methods:", s));
-            values.forEach(mf -> errors.add(String.format("- %s (Description: %s)", mf.getMethod().getName(), mf.getDescription())));
+            errors.add(format("The signature %s references the following Java methods:", s));
+            values.forEach(mf -> errors.add(format("- %s (Description: %s)", mf.getMethodName(), mf.getDescription())));
         });
 
         throw new IllegalStateException(Strings.join(errors, '\n'));

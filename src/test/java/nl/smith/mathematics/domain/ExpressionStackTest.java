@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -18,6 +17,7 @@ import java.util.stream.Stream;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.TEN;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,10 +29,10 @@ class ExpressionStackTest {
     private ExpressionStack<RationalNumber> siblingExpressionStack;
 
     @Mock
-    private MathematicalFunctionMethodMapping negateMethodMapping;
+    private MathematicalFunctionMethodMapping<RationalNumber> negateMethodMapping;
 
     @Mock
-    private MathematicalFunctionMethodMapping addMethodMapping;
+    private MathematicalFunctionMethodMapping<RationalNumber> addMethodMapping;
 
     @Test
     public void initialState() {
@@ -110,7 +110,7 @@ class ExpressionStackTest {
     @ParameterizedTest
     @MethodSource("digest_illegalState")
     public void digest_illegalState(ExpressionStack<RationalNumber> expressionStack, Exception expectedException) {
-        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.digest(Collections.EMPTY_MAP));
+        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.digest((Collections.emptyMap())));
         assertEquals(expectedException.getMessage(), actualException.getMessage());
     }
 
@@ -127,29 +127,59 @@ class ExpressionStackTest {
 
     @Test
     public void digest_unknownVariable() {
-        when(negateMethodMapping.getParameterCount()).thenReturn(1);
         when(addMethodMapping.getParameterCount()).thenReturn(2);
         IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.addVariableName("A")
                 .addBinaryOperator(addMethodMapping)
-                .addUnaryOperator(negateMethodMapping)
+                .addVariableName("Z")
+                .addBinaryOperator(addMethodMapping)
+                .addVariableName("B")
+                .addBinaryOperator(addMethodMapping)
                 .addVariableName("B")
                 .close()
                 .digest(Collections.emptyMap()));
-        assertEquals("Unknown variable 'A'.", actualException.getMessage());
+        assertEquals("Unknown variable(s) 'A', 'B', 'Z'.", actualException.getMessage());
     }
 
-   // @Test
-    public void digest_variables() {
-        when(negateMethodMapping.getParameterCount()).thenReturn(1);
+    @Test
+    public void digest_knownVariable() {
         when(addMethodMapping.getParameterCount()).thenReturn(2);
-        expressionStack.addVariableName("A")
-                .addBinaryOperator(addMethodMapping)
-                .addUnaryOperator(negateMethodMapping)
-                .addVariableName("B")
-                .close()
-                .digest(Map.of("A", ONE, "B", TEN));
+        ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.addVariableName("A") // index: 6
+                .addBinaryOperator(addMethodMapping) // index: 5
+                .addVariableName("Z") // index: 4
+                .addBinaryOperator(addMethodMapping) // index: 3
+                .addVariableName("B") // index: 2
+                .addBinaryOperator(addMethodMapping) // index: 1
+                .addVariableName("B") // index: 0
+                .close().digest(Map.of("A", new RationalNumber(1, 3), "B", new RationalNumber(2, 3), "Z", new RationalNumber(1, 7)));
 
-        System.out.println(expressionStack);
+        assertEquals(7, digestedExpressionStack.size());
+        StackElement<?> stackElement = digestedExpressionStack.stackElements.get(0);
+        assertEquals(StackElement.NumberStackElement.class, stackElement.getClass());
+        assertEquals(new RationalNumber(2, 3), stackElement.getValue());
+        stackElement = digestedExpressionStack.stackElements.get(2);
+        assertEquals(StackElement.NumberStackElement.class, stackElement.getClass());
+        assertEquals(new RationalNumber(2, 3), stackElement.getValue());
+        stackElement = digestedExpressionStack.stackElements.get(4);
+        assertEquals(StackElement.NumberStackElement.class, stackElement.getClass());
+        assertEquals(new RationalNumber(1, 7), stackElement.getValue());
+        stackElement = digestedExpressionStack.stackElements.get(6);
+        assertEquals(StackElement.NumberStackElement.class, stackElement.getClass());
+        assertEquals(new RationalNumber(1, 3), stackElement.getValue());
+    }
+
+    @Test
+    public void digest_unaryOperators() {
+        when(negateMethodMapping.getParameterCount()).thenReturn(1);
+        when(negateMethodMapping.invokeWithNumbers(eq(new RationalNumber(1, 7)))).thenReturn(new RationalNumber(1, 7));
+        when(addMethodMapping.getParameterCount()).thenReturn(2);
+        ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.addUnaryOperator(negateMethodMapping) // index: 3
+                .addNumber(new RationalNumber(1, 7)) // index: 2
+                .addBinaryOperator(addMethodMapping) // index: 1
+                .addNumber(new RationalNumber(2, 7)) // index: 0
+                .close()
+                .digest(Collections.emptyMap());
+
+        assertEquals(3, digestedExpressionStack.size());
     }
 
     private static Stream<Arguments> digest_illegalState() {

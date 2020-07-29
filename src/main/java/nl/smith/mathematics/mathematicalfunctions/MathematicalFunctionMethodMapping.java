@@ -2,8 +2,13 @@ package nl.smith.mathematics.mathematicalfunctions;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static nl.smith.mathematics.util.MathematicalMethodUtil.*;
 
@@ -42,7 +47,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
         this.method = method;
         parameterCount = method.getParameterCount();
         isVararg = method.isVarArgs();
-        signature = getMathematicalMethodSignature(this);
+        signature = getMathematicalMethodSignature();
     }
 
     public RecursiveFunctionContainer<N, ? extends RecursiveFunctionContainer<N, ?>> getContainer() {
@@ -53,12 +58,12 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
         return name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMethodName() {
+        return method.getName();
     }
 
-    public Method getMethod() {
-        return method;
+    public String getDescription() {
+        return description;
     }
 
     public int getParameterCount() {
@@ -71,6 +76,41 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
 
     public String getSignature() {
         return signature;
+    }
+
+    public N invokeWithNumbers(N... arguments){
+        Object[] invocationParameters = getInvocationParameters(arguments);
+        try {
+            // Note: We have to use the sibling container since this is the @Validated container.
+            return (N) method.invoke(container.getSibling(), invocationParameters);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @SafeVarargs
+    private <N extends Number> Object[] getInvocationParameters(N... arguments) {
+        Object[] parameters = new Object[parameterCount];
+
+        if (isVararg) {
+            int numberOfExplicitlyDeclaredParameters = parameterCount - 1;
+
+            if (numberOfExplicitlyDeclaredParameters >= 0)
+                System.arraycopy(arguments, 0, parameters, 0, numberOfExplicitlyDeclaredParameters);
+
+            int numberOfVarArgParameters = arguments.length - numberOfExplicitlyDeclaredParameters;
+            Object varArgParameters = Array.newInstance(container.getNumberType(), numberOfVarArgParameters);
+            for (int i = 0; i < arguments.length - numberOfExplicitlyDeclaredParameters; i++) {
+                Array.set(varArgParameters, i, arguments[numberOfExplicitlyDeclaredParameters + i]);
+            }
+
+            parameters[parameterCount - 1] = varArgParameters;
+        } else {
+            parameters = arguments;
+        }
+
+        return parameters;
+
     }
 
     @Override
@@ -86,5 +126,25 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
     @Override
     public int hashCode() {
         return Objects.hash(name, parameterCount, isVararg);
+    }
+
+    private String getMathematicalMethodSignature() {
+        return  name + "(" +
+                getMathematicalMethodGenericParameterTypesAsString() + ")";
+    }
+
+    private String getMathematicalMethodGenericParameterTypesAsString() {
+        return Stream.of(method.getGenericParameterTypes()).map(genericParameterType -> {
+            if (GenericArrayType.class.isAssignableFrom(genericParameterType.getClass())) {
+                return genericParameterType.getTypeName();
+            }
+
+            return ((TypeVariable<?>) genericParameterType).getName();
+        }).collect(Collectors.joining(", "));
+    }
+
+    @Override
+    public String toString() {
+        return method.getDeclaringClass().getCanonicalName() + getMethodName() + "--->" + signature + " (" + description +")";
     }
 }

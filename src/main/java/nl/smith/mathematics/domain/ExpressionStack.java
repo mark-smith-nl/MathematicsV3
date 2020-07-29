@@ -3,11 +3,9 @@ package nl.smith.mathematics.domain;
 import nl.smith.mathematics.domain.StackElement.*;
 import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -17,7 +15,10 @@ public class ExpressionStack<N extends Number> {
 
     private ExpressionStack<N> sibling;
 
-    private final LinkedList<StackElement<?>> stackElements = new LinkedList<>();
+    /**
+     * Protected for test purposes.
+     */
+    protected final LinkedList<StackElement<?>> stackElements = new LinkedList<>();
 
     /**
      * Protected for test purposes.
@@ -62,6 +63,10 @@ public class ExpressionStack<N extends Number> {
                     State.CLOSED));
         }
         this.sibling = sibling;
+    }
+
+    public int size() {
+        return stackElements.size();
     }
 
     public ExpressionStack<N> addUnaryOperator(MathematicalFunctionMethodMapping<N> methodMapping) {
@@ -131,26 +136,29 @@ public class ExpressionStack<N extends Number> {
             throw new IllegalStateException(format("Can not digest an expression stack when it is in state %s.", getState()));
         }
 
-        substituteVariables(variables).
+        return substituteVariables(variables).
                 substituteUnaryOperators(variables);
-        return this;
-
     }
 
     private ExpressionStack<N> substituteVariables(Map<String, N> variables) {
+        Set<String> unknownVariables = new TreeSet<>();
         for (int i = stackElements.size() - 1; i >= 0; i--) {
             StackElement<?> stackElement = stackElements.get(i);
             if (stackElement instanceof VariableNameStackElement) {
                 String variableName = ((VariableNameStackElement) stackElement).getValue();
                 N number = variables.get(variableName);
                 if (number == null) {
-                    throw new IllegalStateException(format("Unknown variable '%s'.", variableName));
+                    unknownVariables.add(variableName);
+                } else{
+                    stackElements.set(i, new NumberStackElement<>(number));
                 }
-                stackElements.set(i, new NumberStackElement<>(number));
 
             }
         }
 
+        if (!unknownVariables.isEmpty()) {
+            throw new IllegalStateException(format("Unknown variable(s) '%s'.", unknownVariables.stream().collect(Collectors.joining("', '"))));
+        }
         return this;
     }
 
@@ -165,18 +173,14 @@ public class ExpressionStack<N extends Number> {
                 stackElement = stackElements.get(--i);
                 if (stackElement instanceof NumberStackElement) {
                     N number = ((NumberStackElement<N>) stackElement).getValue();
-                    try {
-                        Object result = methodMapping.getMethod().invoke(methodMapping.getContainer(), number);
-                        if (result instanceof Number) {
-                            digestedExpressionStack.addNumber((N) result);
-                        } else {
-                            throw new IllegalStateException("?");
-                        }
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new IllegalStateException(e.getMessage());
+                    Object result = methodMapping.invokeWithNumbers(number);
+                    if (result instanceof Number) {
+                        digestedExpressionStack.addNumber((N) result);
+                    } else {
+                        throw new IllegalStateException("?");
                     }
                 } else {
-                    throw new IllegalStateException(format("Expected a stack element of type %s but it was %s.",
+                    throw new IllegalStateException(format("Expected a stack element of type %s after a unary operatr but the type was was %s.",
                             NumberStackElement.class.getSimpleName(),
                             stackElement.getClass().getSimpleName()));
                 }

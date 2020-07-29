@@ -143,22 +143,4 @@ public class MathematicalMethodUtil {
         }
     }
 
-    public static String getMathematicalMethodSignature(MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping) {
-        if (mathematicalFunctionMethodMapping == null) {
-            throw new IllegalStateException("Please specify a mathematical method.");
-        }
-
-        return  mathematicalFunctionMethodMapping.getName() + "(" +
-                getMathematicalMethodGenericParameterTypesAsString(mathematicalFunctionMethodMapping) + ")";
-    }
-
-    private static String getMathematicalMethodGenericParameterTypesAsString(MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping) {
-        return Stream.of(mathematicalFunctionMethodMapping.getMethod().getGenericParameterTypes()).map(genericParameterType -> {
-            if (GenericArrayType.class.isAssignableFrom(genericParameterType.getClass())) {
-                return genericParameterType.getTypeName();
-            }
-
-            return ((TypeVariable<?>) genericParameterType).getName();
-        }).collect(Collectors.joining(", "));
-    }
 }

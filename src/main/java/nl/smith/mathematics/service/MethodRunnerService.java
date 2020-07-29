@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -89,7 +88,7 @@ public class MethodRunnerService {
             }
 
             String error = duplicateMathematicalFunctionMethodMappings.stream()
-                    .map(mf -> mf.getMethod().getDeclaringClass().getCanonicalName() + mf.getMethod().getName() + "--->" + mf.getSignature())
+                    .map(MathematicalFunctionMethodMapping::toString)
                     .collect(Collectors.joining("\n"));
 
             throw new IllegalStateException("Duplicate mathematical method references found in multiple classes.\n" + error);
@@ -130,46 +129,14 @@ public class MethodRunnerService {
 
     @SafeVarargs
     public final <N extends Number> N invokeMathematicalMethod(@NotEmpty String mathematicalMethodName, N... arguments) {
-        MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping = getMathematicalFunctionMethodMapping(functionContainersByNumberType.get(numberType), mathematicalMethodName, arguments.length);
+        MathematicalFunctionMethodMapping<N> mathematicalFunctionMethodMapping = getMathematicalFunctionMethodMapping(functionContainersByNumberType.get(numberType), mathematicalMethodName, arguments.length);
 
         if (arguments[0].getClass() != numberType) {
             throw new IllegalStateException(String.format("Wrong type of number class.%nThe number type of the %s instance is set to %s while the arguments for the method invocation are of type %s.%nBoth types should be equal.",
                     this.getClass().getCanonicalName(), numberType.getCanonicalName(), arguments[0].getClass().getCanonicalName()));
         }
-        Method method = mathematicalFunctionMethodMapping.getMethod();
-        RecursiveFunctionContainer<?, ?> container = mathematicalFunctionMethodMapping.getContainer();
-        Object[] invocationParameters = getInvocationParameters(mathematicalFunctionMethodMapping, arguments);
-        try {
-            // Note: We have to use the sibling container since this is the @Validated container.
-            return (N) method.invoke(container.getSibling(), invocationParameters);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
 
-    @SafeVarargs
-    private <N extends Number> Object[] getInvocationParameters(MathematicalFunctionMethodMapping mathematicalFunctionMethodMapping, N... arguments) {
-        Object[] parameters = new Object[mathematicalFunctionMethodMapping.getParameterCount()];
-
-        if (mathematicalFunctionMethodMapping.isVararg()) {
-            int numberOfExplicitlyDeclaredParameters = mathematicalFunctionMethodMapping.getParameterCount() - 1;
-
-            if (numberOfExplicitlyDeclaredParameters >= 0)
-                System.arraycopy(arguments, 0, parameters, 0, numberOfExplicitlyDeclaredParameters);
-
-            int numberOfVarArgParameters = arguments.length - numberOfExplicitlyDeclaredParameters;
-            Object varArgParameters = Array.newInstance(numberType, numberOfVarArgParameters);
-            for (int i = 0; i < arguments.length - numberOfExplicitlyDeclaredParameters; i++) {
-                Array.set(varArgParameters, i, arguments[numberOfExplicitlyDeclaredParameters + i]);
-            }
-
-            parameters[mathematicalFunctionMethodMapping.getParameterCount() - 1] = varArgParameters;
-        } else {
-            parameters = arguments;
-        }
-
-        return parameters;
-
+        return mathematicalFunctionMethodMapping.invokeWithNumbers(arguments);
     }
 
     private MathematicalFunctionMethodMapping getMathematicalFunctionMethodMapping(List<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer<?, ?>>> recursiveFunctionContainers, String mathematicalMethodName, int parameterCount) {
