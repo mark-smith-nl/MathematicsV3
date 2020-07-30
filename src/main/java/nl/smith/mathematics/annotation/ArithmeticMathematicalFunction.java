@@ -22,10 +22,18 @@ public @interface ArithmeticMathematicalFunction {
 
 	String description();
 
+	Type type();
+
 	Priority priority();
 
+	enum Type {
+		BINARY,
+		UNARY
+	}
 	enum Priority {
 		HIGH,
 		LOW
 	}
+
+
 }

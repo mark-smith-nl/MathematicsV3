@@ -35,7 +35,7 @@ public class MethodRunnerService {
     private final Map<Class<? extends Number>, Set<MathematicalFunctionMethodMapping>> mathematicalMethodsByNumberType = new HashMap<>();
 
     /** Maps to store basis arithmetic methods for adding subtracting multiplying and dividing (+, -, *, /) grouped bu number type. */
-    private final Map<Class<? extends Number>, Map<Character, Method>> basicArithmeticMethodsByNumberType = new HashMap<>();
+  //  private final Map<Class<? extends Number>, Map<Character, Method>> basicArithmeticMethodsByNumberType = new HashMap<>();
 
     public MethodRunnerService(@NotEmpty Set<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer<?, ?>>> recursiveFunctionContainers) {
         LOGGER.info("Retrieved {} recursive function containers with duplicates.", recursiveFunctionContainers.size());
@@ -56,7 +56,7 @@ public class MethodRunnerService {
 
         buildMathematicalMethodsByNumberType();
 
-        buildBasicArithmeticMethodsByNumberType();
+       // buildBasicArithmeticMethodsByNumberType();
     }
 
     // Since all function containers are recursive and thus have siblings, duplicate containers have to be removed.
@@ -97,13 +97,13 @@ public class MethodRunnerService {
         });
     }
 
-    private void buildBasicArithmeticMethodsByNumberType() {
+    /*private void buildBasicArithmeticMethodsByNumberType() {
         numberTypes.forEach(t -> {
             Map<Character, Method> arithmeticMethods = new HashMap<>();
             basicArithmeticMethodsByNumberType.put(t, arithmeticMethods);
 
         });
-    }
+    }*/
 
     public Set<Class<? extends Number>> getNumberTypes() {
         return numberTypes;
