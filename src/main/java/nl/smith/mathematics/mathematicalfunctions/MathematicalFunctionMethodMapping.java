@@ -48,9 +48,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
 
         MathematicalFunction annotation = method.getAnnotation(MathematicalFunction.class);
 
-        name = "".
-
-                equals(annotation.name()) ? method.getName() : annotation.name();
+        name = "".equals(annotation.name()) ? method.getName() : annotation.name();
         description = annotation.description();
         this.method = method;
         parameterCount = method.getParameterCount();
@@ -61,7 +59,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
             throw new IllegalStateException(format("The name '%s' can not be used to reference a method(%s) of type %s.%nThe name should comply to the regular expression '%s'", name, method, type, type.getRegex()));
         }
 
-        if (!type.getPredicate().test(parameterCount)) {
+        if (!type.getParameterCountChecker().test(parameterCount)) {
             throw new IllegalStateException(format("The number of arguments of method '%s' (%s) does not comply to its type of %s.", name, method, type));
         }
 

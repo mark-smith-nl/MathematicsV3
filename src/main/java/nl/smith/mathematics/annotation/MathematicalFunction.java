@@ -33,19 +33,19 @@ public @interface MathematicalFunction {
 
 		private final String regex;
 
-		private final Predicate<Integer> predicate;
+		private final Predicate<Integer> parameterCountChecker;
 
-		Type(String regex, Predicate<Integer> predicate) {
+		Type(String regex, Predicate<Integer> parameterCountChecker) {
 			this.regex = regex;
-			this.predicate = predicate;
+			this.parameterCountChecker = parameterCountChecker;
 		}
 
 		public String getRegex() {
 			return regex;
 		}
 
-		public Predicate<Integer> getPredicate() {
-			return predicate;
+		public Predicate<Integer> getParameterCountChecker() {
+			return parameterCountChecker;
 		}
 	}
 
