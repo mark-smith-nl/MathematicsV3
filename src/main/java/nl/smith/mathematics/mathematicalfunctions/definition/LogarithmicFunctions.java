@@ -23,7 +23,7 @@ public abstract class LogarithmicFunctions<N extends Number, S extends Logarithm
    *                 i=1
    *
    */
-  @MathematicalFunction(name = "e", description = "The exp of a number")
+  @MathematicalFunction(name = "exp", description = "The exp of a number")
   //TODO test implementations
   public abstract N exp(@NotNull N number);
 

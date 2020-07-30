@@ -11,6 +11,8 @@ import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import nl.smith.mathematics.service.MethodRunnerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,80 +37,74 @@ import static nl.smith.mathematics.configuration.constant.RationalNumberOutputTy
         classes = {RecursiveFunctionContainer.class}))
 public class MathematicsV3Application {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MathematicsV3Application.class);
+
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);
 // test
         MethodRunnerService methodRunnerService = context.getBean(MethodRunnerService.class);
         methodRunnerService.setNumberType(BigDecimal.class);
-        System.out.println(methodRunnerService.invokeMathematicalMethod("faculty", new BigDecimal("5")));
+        LOGGER.info("Faculty(120): {}", methodRunnerService.invokeMathematicalMethod("faculty", new BigDecimal[]{new BigDecimal("5")}));
     }
 
     public static void main2(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);
 
-        System.out.println();
-        System.out.println("Started application 'MathematicsV3'");
-        System.out.println();
-        System.out.println("Code is available at: https://github.com/mark-smith-nl/MathematicsV3");
-        System.out.println("Docker image is runnable as: docker run msmith19650728/mathematicsv3");
-        System.out.println();
-        System.out.println("Example: " + new RationalNumber(1, 7));
-        System.out.println("Example: " + new RationalNumber(2, 14));
+        LOGGER.info("Started application 'MathematicsV3'");
+        LOGGER.info("Code is available at: https://github.com/mark-smith-nl/MathematicsV3");
+        LOGGER.info("Docker image is runnable as: docker run msmith19650728/mathematicsv3");
+        LOGGER.info("Example: {}", new RationalNumber(1, 7));
+        LOGGER.info("Example: {}", new RationalNumber(2, 14));
         Scale.set(10);
-        System.out.println("Example: " + new RationalNumber(2, 14));
+        LOGGER.info("Example: {}", new RationalNumber(2, 14));
         RationalNumberOutputType.set(Type.COMPONENTS_AND_EXACT);
-        System.out.println("Example 2/14 * 1/3: " + (new RationalNumber(2, 14)).multiply(new RationalNumber(1, 3)));
-        System.out.println("Example create number from string literal 12.345{6789}R: " + RationalNumber.valueOf("12.345{6789}R"));
-        System.out.println();
+        LOGGER.info("Example 2/14 * 1/3: {}", (new RationalNumber(2, 14)).multiply(new RationalNumber(1, 3)));
+        LOGGER.info("Example create number from string literal 12.345{6789}R: {}", RationalNumber.valueOf("12.345{6789}R"));
 
-        GoniometricFunctions goniometricFunctions = context.getBean("rationalNumberGoniometricFunctions", RationalNumberGoniometricFunctions.class);
+        GoniometricFunctions<RationalNumber, ?> rationalNumberGoniometricFunctions = context.getBean("rationalNumberGoniometricFunctions", RationalNumberGoniometricFunctions.class);
 
         set(Type.TRUNCATED);
         Scale.set(150);
-        System.out.println("Calculate sin(𝝅/4) using Taylor series:");
+        LOGGER.info("Calculate sin(𝝅/4) using Taylor series:");
         RationalNumber piDividedByFour = rationalValueOf.Pi.get().divide(4);
         for (int i = 0; i < 20; i++) {
             TaylorDegreeOfPolynom.set(i);
-            System.out.println("Taylor (" + TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.sin(piDividedByFour));
+            LOGGER.info("Taylor ({}): {}", TaylorDegreeOfPolynom.get(), rationalNumberGoniometricFunctions.sin(piDividedByFour));
         }
-        System.out.println();
 
-        goniometricFunctions = context.getBean("bigDecimalGoniometricFunctions", BigDecimalGoniometricFunctions.class);
+        GoniometricFunctions<BigDecimal, ?> bigDecimalGoniometricFunctions = context.getBean("bigDecimalGoniometricFunctions", BigDecimalGoniometricFunctions.class);
+
         BigDecimal piDividedBySix = bigDecimalValueOf.Pi.get().divide(new BigDecimal(6), Scale.get(), RoundingMode.get());
-        System.out.println("Calculate cos(𝝅/6) using Taylor series:");
+        LOGGER.info("Calculate cos(𝝅/6) using Taylor series:");
         for (int i = 0; i < 20; i++) {
             TaylorDegreeOfPolynom.set(i);
-            System.out.println("Taylor (" + TaylorDegreeOfPolynom.get() + "): " + goniometricFunctions.cos(piDividedBySix));
+            LOGGER.info("Taylor ({}): {}", TaylorDegreeOfPolynom.get(), bigDecimalGoniometricFunctions.cos(piDividedBySix));
         }
-        System.out.println();
 
         RationalNumberOutputType.set(Type.TRUNCATED);
-        System.out.println("\uD835\uDF45:");
         for (int i = 0; i < 150; i++) {
             Scale.set(i);
-            System.out.println(rationalValueOf.Pi.get());
+            LOGGER.info(rationalValueOf.Pi.get().toString());
         }
-        System.out.println();
 
-        LogarithmicFunctions logarithmicFunctions = context.getBean("rationalNumberLogarithmicFunctions", RationalNumberLogarithmicFunctions.class);
+        LogarithmicFunctions<RationalNumber, ?> logarithmicFunctions = context.getBean("rationalNumberLogarithmicFunctions", RationalNumberLogarithmicFunctions.class);
         RationalNumberOutputType.set(Type.TRUNCATED);
-        System.out.println("Calculate Eulers's number:");
+        LOGGER.info("Calculate Eulers's number:");
         for (int i = 0; i < 150; i++) {
             Scale.set(i);
-            System.out.println(logarithmicFunctions.exp(RationalNumber.ONE));
+            LOGGER.info(logarithmicFunctions.exp(RationalNumber.ONE).toString());
         }
-        System.out.println();
 
-        System.out.println("Have fun!");
+        LOGGER.info("Have fun!");
 
         BigDecimalStatisticalFunctions bigDecimalStatisticalFunctions = context.getBean("bigDecimalStatisticalFunctions", BigDecimalStatisticalFunctions.class);
         BigDecimal[] numbers = new BigDecimal[]{new BigDecimal(2), new BigDecimal(4), new BigDecimal(5), new BigDecimal(5), new BigDecimal(6), new BigDecimal(7), new BigDecimal(9), new BigDecimal(10)};
-        System.out.println("Sum: " + bigDecimalStatisticalFunctions.sum(numbers));
-        System.out.println("Average: " + bigDecimalStatisticalFunctions.average(numbers));
-        System.out.println("Deviation: " + bigDecimalStatisticalFunctions.deviation(numbers));
+        LOGGER.info("Sum: {}", bigDecimalStatisticalFunctions.sum(numbers));
+        LOGGER.info("Average: {}", bigDecimalStatisticalFunctions.average(numbers));
+        LOGGER.info("Deviation: {}", bigDecimalStatisticalFunctions.deviation(numbers));
         Scale.set(3);
         RoundingMode.set(java.math.RoundingMode.CEILING);
-        System.out.println(new BigDecimal(16).divide(new BigDecimal(3), Scale.get(), RoundingMode.get()));
+        LOGGER.info(new BigDecimal(16).divide(new BigDecimal(3), Scale.get(), RoundingMode.get()).toString());
     }
 
     @Bean

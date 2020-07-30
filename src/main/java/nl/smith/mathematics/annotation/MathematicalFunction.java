@@ -4,6 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Predicate;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -21,5 +22,31 @@ public @interface MathematicalFunction {
 	String name() default "";
 
 	String description();
+
+	Type type() default Type.FUNCTION;
+
+	enum Type {
+		FUNCTION("[a-zA-Z]{2,}", integer -> integer > 0),
+		UNARY_OPERATION("[\\-+]", integer -> integer == 1),
+		BINARY_OPERATION("[\\-+\\*/]", integer -> integer == 2),
+		BINARY_OPERATION_HIGH_PRIORITY("[\\-+\\*/]", integer -> integer == 2),;
+
+		private final String regex;
+
+		private final Predicate<Integer> predicate;
+
+		Type(String regex, Predicate<Integer> predicate) {
+			this.regex = regex;
+			this.predicate = predicate;
+		}
+
+		public String getRegex() {
+			return regex;
+		}
+
+		public Predicate<Integer> getPredicate() {
+			return predicate;
+		}
+	}
 
 }

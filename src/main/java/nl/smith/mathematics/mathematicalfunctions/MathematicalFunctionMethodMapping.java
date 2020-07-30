@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static nl.smith.mathematics.util.MathematicalMethodUtil.*;
 
 /**
@@ -17,7 +18,9 @@ import static nl.smith.mathematics.util.MathematicalMethodUtil.*;
  */
 public class MathematicalFunctionMethodMapping<N extends Number> {
 
-    /** The (function container) object in which the method resides. */
+    /**
+     * The (function container) object in which the method resides.
+     */
     private final RecursiveFunctionContainer<N, ? extends RecursiveFunctionContainer<N, ?>> container;
 
     private final String name;
@@ -36,17 +39,32 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
         this.container = container;
 
         checkGenericsEnclosingClass(method.getDeclaringClass());
+
         checkModifiers(method);
+
         checkReturnType(method);
+
         checkArguments(method);
 
         MathematicalFunction annotation = method.getAnnotation(MathematicalFunction.class);
 
-        name = "".equals(annotation.name()) ? method.getName() : annotation.name();
+        name = "".
+
+                equals(annotation.name()) ? method.getName() : annotation.name();
         description = annotation.description();
         this.method = method;
         parameterCount = method.getParameterCount();
         isVararg = method.isVarArgs();
+        MathematicalFunction.Type type = annotation.type();
+
+        if (!name.matches(type.getRegex())) {
+            throw new IllegalStateException(format("The name '%s' can not be used to reference a method(%s) of type %s.%nThe name should comply to the regular expression '%s'", name, method, type, type.getRegex()));
+        }
+
+        if (!type.getPredicate().test(parameterCount)) {
+            throw new IllegalStateException(format("The number of arguments of method '%s' (%s) does not comply to its type of %s.", name, method, type));
+        }
+
         signature = getMathematicalMethodSignature();
     }
 
@@ -78,7 +96,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
         return signature;
     }
 
-    public N invokeWithNumbers(N... arguments){
+    public N invokeWithNumbers(N... arguments) {
         Object[] invocationParameters = getInvocationParameters(arguments);
         try {
             // Note: We have to use the sibling container since this is the @Validated container.
@@ -129,7 +147,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
     }
 
     private String getMathematicalMethodSignature() {
-        return  name + "(" +
+        return name + "(" +
                 getMathematicalMethodGenericParameterTypesAsString() + ")";
     }
 
@@ -145,6 +163,6 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
 
     @Override
     public String toString() {
-        return method.getDeclaringClass().getCanonicalName() + getMethodName() + "--->" + signature + " (" + description +")";
+        return method.getDeclaringClass().getCanonicalName() + getMethodName() + "--->" + signature + " (" + description + ")";
     }
 }

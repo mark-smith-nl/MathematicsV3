@@ -20,4 +20,5 @@ public abstract class AuxiliaryFunctions<N extends Number, S extends AuxiliaryFu
     public abstract N faculty(@NotNull
                               @IsNaturalNumber
                               @IsBetween(floor = "0", includingFloor = true, ceiling = "100", includingCeiling = true) N number);
+
 }

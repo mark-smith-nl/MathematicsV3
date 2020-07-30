@@ -45,4 +45,5 @@ public class RationalNumberArithmeticFunctions extends ArithmeticFunctions<Ratio
     public RationalNumber divideBy(@NotNull RationalNumber number, @NotNull RationalNumber divisor) {
         return number.divide(divisor);
     }
+
 }

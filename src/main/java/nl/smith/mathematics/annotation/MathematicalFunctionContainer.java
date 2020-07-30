@@ -16,4 +16,13 @@ public @interface MathematicalFunctionContainer {
 	String name() default "";
 
 	String description();
+
+	Type type() default Type.FUNCTION;
+
+	enum Type {
+		FUNCTION,
+		BINARY_PRIORITY,
+		BINARY,
+		UNARY
+	}
 }

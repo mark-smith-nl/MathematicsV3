@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,9 +33,6 @@ public class MethodRunnerService {
 
     private final Map<Class<? extends Number>, Set<MathematicalFunctionMethodMapping>> mathematicalMethodsByNumberType = new HashMap<>();
 
-    /** Maps to store basis arithmetic methods for adding subtracting multiplying and dividing (+, -, *, /) grouped bu number type. */
-  //  private final Map<Class<? extends Number>, Map<Character, Method>> basicArithmeticMethodsByNumberType = new HashMap<>();
-
     public MethodRunnerService(@NotEmpty Set<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer<?, ?>>> recursiveFunctionContainers) {
         LOGGER.info("Retrieved {} recursive function containers with duplicates.", recursiveFunctionContainers.size());
         removeDuplicateRecursiveFunctionContainers(recursiveFunctionContainers);
@@ -55,8 +51,6 @@ public class MethodRunnerService {
         LOGGER.info("\nSpecified number types: {}\nUsed number type: {}\n", numberTypes.stream().map(Class::getSimpleName).sorted().collect(Collectors.joining(", ")), numberType == null ? "Number type not defined" : numberType.getSimpleName());
 
         buildMathematicalMethodsByNumberType();
-
-       // buildBasicArithmeticMethodsByNumberType();
     }
 
     // Since all function containers are recursive and thus have siblings, duplicate containers have to be removed.
@@ -97,14 +91,6 @@ public class MethodRunnerService {
         });
     }
 
-    /*private void buildBasicArithmeticMethodsByNumberType() {
-        numberTypes.forEach(t -> {
-            Map<Character, Method> arithmeticMethods = new HashMap<>();
-            basicArithmeticMethodsByNumberType.put(t, arithmeticMethods);
-
-        });
-    }*/
-
     public Set<Class<? extends Number>> getNumberTypes() {
         return numberTypes;
     }
@@ -129,8 +115,7 @@ public class MethodRunnerService {
         return recursiveFunctionContainers;
     }
 
-    @SafeVarargs
-    public final <N extends Number> N invokeMathematicalMethod(@NotEmpty String mathematicalMethodName, N... arguments) {
+    public <N extends Number> N invokeMathematicalMethod(@NotEmpty String mathematicalMethodName, N[] arguments) {
         MathematicalFunctionMethodMapping<N> mathematicalFunctionMethodMapping = getMathematicalFunctionMethodMapping(functionContainersByNumberType.get(numberType), mathematicalMethodName, arguments.length);
 
         if (arguments[0].getClass() != numberType) {

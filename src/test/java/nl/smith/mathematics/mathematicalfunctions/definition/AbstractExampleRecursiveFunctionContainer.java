@@ -35,11 +35,7 @@ public abstract class AbstractExampleRecursiveFunctionContainer<N extends Number
     @MathematicalFunction(description = "function: Five")
     public abstract N five(N number);
 
-    @MathematicalFunction(name = "Method 6", description = "function: Six")
+    @MathematicalFunction(name = "MethodSix", description = "function: Six")
     public abstract N six(N ... number);
-
-   // @MathematicalFunction(name = "Method 6", description = "function: Six")
-  //  public abstract N seven(N ... number);
-
 
 }
