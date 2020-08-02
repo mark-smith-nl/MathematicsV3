@@ -35,6 +35,8 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
 
     private final boolean isVararg;
 
+    private final MathematicalFunction.Type type;
+
     public MathematicalFunctionMethodMapping(RecursiveFunctionContainer<N, ? extends RecursiveFunctionContainer<N, ?>> container, Method method) {
         this.container = container;
 
@@ -53,7 +55,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
         this.method = method;
         parameterCount = method.getParameterCount();
         isVararg = method.isVarArgs();
-        MathematicalFunction.Type type = annotation.type();
+        type = annotation.type();
 
         if (!name.matches(type.getRegex())) {
             throw new IllegalStateException(format("The name '%s' can not be used to reference a method(%s) of type %s.%nThe name should comply to the regular expression '%s'", name, method, type, type.getRegex()));
@@ -64,10 +66,6 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
         }
 
         signature = getMathematicalMethodSignature();
-    }
-
-    public RecursiveFunctionContainer<N, ? extends RecursiveFunctionContainer<N, ?>> getContainer() {
-        return container;
     }
 
     public String getName() {
@@ -90,6 +88,10 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
         return isVararg;
     }
 
+    public MathematicalFunction.Type getType() {
+        return type;
+    }
+
     public String getSignature() {
         return signature;
     }
@@ -100,7 +102,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
             // Note: We have to use the sibling container since this is the @Validated container.
             return (N) method.invoke(container.getSibling(), invocationParameters);
         } catch (Exception e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Can not invoke method.", e);
         }
     }
 
@@ -133,7 +135,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MathematicalFunctionMethodMapping that = (MathematicalFunctionMethodMapping) o;
+        MathematicalFunctionMethodMapping<N> that = (MathematicalFunctionMethodMapping) o;
         return parameterCount == that.parameterCount &&
                 isVararg == that.isVararg &&
                 name.equals(that.name);
@@ -161,6 +163,10 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
 
     @Override
     public String toString() {
-        return method.getDeclaringClass().getCanonicalName() + getMethodName() + "--->" + signature + " (" + description + ")";
+        return String.format("%-105s ---> %-20s%-35s(%s)",
+                method.getDeclaringClass().getCanonicalName() +"." + getMethodName() ,
+                signature,
+                type,
+                description);
     }
 }

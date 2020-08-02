@@ -43,8 +43,7 @@ public class MathematicsV3Application {
         ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);
 // test
         MethodRunnerService methodRunnerService = context.getBean(MethodRunnerService.class);
-        methodRunnerService.setNumberType(BigDecimal.class);
-        LOGGER.info("Faculty(120): {}", methodRunnerService.invokeMathematicalMethod("faculty", new BigDecimal[]{new BigDecimal("5")}));
+        LOGGER.info("Faculty(120): {}", methodRunnerService.invokeMathematicalMethodForNumberType(BigDecimal.class, "faculty", new BigDecimal[]{new BigDecimal("5")}));
     }
 
     public static void main2(String[] args) {

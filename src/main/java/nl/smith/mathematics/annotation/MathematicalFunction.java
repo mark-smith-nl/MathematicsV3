@@ -26,10 +26,10 @@ public @interface MathematicalFunction {
 	Type type() default Type.FUNCTION;
 
 	enum Type {
-		FUNCTION("[a-zA-Z]{2,}", integer -> integer > 0),
-		UNARY_OPERATION("[\\-+]", integer -> integer == 1),
-		BINARY_OPERATION("[\\-+\\*/]", integer -> integer == 2),
-		BINARY_OPERATION_HIGH_PRIORITY("[\\-+\\*/]", integer -> integer == 2),;
+		FUNCTION("[a-zA-Z]{2,}", parameterCount -> parameterCount > 0),
+		UNARY_OPERATION("[\\-+]", parameterCount -> parameterCount == 1),
+		BINARY_OPERATION("[\\-+\\*/]", parameterCount -> parameterCount == 2),
+		BINARY_OPERATION_HIGH_PRIORITY("[\\-+\\*/]", parameterCount -> parameterCount == 2),;
 
 		private final String regex;
 
