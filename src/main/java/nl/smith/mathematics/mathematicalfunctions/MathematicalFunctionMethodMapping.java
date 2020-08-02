@@ -1,11 +1,10 @@
 package nl.smith.mathematics.mathematicalfunctions;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
+import nl.smith.mathematics.exception.MathematicalFunctionMethodMappingException;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.TypeVariable;
+import javax.validation.ConstraintViolationException;
+import java.lang.reflect.*;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,8 +100,15 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
         try {
             // Note: We have to use the sibling container since this is the @Validated container.
             return (N) method.invoke(container.getSibling(), invocationParameters);
-        } catch (Exception e) {
-            throw new IllegalStateException("Can not invoke method.", e);
+        } catch (InvocationTargetException e) {
+            Throwable targetException = e.getTargetException();
+            if (targetException instanceof ConstraintViolationException) {
+                ConstraintViolationException constraintViolationException = (ConstraintViolationException) targetException;
+                throw new IllegalArgumentException(constraintViolationException.getMessage());
+            }
+            throw new MathematicalFunctionMethodMappingException(format("Can not invoke method %s.", signature), e, this, arguments);
+        } catch (IllegalAccessException e) {
+            throw new MathematicalFunctionMethodMappingException(format("Can not invoke method %s.", signature), e, this, arguments);
         }
     }
 

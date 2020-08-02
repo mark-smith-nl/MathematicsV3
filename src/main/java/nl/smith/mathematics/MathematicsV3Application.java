@@ -10,7 +10,6 @@ import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigD
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberGoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
-import nl.smith.mathematics.service.MethodRunnerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -40,13 +39,6 @@ public class MathematicsV3Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(MathematicsV3Application.class);
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);
-// test
-        MethodRunnerService methodRunnerService = context.getBean(MethodRunnerService.class);
-        LOGGER.info("Faculty(120): {}", methodRunnerService.invokeMathematicalMethodForNumberType(BigDecimal.class, "faculty", new BigDecimal[]{new BigDecimal("5")}));
-    }
-
-    public static void main2(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);
 
         LOGGER.info("Started application 'MathematicsV3'");

@@ -1,11 +1,15 @@
 package nl.smith.mathematics.service;
 
+import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.numbertype.RationalNumber;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -16,17 +20,25 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class MethodRunnerServiceTest {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(MethodRunnerServiceTest.class);
 
     private final MethodRunnerService methodRunnerService;
 
     @Autowired
     public MethodRunnerServiceTest(MethodRunnerService methodRunnerService) {
         this.methodRunnerService = methodRunnerService;
+    }
+
+    @BeforeEach
+    public void init() {
+        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
+        LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
+        RationalNumberOutputType.set(outputType);
     }
 
     @Test
@@ -125,17 +137,17 @@ public class MethodRunnerServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("invokeMathematicalMethodForNumberType")
+    @MethodSource({"invokeMathematicalMethodForRationalNumbers", "invokeMathematicalMethodForBigDecimals"})
     public void invokeMathematicalMethodForNumberType(Class<? extends Number> numberType, String functionName, Number expectedValue, Exception expectedException, Number[] arguments) {
         if (expectedException == null) {
-            if (numberType == RationalNumber.class){
+            if (numberType == RationalNumber.class) {
                 RationalNumber actualValue = methodRunnerService.invokeMathematicalMethodForNumberType(numberType, functionName, (RationalNumber[]) arguments);
                 assertEquals(actualValue, expectedValue);
             }
+        } else {
+            Exception actualException = assertThrows(Exception.class, () -> methodRunnerService.invokeMathematicalMethodForNumberType(numberType, functionName, arguments));
+            assertEquals(expectedException.getMessage(), actualException.getMessage());
         }
-
-
-      //  assertEquals(new RationalNumber(120), faculty);
     }
 
     private static Stream<Arguments> getMathematicalMethodsForNumberType() {
@@ -182,16 +194,117 @@ public class MethodRunnerServiceTest {
         );
     }
 
-    private static Stream<Arguments> invokeMathematicalMethodForNumberType() {
+    private static Stream<Arguments> invokeMathematicalMethodForRationalNumbers() {
+        Class<RationalNumber> numberType = RationalNumber.class;
         return Stream.of(
-                Arguments.of(RationalNumber.class, "faculty", new RationalNumber(120), null, new RationalNumber[]{new RationalNumber(5)}),
-          //TODO exception testing      Arguments.of(RationalNumber.class, "faculty", new RationalNumber(120), null, new RationalNumber[]{new RationalNumber(500)}),
-                Arguments.of(RationalNumber.class, "+", new RationalNumber(5), null, new RationalNumber[]{new RationalNumber(2), new RationalNumber(3)}),
-                Arguments.of(RationalNumber.class, "*", new RationalNumber(6), null, new RationalNumber[]{new RationalNumber(2), new RationalNumber(3)}),
-                Arguments.of(RationalNumber.class, "/", new RationalNumber(2, 3), null, new RationalNumber[]{new RationalNumber(2), new RationalNumber(3)}),
-                Arguments.of(RationalNumber.class, "*", new RationalNumber(2), null, new RationalNumber[]{RationalNumber.valueOf("0.[142857]R"), new RationalNumber(14)}),
-                Arguments.of(RationalNumber.class, "-", new RationalNumber(-1, 7), null, new RationalNumber[]{RationalNumber.valueOf("0.[142857]R")})
+                Arguments.of(numberType, "faculty",
+                        new RationalNumber(120),
+                        null,
+                        new RationalNumber[]{new RationalNumber(5)}),
+                Arguments.of(numberType,
+                        "faculty",
+                        null,
+                        new IllegalArgumentException("faculty.number: Value 500/1(nl.smith.mathematics.numbertype.RationalNumber) is not a number or the assumption 0 <= (500/1) <= 100 is not true"),
+                        new RationalNumber[]{new RationalNumber(500)}),
+                Arguments.of(numberType,
+                        "faculty",
+                        null,
+                        new IllegalArgumentException("faculty.number: Value is not a natural number: '10/70'"),
+                        new RationalNumber[]{new RationalNumber(10, 70)}),
+                Arguments.of(numberType,
+                        "sum",
+                        new RationalNumber(45),
+                        null,
+                        new RationalNumber[]{new RationalNumber(1), new RationalNumber(2), new RationalNumber(3), new RationalNumber(4), new RationalNumber(5), new RationalNumber(6), new RationalNumber(7), new RationalNumber(8), new RationalNumber(9)}),
+                Arguments.of(numberType,
+                        "sumA",
+                        null,
+                        new IllegalStateException("Can not find a method sumA accepting 9 argument(s) of type nl.smith.mathematics.numbertype.RationalNumber.\nValue is null.\nExpected a nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping not null value."),
+                        new RationalNumber[]{new RationalNumber(1), new RationalNumber(2), new RationalNumber(3), new RationalNumber(4), new RationalNumber(5), new RationalNumber(6), new RationalNumber(7), new RationalNumber(8), new RationalNumber(9)}),
+                Arguments.of(numberType,
+                        "+",
+                        new RationalNumber(5),
+                        null,
+                        new RationalNumber[]{new RationalNumber(2), new RationalNumber(3)}),
+                Arguments.of(numberType,
+                        "*",
+                        new RationalNumber(6),
+                        null,
+                        new RationalNumber[]{new RationalNumber(2), new RationalNumber(3)}),
+                Arguments.of(numberType,
+                        "/",
+                        new RationalNumber(2, 3),
+                        null,
+                        new RationalNumber[]{new RationalNumber(2), new RationalNumber(3)}),
+                Arguments.of(numberType,
+                        "*",
+                        new RationalNumber(2),
+                        null,
+                        new RationalNumber[]{RationalNumber.valueOf("0.[142857]R"),
+                                new RationalNumber(14)}),
+                Arguments.of(numberType,
+                        "-",
+                        new RationalNumber(-1, 7),
+                        null,
+                        new RationalNumber[]{RationalNumber.valueOf("0.[142857]R")})
         );
-
     }
+
+
+    private static Stream<Arguments> invokeMathematicalMethodForBigDecimals() {
+        Class<BigDecimal> numberType = BigDecimal.class;
+        return Stream.of(
+                Arguments.of(numberType, "faculty",
+                        new BigDecimal(120),
+                        null,
+                        new BigDecimal[]{new BigDecimal(5)}),
+                Arguments.of(numberType,
+                        "faculty",
+                        null,
+                        new IllegalArgumentException("faculty.number: Value 500(java.math.BigDecimal) is not a number or the assumption 0 <= (500) <= 100 is not true"),
+                        new BigDecimal[]{new BigDecimal(500)}),
+                Arguments.of(numberType,
+                        "faculty",
+                        null,
+                        new IllegalArgumentException("faculty.number: Value is not a natural number: '0.142857'"),
+                        new BigDecimal[]{new BigDecimal("0.142857")}),
+                Arguments.of(numberType,
+                        "sum",
+                        new BigDecimal(45),
+                        null,
+                        new BigDecimal[]{new BigDecimal(1), new BigDecimal(2), new BigDecimal(3), new BigDecimal(4), new BigDecimal(5), new BigDecimal(6), new BigDecimal(7), new BigDecimal(8), new BigDecimal(9)}),
+                Arguments.of(numberType,
+                        "sumA",
+                        null,
+                        new IllegalStateException("Can not find a method sumA accepting 9 argument(s) of type java.math.BigDecimal.\nValue is null.\nExpected a nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping not null value."),
+                        new BigDecimal[]{new BigDecimal(1), new BigDecimal(2), new BigDecimal(3), new BigDecimal(4), new BigDecimal(5), new BigDecimal(6), new BigDecimal(7), new BigDecimal(8), new BigDecimal(9)}),
+                Arguments.of(numberType,
+                        "+",
+                        new BigDecimal(5),
+                        null,
+                        new BigDecimal[]{new BigDecimal(2), new BigDecimal(3)}),
+                Arguments.of(numberType,
+                        "*",
+                        new BigDecimal(6),
+                        null,
+                        new BigDecimal[]{new BigDecimal(2), new BigDecimal(3)}),
+                Arguments.of(numberType,
+                        "/",
+                        new BigDecimal(2),
+                        null,
+                        new BigDecimal[]{new BigDecimal(2), new BigDecimal(3)}),
+                Arguments.of(numberType,
+                        "*",
+                        new BigDecimal(2),
+                        null,
+                        new BigDecimal[]{new BigDecimal("0.142857"),
+                                new BigDecimal(14)}),
+                Arguments.of(numberType,
+                        "-",
+                        new BigDecimal("0.142857"),
+                        null,
+                        new BigDecimal[]{new BigDecimal("0.142857")})
+        );
+    }
+
 }

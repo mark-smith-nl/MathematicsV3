@@ -117,12 +117,8 @@ public class MethodRunnerService {
             throw new IllegalStateException(format("Wrong type of number class.%nThe number type of the %s instance is set to %s while the arguments for the method invocation are of type %s.%nBoth types should be equal.",
                     this.getClass().getCanonicalName(), numberType.getCanonicalName(), arguments[0].getClass().getCanonicalName()));
         }
-        try {
-            return mathematicalFunctionMethodMapping.invokeWithNumbers(arguments);
-        } catch (Exception e) {
-            //TODO Implement message
-            throw new IllegalStateException("Jammer dan");
-        }
+
+        return mathematicalFunctionMethodMapping.invokeWithNumbers(arguments);
     }
 
     public Set<MathematicalFunctionMethodMapping> getMathematicalMethodsForNumberTypeAndMathematicalMethodTypes(Class<? extends Number> numberType, Set<Type> types) {
@@ -157,4 +153,3 @@ public class MethodRunnerService {
     }
 
 }
-
