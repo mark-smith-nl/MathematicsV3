@@ -1,8 +1,5 @@
 package nl.smith.mathematics.domain;
 
-import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
-import nl.smith.mathematics.numbertype.RationalNumber;
-
 public abstract class StackElement<T> {
 
     private final T value;

@@ -1,15 +1,11 @@
 package nl.smith.mathematics.service;
 
-import com.sun.source.util.Trees;
-import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.annotation.MathematicalFunction.Type;
-import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
+import nl.smith.mathematics.domain.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
-import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigDecimalArithmeticFunctions;
 import nl.smith.mathematics.util.ObjectWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -110,11 +106,11 @@ public class MethodRunnerService {
         return recursiveFunctionContainers;
     }
 
-    public <N extends Number> N invokeMathematicalMethodForNumberType(@NotNull(message = "Please specify a valid number type (class).") Class<? extends Number> numberType, @NotEmpty String mathematicalMethodName, N[] arguments) {
+    public <N extends Number> N invokeMathematicalMethodForNumberType(@NotNull(message = "Please specify a valid number type (class).") Class<N> numberType, @NotEmpty String mathematicalMethodName, @NotEmpty N[] arguments) {
         MathematicalFunctionMethodMapping<N> mathematicalFunctionMethodMapping = getMathematicalFunctionMethodMapping(functionContainersByNumberType.get(numberType), mathematicalMethodName, arguments.length, numberType);
 
         if (arguments[0].getClass() != numberType) {
-            throw new IllegalStateException(format("Wrong type of number class.%nThe number type of the %s instance is set to %s while the arguments for the method invocation are of type %s.%nBoth types should be equal.",
+            throw new IllegalArgumentException(format("Wrong type of number class.%nThe number type of the %s instance is set to %s while the arguments for the method invocation are of type %s.%nBoth types should be equal.",
                     this.getClass().getCanonicalName(), numberType.getCanonicalName(), arguments[0].getClass().getCanonicalName()));
         }
 

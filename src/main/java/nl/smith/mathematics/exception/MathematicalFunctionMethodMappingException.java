@@ -1,6 +1,6 @@
 package nl.smith.mathematics.exception;
 
-import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
+import nl.smith.mathematics.domain.MathematicalFunctionMethodMapping;
 
 public class MathematicalFunctionMethodMappingException extends RuntimeException {
 

@@ -3,6 +3,7 @@ package nl.smith.mathematics.mathematicalfunctions;
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.annotation.MathematicalFunctionContainer;
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsLargerThan;
+import nl.smith.mathematics.domain.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.service.RecursiveValidatedService;
 import org.apache.logging.log4j.util.Strings;
 

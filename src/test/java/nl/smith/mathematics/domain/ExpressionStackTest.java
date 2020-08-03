@@ -2,7 +2,6 @@ package nl.smith.mathematics.domain;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type;
-import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
 
 import java.util.Collections;
 import java.util.Map;

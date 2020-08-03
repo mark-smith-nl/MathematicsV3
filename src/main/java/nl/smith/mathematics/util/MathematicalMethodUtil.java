@@ -1,11 +1,9 @@
 package nl.smith.mathematics.util;
 
-import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
+import nl.smith.mathematics.domain.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 
 import java.lang.reflect.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 

@@ -1,26 +1,30 @@
 package nl.smith.mathematics.service;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
-import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
+import nl.smith.mathematics.domain.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.stubbing.OngoingStubbing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class MethodRunnerServiceTest {
@@ -137,16 +141,24 @@ public class MethodRunnerServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource({"invokeMathematicalMethodForRationalNumbers", "invokeMathematicalMethodForBigDecimals"})
-    public void invokeMathematicalMethodForNumberType(Class<? extends Number> numberType, String functionName, Number expectedValue, Exception expectedException, Number[] arguments) {
+    @MethodSource({"invokeMathematicalMethodWithIllegalArguments"})
+    //@MethodSource({"invokeMathematicalMethodWithIllegalArguments", "invokeMathematicalMethodForRationalNumbers", "invokeMathematicalMethodForBigDecimals"})
+    public void invokeMathematicalMethodForNumberType(Class<Number> numberType, String functionName, Number expectedValue, Exception expectedException, Number[] arguments) {
         if (expectedException == null) {
-            if (numberType == RationalNumber.class) {
-                RationalNumber actualValue = methodRunnerService.invokeMathematicalMethodForNumberType(numberType, functionName, (RationalNumber[]) arguments);
-                assertEquals(actualValue, expectedValue);
-            }
+            Number actualValue = methodRunnerService.invokeMathematicalMethodForNumberType(numberType, functionName, arguments);
+            assertEquals(actualValue, expectedValue);
         } else {
             Exception actualException = assertThrows(Exception.class, () -> methodRunnerService.invokeMathematicalMethodForNumberType(numberType, functionName, arguments));
-            assertEquals(expectedException.getMessage(), actualException.getMessage());
+            assertEquals(expectedException.getClass(), actualException.getClass());
+
+            if (expectedException instanceof ConstraintViolationException) {
+                Map<String, String> expected = ((ConstraintViolationException) expectedException).getConstraintViolations().stream().collect(Collectors.toMap(cv -> cv.getPropertyPath().toString(), ConstraintViolation::getMessage));
+                Map<String, String> actual = ((ConstraintViolationException) actualException).getConstraintViolations().stream().collect(Collectors.toMap(cv -> cv.getPropertyPath().toString(), ConstraintViolation::getMessage));
+                assertEquals(expected, actual);
+            } else {
+
+                assertEquals(expectedException.getMessage(), actualException.getMessage());
+            }
         }
     }
 
@@ -194,10 +206,51 @@ public class MethodRunnerServiceTest {
         );
     }
 
+    private static Stream<Arguments> invokeMathematicalMethodWithIllegalArguments() {
+        Class<RationalNumber> numberType = RationalNumber.class;
+        return Stream.of(
+                Arguments.of(null,
+                        "",
+                        null,
+                        new ConstraintViolationException("",
+                                Stream.of(
+                                        getConstraintViolation("invokeMathematicalMethodForNumberType.mathematicalMethodName", "must not be empty"),
+                                        getConstraintViolation("invokeMathematicalMethodForNumberType.numberType", "Please specify a valid number type (class)."),
+                                        getConstraintViolation("invokeMathematicalMethodForNumberType.arguments", "must not be empty"))
+                                        .collect(Collectors.toSet())),
+                        null),
+                Arguments.of(RationalNumber.class, "",
+                        null,
+                        new ConstraintViolationException("",
+                                Stream.of(
+                                        getConstraintViolation("invokeMathematicalMethodForNumberType.mathematicalMethodName", "must not be empty"),
+                                        getConstraintViolation("invokeMathematicalMethodForNumberType.arguments", "must not be empty"))
+                                        .collect(Collectors.toSet())),
+                        null),
+                Arguments.of(RationalNumber.class,
+                        "function",
+                        null,
+                        new ConstraintViolationException("",
+                                Stream.of(
+                                        getConstraintViolation("invokeMathematicalMethodForNumberType.arguments", "must not be empty"))
+                                        .collect(Collectors.toSet())),
+                        null),
+                Arguments.of(RationalNumber.class,
+                        "function",
+                        null,
+                        new ConstraintViolationException("",
+                                Stream.of(
+                                        getConstraintViolation("invokeMathematicalMethodForNumberType.arguments", "must not be empty"))
+                                        .collect(Collectors.toSet())),
+                        new RationalNumber[0])
+        );
+    }
+
     private static Stream<Arguments> invokeMathematicalMethodForRationalNumbers() {
         Class<RationalNumber> numberType = RationalNumber.class;
         return Stream.of(
-                Arguments.of(numberType, "faculty",
+                Arguments.of(numberType,
+                        "faculty",
                         new RationalNumber(120),
                         null,
                         new RationalNumber[]{new RationalNumber(5)}),
@@ -219,7 +272,7 @@ public class MethodRunnerServiceTest {
                 Arguments.of(numberType,
                         "sumA",
                         null,
-                        new IllegalStateException("Can not find a method sumA accepting 9 argument(s) of type nl.smith.mathematics.numbertype.RationalNumber.\nValue is null.\nExpected a nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping not null value."),
+                        new IllegalStateException("Can not find a method sumA accepting 9 argument(s) of type nl.smith.mathematics.numbertype.RationalNumber.\nValue is null.\nExpected a nl.smith.mathematics.domain.MathematicalFunctionMethodMapping not null value."),
                         new RationalNumber[]{new RationalNumber(1), new RationalNumber(2), new RationalNumber(3), new RationalNumber(4), new RationalNumber(5), new RationalNumber(6), new RationalNumber(7), new RationalNumber(8), new RationalNumber(9)}),
                 Arguments.of(numberType,
                         "+",
@@ -242,14 +295,18 @@ public class MethodRunnerServiceTest {
                         null,
                         new RationalNumber[]{RationalNumber.valueOf("0.[142857]R"),
                                 new RationalNumber(14)}),
-                Arguments.of(numberType,
+                Arguments.of(RationalNumber.class,
                         "-",
                         new RationalNumber(-1, 7),
                         null,
+                        new RationalNumber[]{RationalNumber.valueOf("0.[142857]R")}),
+                Arguments.of(BigDecimal.class,
+                        "-",
+                        null,
+                        new IllegalArgumentException("Wrong type of number class.\nThe number type of the nl.smith.mathematics.service.MethodRunnerService instance is set to java.math.BigDecimal while the arguments for the method invocation are of type nl.smith.mathematics.numbertype.RationalNumber.\nBoth types should be equal."),
                         new RationalNumber[]{RationalNumber.valueOf("0.[142857]R")})
         );
     }
-
 
     private static Stream<Arguments> invokeMathematicalMethodForBigDecimals() {
         Class<BigDecimal> numberType = BigDecimal.class;
@@ -276,7 +333,7 @@ public class MethodRunnerServiceTest {
                 Arguments.of(numberType,
                         "sumA",
                         null,
-                        new IllegalStateException("Can not find a method sumA accepting 9 argument(s) of type java.math.BigDecimal.\nValue is null.\nExpected a nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping not null value."),
+                        new IllegalStateException("Can not find a method sumA accepting 9 argument(s) of type java.math.BigDecimal.\nValue is null.\nExpected a nl.smith.mathematics.domain.MathematicalFunctionMethodMapping not null value."),
                         new BigDecimal[]{new BigDecimal(1), new BigDecimal(2), new BigDecimal(3), new BigDecimal(4), new BigDecimal(5), new BigDecimal(6), new BigDecimal(7), new BigDecimal(8), new BigDecimal(9)}),
                 Arguments.of(numberType,
                         "+",
@@ -290,21 +347,36 @@ public class MethodRunnerServiceTest {
                         new BigDecimal[]{new BigDecimal(2), new BigDecimal(3)}),
                 Arguments.of(numberType,
                         "/",
-                        new BigDecimal(2),
+                        // See scale and rounding mode properties in the application.properties file
+                        new BigDecimal("0.666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666667"),
                         null,
                         new BigDecimal[]{new BigDecimal(2), new BigDecimal(3)}),
                 Arguments.of(numberType,
                         "*",
-                        new BigDecimal(2),
+                        new BigDecimal("1.999998"),
                         null,
                         new BigDecimal[]{new BigDecimal("0.142857"),
                                 new BigDecimal(14)}),
                 Arguments.of(numberType,
                         "-",
-                        new BigDecimal("0.142857"),
+                        new BigDecimal("-0.142857"),
                         null,
+                        new BigDecimal[]{new BigDecimal("0.142857")}),
+                Arguments.of(RationalNumber.class,
+                        "-",
+                        new BigDecimal("0.142857"),
+                        new IllegalArgumentException("Wrong type of number class.\nThe number type of the nl.smith.mathematics.service.MethodRunnerService instance is set to nl.smith.mathematics.numbertype.RationalNumber while the arguments for the method invocation are of type java.math.BigDecimal.\nBoth types should be equal."),
                         new BigDecimal[]{new BigDecimal("0.142857")})
         );
     }
 
+    private static ConstraintViolation<?> getConstraintViolation(String propertyPathAsString, String message) {
+        ConstraintViolation<?> constraintViolation = mock(ConstraintViolation.class);
+        Path propertyPath = mock(Path.class);
+        when(constraintViolation.getPropertyPath()).thenReturn(propertyPath);
+        when(constraintViolation.getMessage()).thenReturn(message);
+        when(propertyPath.toString()).thenReturn(propertyPathAsString);
+
+        return constraintViolation;
+    }
 }

@@ -1,7 +1,6 @@
 package nl.smith.mathematics.domain;
 
 import nl.smith.mathematics.domain.StackElement.*;
-import nl.smith.mathematics.mathematicalfunctions.MathematicalFunctionMethodMapping;
 
 import java.lang.reflect.Method;
 import java.util.*;

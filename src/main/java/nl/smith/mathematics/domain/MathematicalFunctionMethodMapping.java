@@ -1,7 +1,8 @@
-package nl.smith.mathematics.mathematicalfunctions;
+package nl.smith.mathematics.domain;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.exception.MathematicalFunctionMethodMappingException;
+import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 
 import javax.validation.ConstraintViolationException;
 import java.lang.reflect.*;
