@@ -184,9 +184,9 @@ public class MethodRunnerServiceTest {
     private static Stream<Arguments> getBinaryArithmeticMethodsForNumberType() {
         return Stream.of(
                 Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.plus                            ---> +(N, N)             BINARY_OPERATION                   (Sum of two numbers)"),
-                Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.divideBy                        ---> /(N, N)             BINARY_OPERATION_HIGH_PRIORITY     (Division of two numbers)"),
+                Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.divideBy                        ---> /(N, N)             HIGH_PRIORITY_BINARY_OPERATION     (Division of two numbers)"),
                 Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.minus                           ---> -(N, N)             BINARY_OPERATION                   (Subtraction of two numbers)"),
-                Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.multiplyBy                      ---> *(N, N)             BINARY_OPERATION_HIGH_PRIORITY     (Multiplication of two numbers)")
+                Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.multiplyBy                      ---> *(N, N)             HIGH_PRIORITY_BINARY_OPERATION     (Multiplication of two numbers)")
         );
     }
 
@@ -199,9 +199,9 @@ public class MethodRunnerServiceTest {
     private static Stream<Arguments> getArithmeticMethodsForNumberType() {
         return Stream.of(
                 Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.plus                            ---> +(N, N)             BINARY_OPERATION                   (Sum of two numbers)"),
-                Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.divideBy                        ---> /(N, N)             BINARY_OPERATION_HIGH_PRIORITY     (Division of two numbers)"),
+                Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.divideBy                        ---> /(N, N)             HIGH_PRIORITY_BINARY_OPERATION     (Division of two numbers)"),
                 Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.minus                           ---> -(N, N)             BINARY_OPERATION                   (Subtraction of two numbers)"),
-                Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.multiplyBy                      ---> *(N, N)             BINARY_OPERATION_HIGH_PRIORITY     (Multiplication of two numbers)"),
+                Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.multiplyBy                      ---> *(N, N)             HIGH_PRIORITY_BINARY_OPERATION     (Multiplication of two numbers)"),
                 Arguments.of("nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions.minus                           ---> -(N)                UNARY_OPERATION                    (Negate number)")
         );
     }

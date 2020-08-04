@@ -24,10 +24,10 @@ public abstract class ArithmeticFunctions<N extends Number, S extends Arithmetic
     @MathematicalFunction(name = "-", description = "Subtraction of two numbers", type = BINARY_OPERATION)
     public abstract N minus(@NotNull N number, @NotNull N subtrahend);
 
-    @MathematicalFunction(name = "*", description = "Multiplication of two numbers", type = BINARY_OPERATION_HIGH_PRIORITY)
+    @MathematicalFunction(name = "*", description = "Multiplication of two numbers", type = HIGH_PRIORITY_BINARY_OPERATION)
     public abstract N multiplyBy(@NotNull N number, @NotNull N multiplicand);
 
-    @MathematicalFunction(name = "/", description = "Division of two numbers", type = BINARY_OPERATION_HIGH_PRIORITY)
+    @MathematicalFunction(name = "/", description = "Division of two numbers", type = HIGH_PRIORITY_BINARY_OPERATION)
     public abstract N divideBy(@NotNull N number, @NotNull N divisor);
 
 }

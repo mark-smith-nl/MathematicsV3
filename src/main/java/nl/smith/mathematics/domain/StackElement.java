@@ -1,6 +1,8 @@
 package nl.smith.mathematics.domain;
 
-import nl.smith.mathematics.numbertype.RationalNumber;
+import nl.smith.mathematics.annotation.MathematicalFunction.Type;
+
+import static java.lang.String.format;
 
 /** T
  * <pre>
@@ -37,62 +39,81 @@ public abstract class StackElement<N, T> {
         return value;
     }
 
+    public abstract boolean canBeLastStackElement();
+
     public T getValue() {
         return value;
     }
 
-    public static class UnaryOperatorStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
+    public static abstract class MathematicalFunctionMethodMappingStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
+        public MathematicalFunctionMethodMappingStackElement(MathematicalFunctionMethodMapping<N> value) {
+            super(value);
+        }
+
+        @Override
+        protected void assertIsValid(MathematicalFunctionMethodMapping<N> value) {
+            if (value == null) {
+                throw new IllegalStateException(format("A method must be specified when instantiating %s.", this.getClass().getSimpleName()));
+            }
+
+            if (value.getType() != getRequiredType()) {
+                throw new IllegalStateException(format("A %s must wrap a %s of type %s. Type specified %s.", this.getClass().getSimpleName(), MathematicalFunctionMethodMapping.class.getSimpleName(), getRequiredType(), value.getType()));
+            }
+        }
+
+        protected abstract Type getRequiredType();
+
+        @Override
+        public boolean canBeLastStackElement() {
+            return false;
+        }
+    }
+
+    public static class UnaryOperatorStackElement<N extends Number> extends MathematicalFunctionMethodMappingStackElement<N> {
 
         public UnaryOperatorStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
         }
 
-        @Override
-        protected void assertIsValid(MathematicalFunctionMethodMapping<N> value) {
-            if (value == null) {
-                throw new IllegalStateException("A method must be specified.");
-            }
-
-            if (value.getParameterCount() != 1) {
-                throw new IllegalStateException("Method mapping to a unary operation should have 1 argument.");
-            }
+        protected Type getRequiredType() {
+            return Type.UNARY_OPERATION;
         }
     }
 
-    public static class BinaryOperatorStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
+    public static class BinaryOperatorStackElement<N extends Number> extends MathematicalFunctionMethodMappingStackElement<N> {
 
         public BinaryOperatorStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
         }
 
-        @Override
-        protected void assertIsValid(MathematicalFunctionMethodMapping<N> value) {
-            if (value == null) {
-                throw new IllegalStateException("A method must be specified.");
-            }
+        protected Type getRequiredType() {
+            return Type.BINARY_OPERATION;
+        }
 
-            if (value.getParameterCount() != 2) {
-                throw new IllegalStateException("Method mapping to a binary operation should have 2 arguments.");
-            }
+    }
+
+    public static class HighPriorityBinaryOperatorStackElement<N extends Number> extends MathematicalFunctionMethodMappingStackElement<N> {
+
+        public HighPriorityBinaryOperatorStackElement(MathematicalFunctionMethodMapping<N> value) {
+            super(value);
+        }
+
+        protected Type getRequiredType() {
+            return Type.BINARY_OPERATION;
         }
     }
 
-    public static class MathematicalFunctionStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
+    public static class MathematicalFunctionStackElement<N extends Number> extends MathematicalFunctionMethodMappingStackElement<N> {
 
         public MathematicalFunctionStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
         }
 
         @Override
-        protected void assertIsValid(MathematicalFunctionMethodMapping<N> value) {
-            if (value == null) {
-                throw new IllegalStateException("E");
-            }
-
-            if (value.getParameterCount() < 1) {
-                throw new IllegalStateException("F");
-            }
+        protected Type getRequiredType() {
+            return Type.FUNCTION;
         }
+
     }
 
     public static class VariableNameStackElement<N extends Number> extends StackElement<N, String> {
@@ -109,6 +130,11 @@ public abstract class StackElement<N, T> {
 
             //TODO
         }
+
+        @Override
+        public boolean canBeLastStackElement() {
+            return true;
+        }
     }
 
     public static class NumberStackElement<N extends Number> extends StackElement<N, N> {
@@ -122,6 +148,11 @@ public abstract class StackElement<N, T> {
             if (value == null) {
                 throw new IllegalStateException("G");
             }
+        }
+
+        @Override
+        public boolean canBeLastStackElement() {
+            return true;
         }
     }
 
@@ -140,6 +171,11 @@ public abstract class StackElement<N, T> {
             if (value.getState() != ExpressionStack.State.CLOSED){
                 throw new IllegalStateException("J");
             }
+        }
+
+        @Override
+        public boolean canBeLastStackElement() {
+            return true;
         }
     }
 

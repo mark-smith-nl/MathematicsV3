@@ -131,11 +131,11 @@ public class MethodRunnerService {
     }
 
     public Set<MathematicalFunctionMethodMapping> getBinaryArithmeticMethodsForNumberType(Class<? extends Number> numberType) {
-        return getMathematicalMethodsForNumberTypeAndMathematicalMethodTypes(numberType, new HashSet<>(Arrays.asList(Type.BINARY_OPERATION, Type.BINARY_OPERATION_HIGH_PRIORITY)));
+        return getMathematicalMethodsForNumberTypeAndMathematicalMethodTypes(numberType, new HashSet<>(Arrays.asList(Type.BINARY_OPERATION, Type.HIGH_PRIORITY_BINARY_OPERATION)));
     }
 
     public Set<MathematicalFunctionMethodMapping> getArithmeticMethodsForNumberType(Class<? extends Number> numberType) {
-        return getMathematicalMethodsForNumberTypeAndMathematicalMethodTypes(numberType, new HashSet<>(Arrays.asList(Type.UNARY_OPERATION, Type.BINARY_OPERATION, Type.BINARY_OPERATION_HIGH_PRIORITY)));
+        return getMathematicalMethodsForNumberTypeAndMathematicalMethodTypes(numberType, new HashSet<>(Arrays.asList(Type.UNARY_OPERATION, Type.BINARY_OPERATION, Type.HIGH_PRIORITY_BINARY_OPERATION)));
     }
 
     private MathematicalFunctionMethodMapping getMathematicalFunctionMethodMapping(List<RecursiveFunctionContainer<? extends Number, ? extends RecursiveFunctionContainer<?, ?>>>
