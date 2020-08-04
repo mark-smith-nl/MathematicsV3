@@ -125,6 +125,7 @@ class ExpressionStackTest {
     @Test
     public void digest() {
         when(addMethodMapping.getParameterCount()).thenReturn(2);
+        // Expression = 1 + 10
         expressionStack.addNumber(ONE)
                 .addBinaryOperator(addMethodMapping)
                 .addNumber(TEN)
@@ -136,7 +137,9 @@ class ExpressionStackTest {
     @Test
     public void digest_unknownVariable() {
         when(addMethodMapping.getParameterCount()).thenReturn(2);
-        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.addVariableName("A")
+        // Expression = A + Z + B + B
+        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack
+                .addVariableName("A")
                 .addBinaryOperator(addMethodMapping)
                 .addVariableName("Z")
                 .addBinaryOperator(addMethodMapping)
@@ -151,6 +154,7 @@ class ExpressionStackTest {
     @Test
     public void digest_knownVariable() {
         when(addMethodMapping.getParameterCount()).thenReturn(2);
+        // Expression = A + Z + B + B
         ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.addVariableName("A") // index: 6
                 .addBinaryOperator(addMethodMapping) // index: 5
                 .addVariableName("Z") // index: 4
@@ -163,11 +167,11 @@ class ExpressionStackTest {
 
         assertEquals(7, expressionStack.size());
 
-        assertFalse(expressionStack == digestedExpressionStack);
+        assertNotSame(expressionStack, digestedExpressionStack);
         assertEquals(7, digestedExpressionStack.size());
         assertEquals(CLOSED, digestedExpressionStack.getState());
 
-        StackElement<?> stackElement = digestedExpressionStack.stackElements.get(0);
+        StackElement<RationalNumber, ?> stackElement = digestedExpressionStack.stackElements.get(0);
         assertEquals(StackElement.NumberStackElement.class, stackElement.getClass());
         assertEquals(new RationalNumber(2, 3), stackElement.getValue());
         stackElement = digestedExpressionStack.stackElements.get(2);
@@ -200,7 +204,7 @@ class ExpressionStackTest {
 
         assertEquals(5, expressionStack.size());
 
-        assertFalse(expressionStack == digestedExpressionStack);
+        assertNotSame(expressionStack, digestedExpressionStack);
         assertEquals(3, digestedExpressionStack.size());
         assertEquals(CLOSED, digestedExpressionStack.getState());
 

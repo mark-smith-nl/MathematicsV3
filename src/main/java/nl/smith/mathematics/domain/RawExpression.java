@@ -261,4 +261,8 @@ public class RawExpression {
             throw new IllegalStateException("Raw expression has already been terminated.");
         }
     }
+
+    public <N extends Number> ExpressionStack<N> getExpressionStack(Class<N> numberType, Set<String> unaryOperatorChars, Set<String> binaryOperatorChars, String numberPattern) {
+        return null;
+    }
 }

@@ -2,6 +2,8 @@ package nl.smith.mathematics.service;
 
 import javafx.util.Pair;
 import nl.smith.mathematics.annotation.constraint.TextWithoutReservedCharacters;
+import nl.smith.mathematics.domain.ExpressionStack;
+import nl.smith.mathematics.domain.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.domain.RawExpression;
 import nl.smith.mathematics.annotation.constraint.TextWithoutLinesWithTrailingBlanks;
 import nl.smith.mathematics.exception.InValidExpressionStringException;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,14 +27,17 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
     private final TextAnnotationService textAnnotationService;
 
+    private final MethodRunnerService methodRunnerService;
+
     private static final Set<Pair<Character, Character>> AGGREGATION_TOKEN_PAIRS = new HashSet<>(Arrays.asList(
             new Pair<>('(', ')'),
             new Pair<>('{', '}')));
 
     private static final char START_SIBLING_CHARACTER = ',';
 
-    public ExpressionDigestionService(TextAnnotationService textAnnotationService) {
+    public ExpressionDigestionService(TextAnnotationService textAnnotationService, MethodRunnerService methodRunnerService) {
         this.textAnnotationService = textAnnotationService;
+        this.methodRunnerService = methodRunnerService;
     }
 
     /**
@@ -53,7 +59,18 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
     @Bean(SIBLING_BEAN_NAME)
     @Override
     public ExpressionDigestionService makeSibling() {
-        return new ExpressionDigestionService(textAnnotationService);
+        return new ExpressionDigestionService(textAnnotationService, methodRunnerService);
+    }
+
+    public <N extends Number> N getResult(@NotNull Class<N> numberType, String text, Map<String, N> variables) {
+        RawExpression rawExpression = sibling.getRawExpression(text);
+
+        Set<String> unaryOperatorChars = methodRunnerService.getUnaryArithmeticMethodsForNumberType(numberType).stream().map(MathematicalFunctionMethodMapping::getName).collect(Collectors.toSet());
+        Set<String> binaryOperatorChars = methodRunnerService.getBinaryArithmeticMethodsForNumberType(numberType).stream().map(MathematicalFunctionMethodMapping::getName).collect(Collectors.toSet());
+        String numberPattern = null;
+        ExpressionStack<N> expressionStack = rawExpression.getExpressionStack(numberType, unaryOperatorChars, binaryOperatorChars, numberPattern);
+        ExpressionStack<N> digest = expressionStack.digest(variables);
+        return null;
     }
 
     /**

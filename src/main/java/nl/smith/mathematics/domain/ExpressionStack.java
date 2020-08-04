@@ -4,7 +4,6 @@ import nl.smith.mathematics.domain.StackElement.*;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -17,7 +16,7 @@ public class ExpressionStack<N extends Number> {
     /**
      * Protected for test purposes.
      */
-    protected final LinkedList<StackElement<?>> stackElements = new LinkedList<>();
+    protected final LinkedList<StackElement<N, ?>> stackElements = new LinkedList<>();
 
     /**
      * Protected for test purposes.
@@ -73,11 +72,11 @@ public class ExpressionStack<N extends Number> {
     }
 
     public ExpressionStack<N> addBinaryOperator(MathematicalFunctionMethodMapping<N> methodMapping) {
-        return push(new BinaryOperatorStackElement<N>(methodMapping));
+        return push(new BinaryOperatorStackElement<>(methodMapping));
     }
 
     public ExpressionStack<N> addVariableName(String variableName) {
-        return push(new VariableNameStackElement(variableName));
+        return push(new VariableNameStackElement<>(variableName));
     }
 
     public ExpressionStack<N> addFunctionName(MathematicalFunctionMethodMapping<N> methodMapping) {
@@ -96,7 +95,7 @@ public class ExpressionStack<N extends Number> {
         return push(new CompoundExpressionStackElement<>(expressionStack));
     }
 
-    private ExpressionStack<N> push(StackElement<?> stackElement) {
+    private ExpressionStack<N> push(StackElement<N, ?> stackElement) {
         if (getState() == State.CLOSED || getState() == State.DIGESTED) {
             throw new IllegalStateException(format("Stack elements can not be pushed to an expression stack when it is in state %s.", state));
         }
@@ -130,13 +129,101 @@ public class ExpressionStack<N extends Number> {
         return this;
     }
 
+    /**
+     * <pre>
+     * The order in which a stack is digested is:
+     *
+     *     - substitute compound expressions(the stack size does not change, elements of type {@link CompoundExpressionStackElement} are being replaced by {@link NumberStackElement}
+     *     - substitute functions (the stack size diminishes by the number of {@link MathematicalFunctionStackElement} elements)
+     *     - substitute variables (the stack size does not change, elements of type {@link VariableNameStackElement} are being replaced by {@link NumberStackElement}
+     *     - substitute unary operators (the stack size diminishes by the number of {@link UnaryOperatorStackElement} elements)
+     *     - substitute high priority binary operators (the stack size diminishes by two times the number of {@link BinaryOperatorStackElement} of type {@link nl.smith.mathematics.annotation.MathematicalFunction.Type#BINARY_OPERATION_HIGH_PRIORITY} elements)
+     *     - substitute binary operators (the stack size diminishes by two times the number of {@link BinaryOperatorStackElement} of type {@link nl.smith.mathematics.annotation.MathematicalFunction.Type#BINARY_OPERATION} elements)
+     *
+     * After the last step the stack should contain one element of type {@link StackElement.NumberStackElement}
+     *
+     * </pre>
+     *
+     * @param variables Map of variable names and values
+     * @return An expression stack with one element of type {@link NumberStackElement}
+     */
     public ExpressionStack<N> digest(Map<String, N> variables) {
         if (getState() != State.CLOSED) {
             throw new IllegalStateException(format("Can not digest an expression stack when it is in state %s.", getState()));
         }
 
-        return substituteVariables(variables).
-                substituteUnaryOperators();
+        ExpressionStack<N> digestedExpressionStack = substituteCompoundExpressions(variables)
+                .substituteMathematicalFunctions()
+                .substituteVariables(variables)
+                .substituteUnaryOperators()
+                .substituteHighPriorityBinaryOperators()
+                .substituteBinaryOperators();
+
+        if (sibling != null) {
+            digestedExpressionStack.setSibling(sibling.digest(variables));
+        }
+
+        return digestedExpressionStack;
+    }
+
+    private ExpressionStack<N> substituteCompoundExpressions(Map<String, N> variables) {
+        ExpressionStack<N> digestedExpressionStack = new ExpressionStack<>();
+
+        for (int i = stackElements.size() - 1; i >= 0; i--) {
+            StackElement<N, ?> stackElement = stackElements.get(i);
+            if (stackElement instanceof CompoundExpressionStackElement) {
+                CompoundExpressionStackElement<N> compoundExpressionStackElement = (CompoundExpressionStackElement<N>) stackElement;
+                ExpressionStack<N> subExpressionStack = compoundExpressionStackElement.getValue();
+                ExpressionStack<N> digestedSubExpressionStack = subExpressionStack.digest(variables);
+                if (digestedSubExpressionStack.stackElements.size() == 1) {
+                    StackElement<N, ?> resultStackElement = digestedSubExpressionStack.stackElements.get(0);
+                    if (resultStackElement instanceof NumberStackElement) {
+                        NumberStackElement<N> numberStackElement =(NumberStackElement<N>) resultStackElement;
+                        digestedExpressionStack.addNumber(numberStackElement.getValue());
+                    } else {
+                        throw new IllegalStateException("Wrong type");
+                    }
+                } else {
+                    throw new IllegalStateException("Wrong size");
+                }
+            } else {
+                digestedExpressionStack.push(stackElement);
+            }
+        }
+
+        return digestedExpressionStack.close();
+    }
+
+    private ExpressionStack<N> substituteMathematicalFunctions() {
+        if (getState() != State.CLOSED) {
+            throw new IllegalStateException(format("Can not substitute function/value pairs in an expression stack when it is in state %s.", getState()));
+        }
+
+        ExpressionStack<N> digestedExpressionStack = new ExpressionStack<>();
+
+        int i = stackElements.size();
+        while (i > 0) {
+            StackElement<N, ?> stackElement = stackElements.get(--i);
+            if (stackElement instanceof MathematicalFunctionStackElement) {
+                MathematicalFunctionStackElement<N> mathematicalFunctionStackElement = (MathematicalFunctionStackElement) stackElement;
+                MathematicalFunctionMethodMapping<N> methodMapping = mathematicalFunctionStackElement.getValue();
+                stackElement = stackElements.get(--i);
+                if (stackElement instanceof NumberStackElement) {
+                    NumberStackElement<N> numberStackElement = (NumberStackElement<N>) stackElement;
+                    N number = numberStackElement.getValue();
+                    N result = methodMapping.invokeWithNumbers(number);
+                    digestedExpressionStack.addNumber(result);
+                } else {
+                    throw new IllegalStateException(format("Expected a stack element of type %s after a unary operator but the type was was %s.",
+                            NumberStackElement.class.getSimpleName(),
+                            stackElement.getClass().getSimpleName()));
+                }
+            } else {
+                digestedExpressionStack.push(stackElement);
+            }
+        }
+
+        return digestedExpressionStack.close();
     }
 
     private ExpressionStack<N> substituteVariables(Map<String, N> variables) {
@@ -148,23 +235,23 @@ public class ExpressionStack<N extends Number> {
 
         Set<String> unknownVariables = new TreeSet<>();
         for (int i = stackElements.size() - 1; i >= 0; i--) {
-            StackElement<?> stackElement = stackElements.get(i);
+            StackElement<N, ?> stackElement = stackElements.get(i);
             if (stackElement instanceof VariableNameStackElement) {
-                String variableName = ((VariableNameStackElement) stackElement).getValue();
+                VariableNameStackElement<N> variableNameStackElement = (VariableNameStackElement<N>) stackElement;
+                String variableName = variableNameStackElement.getValue();
                 N number = variables.get(variableName);
                 if (number == null) {
                     unknownVariables.add(variableName);
-                } else{
+                } else {
                     digestedExpressionStack.addNumber(number);
                 }
-
             } else {
                 digestedExpressionStack.push(stackElement);
             }
         }
 
         if (!unknownVariables.isEmpty()) {
-            throw new IllegalStateException(format("Unknown variable(s) '%s'.", unknownVariables.stream().collect(Collectors.joining("', '"))));
+            throw new IllegalStateException(format("Unknown variable(s) '%s'.", String.join("', '", unknownVariables)));
         }
 
         return digestedExpressionStack.close();
@@ -179,20 +266,17 @@ public class ExpressionStack<N extends Number> {
 
         int i = stackElements.size();
         while (i > 0) {
-            StackElement<?> stackElement = stackElements.get(--i);
+            StackElement<N, ?> stackElement = stackElements.get(--i);
             if (stackElement instanceof UnaryOperatorStackElement) {
                 MathematicalFunctionMethodMapping<N> methodMapping = ((UnaryOperatorStackElement<N>) stackElement).getValue();
                 stackElement = stackElements.get(--i);
                 if (stackElement instanceof NumberStackElement) {
-                    N number = ((NumberStackElement<N>) stackElement).getValue();
-                    Object result = methodMapping.invokeWithNumbers(number);
-                    if (result instanceof Number) {
-                        digestedExpressionStack.addNumber((N) result);
-                    } else {
-                        throw new IllegalStateException("?");
-                    }
+                    NumberStackElement<N> numberStackElement = (NumberStackElement<N>) stackElement;
+                    N number = numberStackElement.getValue();
+                    N result = methodMapping.invokeWithNumbers(number);
+                    digestedExpressionStack.addNumber(result);
                 } else {
-                    throw new IllegalStateException(format("Expected a stack element of type %s after a unary operatr but the type was was %s.",
+                    throw new IllegalStateException(format("Expected a stack element of type %s after a unary operator but the type was was %s.",
                             NumberStackElement.class.getSimpleName(),
                             stackElement.getClass().getSimpleName()));
                 }
@@ -204,15 +288,22 @@ public class ExpressionStack<N extends Number> {
         return digestedExpressionStack.close();
     }
 
+    private ExpressionStack<N> substituteHighPriorityBinaryOperators() {
+        if (getState() != State.CLOSED) {
+            throw new IllegalStateException(format("Can not substitute binary operator/value set pairs in an expression stack when it is in state %s.", getState()));
+        }
+
+        // TODO implement
+        return this;
+    }
+
     private ExpressionStack<N> substituteBinaryOperators() {
         if (getState() != State.CLOSED) {
             throw new IllegalStateException(format("Can not substitute binary operator/value set pairs in an expression stack when it is in state %s.", getState()));
         }
 
-        ExpressionStack<N> digestedExpressionStack = new ExpressionStack<>();
-
-        // TODO implment
-        return digestedExpressionStack;
+        // TODO implement
+        return this;
     }
 
     private static boolean isValidStackSequence(Class<?> previousStackElementClass, Class<?> stackElementClass) {
@@ -260,7 +351,7 @@ public class ExpressionStack<N extends Number> {
                 throw new IllegalStateException(format("Unknown expression stack state %s.", state));
         }
 
-        for (StackElement<?> stackElement : stackElements) {
+        for (StackElement<N, ?> stackElement : stackElements) {
             Object elementValue = stackElement.getValue();
             if (elementValue instanceof Method) {
                 value.append(format(OUTPUT_FORMAT, stackElement.getClass().getSimpleName(), indent, ((Method) elementValue).getName()));

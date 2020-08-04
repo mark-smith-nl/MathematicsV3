@@ -1,6 +1,27 @@
 package nl.smith.mathematics.domain;
 
-public abstract class StackElement<T> {
+import nl.smith.mathematics.numbertype.RationalNumber;
+
+/** T
+ * <pre>
+ *
+ * The element in a stack can be one of the following types and is an instance of a subclass of {@link StackElement}
+ *
+ *     - Unary operator {@link UnaryOperatorStackElement}
+ *     - Binary operator {@link BinaryOperatorStackElement}
+ *     - Variable {@link VariableNameStackElement}
+ *     - Compound expression {@link CompoundExpressionStackElement}
+ *     - Number {@link NumberStackElement}
+ *
+ *     In the construction of a stack element the number type has to be specified.
+ *     The type the stack element contains is specified in the subclass declaration.
+ *
+ * </pre>
+ *
+ * @param <N> The number type
+ * @param <T> The value type
+ */
+public abstract class StackElement<N, T> {
 
     private final T value;
 
@@ -20,7 +41,7 @@ public abstract class StackElement<T> {
         return value;
     }
 
-    public static class UnaryOperatorStackElement<N extends Number> extends StackElement<MathematicalFunctionMethodMapping<N>> {
+    public static class UnaryOperatorStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
 
         public UnaryOperatorStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
@@ -38,7 +59,7 @@ public abstract class StackElement<T> {
         }
     }
 
-    public static class BinaryOperatorStackElement<N extends Number> extends StackElement<MathematicalFunctionMethodMapping<N>> {
+    public static class BinaryOperatorStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
 
         public BinaryOperatorStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
@@ -56,7 +77,7 @@ public abstract class StackElement<T> {
         }
     }
 
-    public static class MathematicalFunctionStackElement<N extends Number> extends StackElement<MathematicalFunctionMethodMapping<N>> {
+    public static class MathematicalFunctionStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
 
         public MathematicalFunctionStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
@@ -74,7 +95,7 @@ public abstract class StackElement<T> {
         }
     }
 
-    public static class VariableNameStackElement extends StackElement<String> {
+    public static class VariableNameStackElement<N extends Number> extends StackElement<N, String> {
 
         public VariableNameStackElement(String value) {
             super(value);
@@ -90,7 +111,7 @@ public abstract class StackElement<T> {
         }
     }
 
-    public static class NumberStackElement<N extends Number> extends StackElement<N> {
+    public static class NumberStackElement<N extends Number> extends StackElement<N, N> {
 
         public NumberStackElement(N value) {
             super(value);
@@ -104,7 +125,7 @@ public abstract class StackElement<T> {
         }
     }
 
-    public static class CompoundExpressionStackElement<N extends Number> extends StackElement<ExpressionStack<N>> {
+    public static class CompoundExpressionStackElement<N extends Number> extends StackElement<N, ExpressionStack<N>> {
 
         public CompoundExpressionStackElement(ExpressionStack<N> value) {
             super(value);

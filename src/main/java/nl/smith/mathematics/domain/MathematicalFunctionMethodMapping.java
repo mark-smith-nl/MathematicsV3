@@ -38,6 +38,10 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
     private final MathematicalFunction.Type type;
 
     public MathematicalFunctionMethodMapping(RecursiveFunctionContainer<N, ? extends RecursiveFunctionContainer<N, ?>> container, Method method) {
+        if (container == null || method == null) {
+            throw new IllegalArgumentException("Please specify a container and a method.");
+        }
+
         this.container = container;
 
         checkGenericsEnclosingClass(method.getDeclaringClass());

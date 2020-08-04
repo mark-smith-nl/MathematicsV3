@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class MathematicalFunctionMethodMappingUtilTest {
+class MathematicalMethodUtilTest {
 
     private final Class<AbstractExampleRecursiveFunctionContainer> clazz = AbstractExampleRecursiveFunctionContainer.class;
 
