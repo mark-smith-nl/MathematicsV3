@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static java.lang.String.format;
+import static nl.smith.mathematics.domain.ExpressionStack.State.DIGESTED;
 
 public class ExpressionStack<N extends Number> {
 
@@ -227,7 +228,7 @@ public class ExpressionStack<N extends Number> {
                 state.DIGESTED_VARIABLES,
                 state.DIGESTED_UNARY_OPERATORS,
                 state.DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS,
-                state.DIGESTED)
+                DIGESTED)
                 .contains(requestedState)) {
             throw new IllegalArgumentException(format("Can not close expression stack and change state of expression stack from current state %s to requested state %s.", getState(), requestedState));
         }
@@ -267,12 +268,12 @@ public class ExpressionStack<N extends Number> {
             throw new IllegalStateException(format("Can not digest an expression stack when it is in state %s.", getState()));
         }
 
-        ExpressionStack<N> digestedExpressionStack = substituteCompoundExpressions(variables)
-                .substituteMathematicalFunctions()
-                .substituteVariables(variables)
-                .substituteUnaryOperators()
-                .substituteBinaryOperators(true)
-                .substituteBinaryOperators(false);
+        ExpressionStack<N> digestedExpressionStack = digestCompoundExpressions(variables)
+                .digestMathematicalFunctions()
+                .digestVariables(variables)
+                .digestUnaryOperators()
+                .digestHighPriorityBinaryOperators()
+                .digestBinaryOperators();
 
         if (sibling != null) {
             digestedExpressionStack.setSibling(sibling.digest(variables));
@@ -284,7 +285,7 @@ public class ExpressionStack<N extends Number> {
     /**
      * Protected for test purposes.
      */
-    protected ExpressionStack<N> substituteCompoundExpressions(Map<String, N> variables) {
+    protected ExpressionStack<N> digestCompoundExpressions(Map<String, N> variables) {
         State requestedState = State.DIGESTED_COMPOUND_EXPRESSIONS;
         if (getState().getNextState() != requestedState) {
             throw new IllegalStateException(format("Can not digest (substitute compound expressions) an expression stack when it is in state %s.", getState()));
@@ -320,7 +321,7 @@ public class ExpressionStack<N extends Number> {
     /**
      * Protected for test purposes.
      */
-    protected ExpressionStack<N> substituteMathematicalFunctions() {
+    protected ExpressionStack<N> digestMathematicalFunctions() {
         State requestedState = State.DIGESTED_MATHEMATICAL_FUNCTIONS;
         if (getState().getNextState() != requestedState) {
             throw new IllegalStateException(format("Can not digest (substitute mathematical functions) an expression stack when it is in state %s.", getState()));
@@ -356,7 +357,7 @@ public class ExpressionStack<N extends Number> {
     /**
      * Protected for test purposes.
      */
-    protected ExpressionStack<N> substituteVariables(Map<String, N> variables) {
+    protected ExpressionStack<N> digestVariables(Map<String, N> variables) {
         State requestedState = State.DIGESTED_VARIABLES;
         if (getState().getNextState() != requestedState) {
             throw new IllegalStateException(format("Can not digest (substitute variables) an expression stack when it is in state %s.", getState()));
@@ -391,7 +392,7 @@ public class ExpressionStack<N extends Number> {
     /**
      * Protected for test purposes.
      */
-    protected ExpressionStack<N> substituteUnaryOperators() {
+    protected ExpressionStack<N> digestUnaryOperators() {
         State requestedState = State.DIGESTED_UNARY_OPERATORS;
         if (getState().getNextState() != requestedState) {
             throw new IllegalStateException(format("Can not digest (substitute unary operators) an expression stack when it is in state %s.", getState()));
@@ -427,28 +428,41 @@ public class ExpressionStack<N extends Number> {
     /**
      * Protected for test purposes.
      */
-    protected ExpressionStack<N> substituteBinaryOperators(boolean digestHighPriorityBinaryOperators) {
-        State requestedState = digestHighPriorityBinaryOperators ? State.DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS : State.DIGESTED;
-
+    protected ExpressionStack<N> digestHighPriorityBinaryOperators() {
+        State requestedState = State.DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS;
         if (getState().getNextState() != requestedState) {
-            throw new IllegalStateException(format("Can not digest (substitute binary high priority operators) an expression stack when it is in state %s.", getState()));
+            throw new IllegalStateException(format("Can not digest (substitute high priority binary operators) an expression stack when it is in state %s.", getState()));
         }
 
-        ExpressionStack<N> digestedExpressionStack = new ExpressionStack<>();
+        return digestSpecifiedBinaryOperators(HighPriorityBinaryOperatorStackElement.class, requestedState);
+    }
 
+    /**
+     * Protected for test purposes.
+     */
+    protected ExpressionStack<N> digestBinaryOperators() {
+        State requestedState = State.DIGESTED;
+        if (getState().getNextState() != requestedState) {
+            throw new IllegalStateException(format("Can not digest (substitute binary operators) an expression stack when it is in state %s.", getState()));
+        }
+
+        return digestSpecifiedBinaryOperators(BinaryOperatorStackElement.class, requestedState);
+    }
+
+    private ExpressionStack<N> digestSpecifiedBinaryOperators(Class<? extends BinaryOperatorStackElement> stackElementType, State requestedState) {
+        ExpressionStack<N> digestedExpressionStack;
         LinkedList<StackElement<N, ?>> elements = stackElements;
-
         boolean encounteredBinaryOperatorStackElement;
+
         do {
+            digestedExpressionStack = new ExpressionStack<>();
             int i = elements.size();
             encounteredBinaryOperatorStackElement = false;
             while (i > 0) {
                 StackElement<N, ?> stackElement = stackElements.get(--i);
 
-                if (!encounteredBinaryOperatorStackElement && stackElement instanceof HighPriorityBinaryOperatorStackElement) {
-                    HighPriorityBinaryOperatorStackElement<N> highPriorityBinaryOperatorStackElement = (HighPriorityBinaryOperatorStackElement) stackElement;
-                    MathematicalFunctionMethodMapping<N> methodMapping = highPriorityBinaryOperatorStackElement.getValue();
-
+                if (!encounteredBinaryOperatorStackElement && stackElement instanceof MathematicalFunctionMethodMappingStackElement && stackElement.getClass() == stackElementType) {
+                    MathematicalFunctionMethodMapping<N> methodMapping = ((MathematicalFunctionMethodMappingStackElement<N>) stackElement).getValue();
                     StackElement<N, ?> previousStackElement = stackElements.get(i + 1);
                     stackElement = stackElements.get(--i);
                     if (previousStackElement instanceof NumberStackElement && stackElement instanceof NumberStackElement) {

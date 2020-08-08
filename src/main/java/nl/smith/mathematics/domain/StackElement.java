@@ -46,6 +46,7 @@ public abstract class StackElement<N, T> {
     }
 
     public static abstract class MathematicalFunctionMethodMappingStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
+
         public MathematicalFunctionMethodMappingStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
         }
@@ -92,14 +93,14 @@ public abstract class StackElement<N, T> {
 
     }
 
-    public static class HighPriorityBinaryOperatorStackElement<N extends Number> extends MathematicalFunctionMethodMappingStackElement<N> {
+    public static class HighPriorityBinaryOperatorStackElement<N extends Number> extends BinaryOperatorStackElement<N> {
 
         public HighPriorityBinaryOperatorStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
         }
 
         protected Type getRequiredType() {
-            return Type.BINARY_OPERATION;
+            return Type.HIGH_PRIORITY_BINARY_OPERATION;
         }
     }
 
