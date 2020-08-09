@@ -45,9 +45,9 @@ public abstract class StackElement<N, T> {
         return value;
     }
 
-    public static abstract class MathematicalFunctionMethodMappingStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
+    public static abstract class MethodMappingStackElement<N extends Number> extends StackElement<N, MathematicalFunctionMethodMapping<N>> {
 
-        public MathematicalFunctionMethodMappingStackElement(MathematicalFunctionMethodMapping<N> value) {
+        public MethodMappingStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
         }
 
@@ -70,7 +70,7 @@ public abstract class StackElement<N, T> {
         }
     }
 
-    public static class UnaryOperatorStackElement<N extends Number> extends MathematicalFunctionMethodMappingStackElement<N> {
+    public static class UnaryOperatorStackElement<N extends Number> extends MethodMappingStackElement<N> {
 
         public UnaryOperatorStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
@@ -86,7 +86,7 @@ public abstract class StackElement<N, T> {
         }
     }
 
-    public static class BinaryOperatorStackElement<N extends Number> extends MathematicalFunctionMethodMappingStackElement<N> {
+    public static class BinaryOperatorStackElement<N extends Number> extends MethodMappingStackElement<N> {
 
         public BinaryOperatorStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);
@@ -113,7 +113,7 @@ public abstract class StackElement<N, T> {
         }
     }
 
-    public static class MathematicalFunctionStackElement<N extends Number> extends MathematicalFunctionMethodMappingStackElement<N> {
+    public static class MathematicalFunctionStackElement<N extends Number> extends MethodMappingStackElement<N> {
 
         public MathematicalFunctionStackElement(MathematicalFunctionMethodMapping<N> value) {
             super(value);

@@ -6,7 +6,7 @@ import nl.smith.mathematics.domain.StackElement.*;
 import java.util.*;
 
 import static java.lang.String.format;
-import static nl.smith.mathematics.domain.ExpressionStack.State.DIGESTED;
+import static nl.smith.mathematics.domain.ExpressionStack.State.*;
 
 public class ExpressionStack<N extends Number> {
 
@@ -25,77 +25,69 @@ public class ExpressionStack<N extends Number> {
     protected enum State {
         DIGESTED("<Digested stack>",
                 null,
-                new HashSet<>(Collections.singletonList(
-                        NumberStackElement.class))),
+                NumberStackElement.class),
         DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS("<Digested stack - High priority binary operators>",
                 DIGESTED,
-                new HashSet<>(Arrays.asList(
-                        BinaryOperatorStackElement.class,
-                        NumberStackElement.class))),
+                BinaryOperatorStackElement.class,
+                NumberStackElement.class),
         DIGESTED_UNARY_OPERATORS("<Digested stack - Unary operators>",
                 DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS,
-                new HashSet<>(Arrays.asList(
-                        HighPriorityBinaryOperatorStackElement.class,
-                        BinaryOperatorStackElement.class,
-                        NumberStackElement.class))),
+                HighPriorityBinaryOperatorStackElement.class,
+                BinaryOperatorStackElement.class,
+                NumberStackElement.class),
         DIGESTED_VARIABLES("<Digested stack - Variables>",
                 DIGESTED_UNARY_OPERATORS,
-                new HashSet<>(Arrays.asList(
-                        UnaryOperatorStackElement.class,
-                        HighPriorityBinaryOperatorStackElement.class,
-                        BinaryOperatorStackElement.class,
-                        NumberStackElement.class))),
+                UnaryOperatorStackElement.class,
+                HighPriorityBinaryOperatorStackElement.class,
+                BinaryOperatorStackElement.class,
+                NumberStackElement.class),
         DIGESTED_MATHEMATICAL_FUNCTIONS("<Digested stack - Mathematical functions>",
                 DIGESTED_VARIABLES,
-                new HashSet<>(Arrays.asList(
-                        VariableNameStackElement.class,
-                        UnaryOperatorStackElement.class,
-                        HighPriorityBinaryOperatorStackElement.class,
-                        BinaryOperatorStackElement.class,
-                        NumberStackElement.class))),
+                VariableNameStackElement.class,
+                UnaryOperatorStackElement.class,
+                HighPriorityBinaryOperatorStackElement.class,
+                BinaryOperatorStackElement.class,
+                NumberStackElement.class),
         DIGESTED_COMPOUND_EXPRESSIONS("<Digested stack - Compound expressions>",
                 DIGESTED_MATHEMATICAL_FUNCTIONS,
-                new HashSet<>(Arrays.asList(
-                        MathematicalFunctionStackElement.class,
-                        VariableNameStackElement.class,
-                        UnaryOperatorStackElement.class,
-                        HighPriorityBinaryOperatorStackElement.class,
-                        BinaryOperatorStackElement.class,
-                        NumberStackElement.class))),
+                MathematicalFunctionStackElement.class,
+                VariableNameStackElement.class,
+                UnaryOperatorStackElement.class,
+                HighPriorityBinaryOperatorStackElement.class,
+                BinaryOperatorStackElement.class,
+                NumberStackElement.class),
         CLOSED("<Closed stack>",
                 DIGESTED_COMPOUND_EXPRESSIONS,
-                new HashSet<>(Arrays.asList(
-                        CompoundExpressionStackElement.class,
-                        MathematicalFunctionStackElement.class,
-                        VariableNameStackElement.class,
-                        UnaryOperatorStackElement.class,
-                        HighPriorityBinaryOperatorStackElement.class,
-                        BinaryOperatorStackElement.class,
-                        NumberStackElement.class))),
+                CompoundExpressionStackElement.class,
+                MathematicalFunctionStackElement.class,
+                VariableNameStackElement.class,
+                UnaryOperatorStackElement.class,
+                HighPriorityBinaryOperatorStackElement.class,
+                BinaryOperatorStackElement.class,
+                NumberStackElement.class),
         APPENDABLE("<Appendable stack>",
                 CLOSED,
-                new HashSet<>(Arrays.asList(
-                        CompoundExpressionStackElement.class,
-                        MathematicalFunctionStackElement.class,
-                        VariableNameStackElement.class,
-                        UnaryOperatorStackElement.class,
-                        HighPriorityBinaryOperatorStackElement.class,
-                        BinaryOperatorStackElement.class,
-                        NumberStackElement.class))),
+                CompoundExpressionStackElement.class,
+                MathematicalFunctionStackElement.class,
+                VariableNameStackElement.class,
+                UnaryOperatorStackElement.class,
+                HighPriorityBinaryOperatorStackElement.class,
+                BinaryOperatorStackElement.class,
+                NumberStackElement.class),
         INITIALIZED("<Initialized stack>",
-                APPENDABLE,
-                Collections.emptySet());
+                APPENDABLE);
 
         private final String description;
 
         private final State nextState;
 
-        private final Set<Class<? extends StackElement>> allowedStackElementTypes;
+        private final Set<Class<? extends StackElement>> allowedStackElementTypes = new HashSet<>();
 
-        State(String description, State nextState, Set<Class<? extends StackElement>> allowedStackElementTypes) {
+        @SafeVarargs
+        State(String description, State nextState, Class<? extends StackElement> ... allowedStackElementTypes) {
             this.description = description;
             this.nextState = nextState;
-            this.allowedStackElementTypes = allowedStackElementTypes;
+            this.allowedStackElementTypes.addAll(Arrays.asList(allowedStackElementTypes));
         }
 
         public String getDescription() {
@@ -221,12 +213,12 @@ public class ExpressionStack<N extends Number> {
      * Protected for test purposes.
      */
     protected ExpressionStack<N> closeWithState(State requestedState) {
-        if (!Arrays.asList(state.CLOSED,
-                state.DIGESTED_COMPOUND_EXPRESSIONS,
-                state.DIGESTED_MATHEMATICAL_FUNCTIONS,
-                state.DIGESTED_VARIABLES,
-                state.DIGESTED_UNARY_OPERATORS,
-                state.DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS,
+        if (!Arrays.asList(CLOSED,
+                DIGESTED_COMPOUND_EXPRESSIONS,
+                DIGESTED_MATHEMATICAL_FUNCTIONS,
+                DIGESTED_VARIABLES,
+                DIGESTED_UNARY_OPERATORS,
+                DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS,
                 DIGESTED)
                 .contains(requestedState)) {
             throw new IllegalArgumentException(format("Can not close expression stack and change state of expression stack from current state %s to requested state %s.", getState(), requestedState));
@@ -285,7 +277,7 @@ public class ExpressionStack<N extends Number> {
      * Protected for test purposes.
      */
     protected ExpressionStack<N> digestCompoundExpressions(Map<String, N> variables) {
-        State requestedState = State.DIGESTED_COMPOUND_EXPRESSIONS;
+        State requestedState = DIGESTED_COMPOUND_EXPRESSIONS;
         if (getState().getNextState() != requestedState) {
             throw new IllegalStateException(format("Can not digest (substitute compound expressions) an expression stack when it is in state %s.", getState()));
         }
@@ -321,7 +313,7 @@ public class ExpressionStack<N extends Number> {
      * Protected for test purposes.
      */
     protected ExpressionStack<N> digestMathematicalFunctions() {
-        State requestedState = State.DIGESTED_MATHEMATICAL_FUNCTIONS;
+        State requestedState = DIGESTED_MATHEMATICAL_FUNCTIONS;
         if (getState().getNextState() != requestedState) {
             throw new IllegalStateException(format("Can not digest (substitute mathematical functions) an expression stack when it is in state %s.", getState()));
         }
@@ -357,7 +349,7 @@ public class ExpressionStack<N extends Number> {
      * Protected for test purposes.
      */
     protected ExpressionStack<N> digestVariables(Map<String, N> variables) {
-        State requestedState = State.DIGESTED_VARIABLES;
+        State requestedState = DIGESTED_VARIABLES;
         if (getState().getNextState() != requestedState) {
             throw new IllegalStateException(format("Can not digest (substitute variables) an expression stack when it is in state %s.", getState()));
         }
@@ -392,7 +384,7 @@ public class ExpressionStack<N extends Number> {
      * Protected for test purposes.
      */
     protected ExpressionStack<N> digestUnaryOperators() {
-        State requestedState = State.DIGESTED_UNARY_OPERATORS;
+        State requestedState = DIGESTED_UNARY_OPERATORS;
         if (getState().getNextState() != requestedState) {
             throw new IllegalStateException(format("Can not digest (substitute unary operators) an expression stack when it is in state %s.", getState()));
         }
@@ -442,7 +434,7 @@ public class ExpressionStack<N extends Number> {
      * Protected for test purposes.
      */
     private ExpressionStack<N> digestBinaryOperators(boolean highPriority) {
-        State requestedState = State.DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS;
+        State requestedState = highPriority ? DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS : DIGESTED;
         if (getState().getNextState() != requestedState) {
             throw new IllegalStateException(format("Can not digest (substitute high priority binary operators) an expression stack when it is in state %s.", getState()));
         }
@@ -451,7 +443,7 @@ public class ExpressionStack<N extends Number> {
 
         int i = stackElements.size();
         NumberStackElement<N> firstNumberStackElement = null;
-        NumberStackElement<N> secondNumberStackElement = null;
+        NumberStackElement<N> secondNumberStackElement;
         BinaryOperatorStackElement<N> binaryOperatorStackElement = null;
 
         while (i > 0) {
@@ -475,7 +467,7 @@ public class ExpressionStack<N extends Number> {
                 }
             } else {
                 if (stackElement instanceof BinaryOperatorStackElement) {
-                    binaryOperatorStackElement = (HighPriorityBinaryOperatorStackElement) stackElement;
+                    binaryOperatorStackElement = (BinaryOperatorStackElement) stackElement;
                 }
             }
         }
@@ -528,27 +520,6 @@ public class ExpressionStack<N extends Number> {
         return false;
     }
 
-    private static boolean isValidStackSequenceOld(Class<?> previousStackElementClass, Class<?>
-            stackElementClass) {
-        if (previousStackElementClass == null || previousStackElementClass == BinaryOperatorStackElement.class) {
-            return stackElementClass != BinaryOperatorStackElement.class;
-        }
-
-        if (previousStackElementClass == UnaryOperatorStackElement.class) {
-            return stackElementClass != BinaryOperatorStackElement.class && stackElementClass != UnaryOperatorStackElement.class;
-        }
-
-        if (Arrays.asList(NumberStackElement.class, CompoundExpressionStackElement.class, VariableNameStackElement.class).contains(previousStackElementClass)) {
-            return stackElementClass == BinaryOperatorStackElement.class;
-        }
-
-        if (previousStackElementClass == MathematicalFunctionStackElement.class) {
-            return stackElementClass == CompoundExpressionStackElement.class;
-        }
-
-        return false;
-    }
-
     public StringBuilder toStringBuilder(int level) {
         StringBuilder value = new StringBuilder();
 
@@ -557,7 +528,7 @@ public class ExpressionStack<N extends Number> {
             indent.append("\t\t");
         }
 
-        value.append(format(OUTPUT_FORMAT, "Size: " + stackElements.size(), indent, state.getDescription()));
+        value.append(format(OUTPUT_FORMAT, "Size: " + size(), indent, state.getDescription()));
 
         for (StackElement<N, ?> stackElement : stackElements) {
             Object elementValue = stackElement.getValue();

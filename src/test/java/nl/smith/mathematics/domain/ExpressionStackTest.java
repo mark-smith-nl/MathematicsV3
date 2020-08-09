@@ -124,17 +124,27 @@ class ExpressionStackTest {
 
     @ParameterizedTest
     @MethodSource("digestHighPriorityBinaryOperators")
-    public void digestHighPriorityBinaryOperators(ExpressionStack<RationalNumber> expressionStack, RationalNumber expectedValue, Exception expectedException) {
-        if (expectedException == null) {
-            ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.digestHighPriorityBinaryOperators();
-            assertEquals(DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, digestedExpressionStack.getState());
-            assertEquals(5, digestedExpressionStack.size());
-        } else {
-            //IllegalArgumentException actualException = assertThrows(IllegalArgumentException.class, () -> expressionStack.closeWithState(requestedState));
-            //assertEquals(expectedException.getMessage(), actualException.getMessage());
+    public void digestHighPriorityBinaryOperators(ExpressionStack<RationalNumber> expressionStack, ExpressionStack<RationalNumber> expectedExpressionStack) {
+        ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.digestHighPriorityBinaryOperators();
+        assertEquals(expectedExpressionStack.getState(), digestedExpressionStack.getState());
+        assertEquals(expectedExpressionStack.size(), digestedExpressionStack.size());
+        for (int i = 0; i < expectedExpressionStack.size(); i++){
+            StackElement<RationalNumber, ?> expectedStackElement = expectedExpressionStack.stackElements.get(i);
+            StackElement<RationalNumber, ?> actualStackElement = digestedExpressionStack.stackElements.get(i);
+            assertEquals(expectedStackElement.getClass(), actualStackElement.getClass());
+            if (expectedStackElement.getValue() instanceof Number) {
+                assertEquals(expectedStackElement.getValue(), actualStackElement.getValue(), "retet");
+            } else {
+                assertTrue(expectedStackElement instanceof StackElement.MethodMappingStackElement);
+                assertTrue(actualStackElement instanceof StackElement.MethodMappingStackElement);
+                StackElement.MethodMappingStackElement expectedMethodMappingStackElement = (StackElement.MethodMappingStackElement) expectedStackElement;
+                StackElement.MethodMappingStackElement actualMethodMappingStackElement = (StackElement.MethodMappingStackElement) actualStackElement;
+                assertEquals(expectedMethodMappingStackElement.getRequiredType(), actualMethodMappingStackElement.getRequiredType());
+                assertEquals(((StackElement.MethodMappingStackElement<RationalNumber>)expectedMethodMappingStackElement).getValue().getName(),
+                        ((StackElement.MethodMappingStackElement<RationalNumber>)actualMethodMappingStackElement).getValue().getName());
+            }
         }
     }
-
 
     //@Test
     public void digest() {
@@ -228,7 +238,7 @@ class ExpressionStackTest {
         return Stream.of(
                 // Expression = 1 + 2 * 3 * 4 - 6
                 of(new ExpressionStack<RationalNumber>()
-                                .addNumber(new RationalNumber(1))
+                                .addNumber(ONE)
                                 .addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION))
                                 .addNumber(new RationalNumber(2))
                                 .addHighPriorityBinaryOperator(getMethodMapping("*", 2, HIGH_PRIORITY_BINARY_OPERATION, new RationalNumber(6), new RationalNumber(2), new RationalNumber(3)))
@@ -238,9 +248,14 @@ class ExpressionStackTest {
                                 .addBinaryOperator(getMethodMapping("-", 2, BINARY_OPERATION))
                                 .addNumber(new RationalNumber(5))
                                 .closeWithState(DIGESTED_UNARY_OPERATORS),
-                        new RationalNumber(11),
-                        null)
-
+                        new ExpressionStack<RationalNumber>()
+                                .addNumber(ONE)
+                                .addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION))
+                                .addNumber(new RationalNumber(24))
+                                .addBinaryOperator(getMethodMapping("-", 2, BINARY_OPERATION))
+                                .addNumber(new RationalNumber(5))
+                                .closeWithState(DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS)
+                )
         );
     }
 
@@ -415,4 +430,5 @@ class ExpressionStackTest {
                 of(new ExpressionStack<RationalNumber>().addNumber(ONE), DIGESTED, null)
         );
     }
+
 }
