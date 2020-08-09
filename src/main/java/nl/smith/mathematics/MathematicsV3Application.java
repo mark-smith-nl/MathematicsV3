@@ -50,7 +50,7 @@ public class MathematicsV3Application {
         LOGGER.info("Example: {}", new RationalNumber(2, 14));
         RationalNumberOutputType.set(Type.COMPONENTS_AND_EXACT);
         LOGGER.info("Example 2/14 * 1/3: {}", (new RationalNumber(2, 14)).multiply(new RationalNumber(1, 3)));
-        LOGGER.info("Example create number from string literal 12.345{6789}R: {}", RationalNumber.valueOf("12.345{6789}R"));
+        LOGGER.info("Example create number from string literal 12.345[6789]R: {}", RationalNumber.valueOf("12.345[6789]R"));
 
         GoniometricFunctions<RationalNumber, ?> rationalNumberGoniometricFunctions = context.getBean("rationalNumberGoniometricFunctions", RationalNumberGoniometricFunctions.class);
 

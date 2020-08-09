@@ -49,7 +49,7 @@ class ExpressionStackTest {
 
     @Test
     public void addingMalFormedUnaryOperatorStackElement_usingBinaryMethod() {
-        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.addUnaryOperator(getMethodMapping(2, BINARY_OPERATION)));
+        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.addUnaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)));
         assertEquals("A UnaryOperatorStackElement must wrap a MathematicalFunctionMethodMapping of type UNARY_OPERATION. Type specified BINARY_OPERATION.", actualException.getMessage());
     }
 
@@ -61,7 +61,7 @@ class ExpressionStackTest {
 
     @Test
     public void addingMalFormedBinaryOperatorStackElement_usingUnaryMethod() {
-        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.addNumber(ONE).addBinaryOperator(getMethodMapping(1, UNARY_OPERATION)));
+        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.addNumber(ONE).addBinaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)));
         assertEquals("A BinaryOperatorStackElement must wrap a MathematicalFunctionMethodMapping of type BINARY_OPERATION. Type specified UNARY_OPERATION.", actualException.getMessage());
     }
 
@@ -122,41 +122,25 @@ class ExpressionStackTest {
         assertEquals(expectedException.getMessage(), actualException.getMessage());
     }
 
-    //@ParameterizedTest
-    //@MethodSource("digestBinaryOperators")
-    public void digestBinaryOperators(ExpressionStack<RationalNumber> expressionStack, RationalNumber expectedValue, Exception expectedException) {
+    @ParameterizedTest
+    @MethodSource("digestHighPriorityBinaryOperators")
+    public void digestHighPriorityBinaryOperators(ExpressionStack<RationalNumber> expressionStack, RationalNumber expectedValue, Exception expectedException) {
         if (expectedException == null) {
-            expressionStack.digestBinaryOperators();
-            assertEquals(DIGESTED, expressionStack.getState());
-            assertEquals(1, expressionStack.size());
-            assertEquals(RationalNumber.class, expressionStack.stackElements.get(0).getClass());
+            ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.digestHighPriorityBinaryOperators();
+            assertEquals(DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, digestedExpressionStack.getState());
+            assertEquals(5, digestedExpressionStack.size());
         } else {
             //IllegalArgumentException actualException = assertThrows(IllegalArgumentException.class, () -> expressionStack.closeWithState(requestedState));
             //assertEquals(expectedException.getMessage(), actualException.getMessage());
         }
-        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.digestCompoundExpressions((Collections.emptyMap())));
-        assertEquals(expectedException.getMessage(), actualException.getMessage());
     }
 
-    //@ParameterizedTest
-    //@MethodSource("digestCompoundExpressions")
-    public void digestCompoundExpressions(ExpressionStack<RationalNumber> expressionStack, RationalNumber expectedValue, Exception expectedException) {
-        if (expectedException == null) {
-            expressionStack.digestBinaryOperators();
-            assertEquals(DIGESTED_COMPOUND_EXPRESSIONS, expressionStack.getState());
-        } else {
-          //  IllegalArgumentException actualException = assertThrows(IllegalArgumentException.class, () -> expressionStack.closeWithState(requestedState));
-          //  assertEquals(expectedException.getMessage(), actualException.getMessage());
-        }
-        IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.digestCompoundExpressions((Collections.emptyMap())));
-        assertEquals(expectedException.getMessage(), actualException.getMessage());
-    }
 
     //@Test
     public void digest() {
         // Expression = 1 + 10
         expressionStack.addNumber(ONE)
-                .addBinaryOperator(getMethodMapping(2, BINARY_OPERATION))
+                .addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION))
                 .addNumber(TEN)
                 .close();
 
@@ -164,30 +148,30 @@ class ExpressionStackTest {
     }
 
     @Test
-    public void digest_unknownVariable() {
-        // Expression = A + Z + B + B
+    public void digestVariables() {
+        // Expression = A + Z - B * B
         IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack
                 .addVariableName("A")
-                .addBinaryOperator(getMethodMapping(2, BINARY_OPERATION))
+                .addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION))
                 .addVariableName("Z")
-                .addBinaryOperator(getMethodMapping(2, BINARY_OPERATION))
+                .addBinaryOperator(getMethodMapping("-", 2, BINARY_OPERATION))
                 .addVariableName("B")
-                .addBinaryOperator(getMethodMapping(2, BINARY_OPERATION))
+                .addBinaryOperator(getMethodMapping("*", 2, BINARY_OPERATION))
                 .addVariableName("B")
-                .close()
-                .digest(Collections.emptyMap()));
+                .closeWithState(DIGESTED_MATHEMATICAL_FUNCTIONS)
+                .digestVariables(Collections.emptyMap()));
         assertEquals("Unknown variable(s) 'A', 'B', 'Z'.", actualException.getMessage());
     }
 
     //@Test
     public void digest_knownVariable() {
-        // Expression = A + Z + B + B ===> 1/3 + 1/7 + 2/3 + 2/3
+        // Expression = A + Z - B * B ===> 1/3 + 1/7 - 2/3 * 2/3
         ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.addVariableName("A") // index: 6
-                .addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)) // index: 5
+                .addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)) // index: 5
                 .addVariableName("Z") // index: 4
-                .addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)) // index: 3
+                .addBinaryOperator(getMethodMapping("-", 2, BINARY_OPERATION)) // index: 3
                 .addVariableName("B") // index: 2
-                .addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)) // index: 1
+                .addBinaryOperator(getMethodMapping("*", 2, BINARY_OPERATION)) // index: 1
                 .addVariableName("B") // index: 0
                 .close()
                 .digest(Map.of("A", new RationalNumber(1, 3), "B", new RationalNumber(2, 3), "Z", new RationalNumber(1, 7)));
@@ -215,10 +199,10 @@ class ExpressionStackTest {
     //@Test
     public void digest_unaryOperators() {
         // Expression = - 1/7 + - 2/13
-        ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.addUnaryOperator(getMethodMapping(1, UNARY_OPERATION, new RationalNumber(-1, 7), new RationalNumber(1, 7))) // index: 4
+        ExpressionStack<RationalNumber> digestedExpressionStack = expressionStack.addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION, new RationalNumber(-1, 7), new RationalNumber(1, 7))) // index: 4
                 .addNumber(new RationalNumber(1, 7)) // index: 3
-                .addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)) // index: 2
-                .addUnaryOperator(getMethodMapping(1, UNARY_OPERATION, new RationalNumber(-2, 13), new RationalNumber(2, 13))) // index: 1
+                .addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)) // index: 2
+                .addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION, new RationalNumber(-2, 13), new RationalNumber(2, 13))) // index: 1
                 .addNumber(new RationalNumber(2, 13)) // index: 0
                 .close()
                 .digest(Collections.emptyMap());
@@ -240,20 +224,28 @@ class ExpressionStackTest {
         );
     }
 
-    private static Stream<Arguments> digestBinaryOperators() {
+    private static Stream<Arguments> digestHighPriorityBinaryOperators() {
         return Stream.of(
+                // Expression = 1 + 2 * 3 * 4 - 6
                 of(new ExpressionStack<RationalNumber>()
-                        .addNumber(ONE)
-                        .addBinaryOperator(getMethodMapping(2, BINARY_OPERATION, new RationalNumber(11), ONE, TEN))
-                        .addNumber(TEN).closeWithState(DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS),
+                                .addNumber(new RationalNumber(1))
+                                .addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION))
+                                .addNumber(new RationalNumber(2))
+                                .addHighPriorityBinaryOperator(getMethodMapping("*", 2, HIGH_PRIORITY_BINARY_OPERATION, new RationalNumber(6), new RationalNumber(2), new RationalNumber(3)))
+                                .addNumber(new RationalNumber(3))
+                                .addHighPriorityBinaryOperator(getMethodMapping("*", 2, HIGH_PRIORITY_BINARY_OPERATION, new RationalNumber(24), new RationalNumber(6), new RationalNumber(4)))
+                                .addNumber(new RationalNumber(4))
+                                .addBinaryOperator(getMethodMapping("-", 2, BINARY_OPERATION))
+                                .addNumber(new RationalNumber(5))
+                                .closeWithState(DIGESTED_UNARY_OPERATORS),
                         new RationalNumber(11),
                         null)
 
         );
     }
 
-    private static MathematicalFunctionMethodMapping<RationalNumber> getMethodMapping(int parameterCount, MathematicalFunction.Type type) {
-        return getMethodMapping(parameterCount, type, null, null);
+    private static MathematicalFunctionMethodMapping<RationalNumber> getMethodMapping(String name, int parameterCount, MathematicalFunction.Type type) {
+        return getMethodMapping(name, parameterCount, type, null, null);
     }
 
     /**
@@ -265,8 +257,11 @@ class ExpressionStackTest {
      * @param arguments      The methods arguments
      * @return The MathematicalFunctionMethodMapping mock
      */
-    private static MathematicalFunctionMethodMapping<RationalNumber> getMethodMapping(int parameterCount, MathematicalFunction.Type type, RationalNumber expectedValue, RationalNumber... arguments) {
+    private static MathematicalFunctionMethodMapping<RationalNumber> getMethodMapping(String name, int parameterCount, MathematicalFunction.Type type, RationalNumber expectedValue, RationalNumber... arguments) {
         MathematicalFunctionMethodMapping<RationalNumber> methodMapping = mock(MathematicalFunctionMethodMapping.class);
+
+        when(methodMapping.getName()).thenReturn(name);
+        methodMapping.getName();
 
         when(methodMapping.getParameterCount()).thenReturn(parameterCount);
         methodMapping.getParameterCount();
@@ -287,7 +282,7 @@ class ExpressionStackTest {
      * The digested return value is {@link RationalNumber#ZERO}
      * All mocked methods are being invoked to prevent an {@link org.mockito.exceptions.misusing.UnnecessaryStubbingException}
      *
-     * @param state     The state of the stack
+     * @param state The state of the stack
      * @return The MathematicalFunctionMethodMapping mock
      */
     private static ExpressionStack<RationalNumber> getExpressionStack(ExpressionStack.State state) {
@@ -299,7 +294,7 @@ class ExpressionStackTest {
      * The digested return value is  {@link RationalNumber#ZERO}
      * All mocked methods are being invoked to prevent an {@link org.mockito.exceptions.misusing.UnnecessaryStubbingException}
      *
-     * @param state     The state of the stack
+     * @param state The state of the stack
      * @return The MathematicalFunctionMethodMapping mock
      */
     private static ExpressionStack<RationalNumber> getExpressionStack(ExpressionStack.State state, int dimension) {
@@ -310,9 +305,9 @@ class ExpressionStackTest {
      * Method to return a ExpressionStack mock with the desired state, dimension and return value.
      * All mocked methods are being invoked to prevent an {@link org.mockito.exceptions.misusing.UnnecessaryStubbingException}
      *
-     * @param state     The state of the stack
-     * @param dimension The dimension of the stack
-     * @param digestedValue  The value when the stack is digested. This value is wrapped in an expression stack
+     * @param state         The state of the stack
+     * @param dimension     The dimension of the stack
+     * @param digestedValue The value when the stack is digested. This value is wrapped in an expression stack
      * @return The MathematicalFunctionMethodMapping mock
      */
     private static ExpressionStack<RationalNumber> getExpressionStack(ExpressionStack.State state, int dimension, RationalNumber digestedValue) {
@@ -323,10 +318,10 @@ class ExpressionStackTest {
      * Method to return a ExpressionStack mock with the desired state, dimension and return value.
      * All mocked methods are being invoked to prevent an {@link org.mockito.exceptions.misusing.UnnecessaryStubbingException}
      *
-     * @param state     The state of the stack
-     * @param dimension The dimension of the stack
-     * @param digestedValue  The value when the stack is digested. This value is wrapped in an expression stack
-     * @param variables  The map of vaiables used to digest the expression stack
+     * @param state         The state of the stack
+     * @param dimension     The dimension of the stack
+     * @param digestedValue The value when the stack is digested. This value is wrapped in an expression stack
+     * @param variables     The map of vaiables used to digest the expression stack
      * @return The MathematicalFunctionMethodMapping mock
      */
     private static ExpressionStack<RationalNumber> getExpressionStack(ExpressionStack.State state, int dimension, RationalNumber digestedValue, Map<String, RationalNumber> variables) {
@@ -359,15 +354,15 @@ class ExpressionStackTest {
                 of(new ExpressionStack<RationalNumber>().addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, new IllegalStateException("Can not change state of expression stack from CLOSED to DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
                 of(new ExpressionStack<RationalNumber>().addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED, new IllegalStateException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
 
-                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping(1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
-                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping(1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),
-                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping(1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), CLOSED, null),
-                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping(1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_COMPOUND_EXPRESSIONS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_COMPOUND_EXPRESSIONS. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
-                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping(1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_MATHEMATICAL_FUNCTIONS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_MATHEMATICAL_FUNCTIONS. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
-                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping(1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_VARIABLES, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_VARIABLES. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
-                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping(1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_UNARY_OPERATORS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_UNARY_OPERATORS. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
-                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping(1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
-                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping(1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping("f1", 1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
+                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping("f1", 1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),
+                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping("f1", 1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), CLOSED, null),
+                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping("f1", 1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_COMPOUND_EXPRESSIONS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_COMPOUND_EXPRESSIONS. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping("f1", 1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_MATHEMATICAL_FUNCTIONS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_MATHEMATICAL_FUNCTIONS. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping("f1", 1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_VARIABLES, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_VARIABLES. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping("f1", 1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_UNARY_OPERATORS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_UNARY_OPERATORS. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping("f1", 1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addMathematicalFunction(getMethodMapping("f1", 1, FUNCTION)).addCompoundExpression(getExpressionStack(CLOSED)), DIGESTED, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type CompoundExpressionStackElement which is not allowed in the desired state.")),
 
                 of(new ExpressionStack<RationalNumber>().addVariableName("x"), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
                 of(new ExpressionStack<RationalNumber>().addVariableName("x"), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),
@@ -379,35 +374,35 @@ class ExpressionStackTest {
                 of(new ExpressionStack<RationalNumber>().addVariableName("x"), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS. Stack contains element of type VariableNameStackElement which is not allowed in the desired state.")),
                 of(new ExpressionStack<RationalNumber>().addVariableName("x"), DIGESTED, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type VariableNameStackElement which is not allowed in the desired state.")),
 
-                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping(1, UNARY_OPERATION)).addNumber(ONE), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
-                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping(1, UNARY_OPERATION)).addNumber(ONE), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),
-                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping(1, UNARY_OPERATION)).addNumber(ONE), CLOSED, null),
-                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping(1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_COMPOUND_EXPRESSIONS, null),
-                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping(1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_MATHEMATICAL_FUNCTIONS, null),
-                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping(1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_VARIABLES, null),
-                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping(1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_UNARY_OPERATORS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_UNARY_OPERATORS. Stack contains element of type UnaryOperatorStackElement which is not allowed in the desired state.")),
-                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping(1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS. Stack contains element of type UnaryOperatorStackElement which is not allowed in the desired state.")),
-                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping(1, UNARY_OPERATION)).addNumber(ONE), DIGESTED, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type UnaryOperatorStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)).addNumber(ONE), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
+                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)).addNumber(ONE), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),
+                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)).addNumber(ONE), CLOSED, null),
+                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_COMPOUND_EXPRESSIONS, null),
+                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_MATHEMATICAL_FUNCTIONS, null),
+                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_VARIABLES, null),
+                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_UNARY_OPERATORS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_UNARY_OPERATORS. Stack contains element of type UnaryOperatorStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)).addNumber(ONE), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS. Stack contains element of type UnaryOperatorStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addUnaryOperator(getMethodMapping("-", 1, UNARY_OPERATION)).addNumber(ONE), DIGESTED, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type UnaryOperatorStackElement which is not allowed in the desired state.")),
 
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), CLOSED, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_COMPOUND_EXPRESSIONS, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_MATHEMATICAL_FUNCTIONS, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_VARIABLES, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_UNARY_OPERATORS, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type BinaryOperatorStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), CLOSED, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_COMPOUND_EXPRESSIONS, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_MATHEMATICAL_FUNCTIONS, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_VARIABLES, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_UNARY_OPERATORS, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type BinaryOperatorStackElement which is not allowed in the desired state.")),
 
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), CLOSED, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_COMPOUND_EXPRESSIONS, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_MATHEMATICAL_FUNCTIONS, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_VARIABLES, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_UNARY_OPERATORS, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, null),
-                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping(2, BINARY_OPERATION)).addNumber(ONE), DIGESTED, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type BinaryOperatorStackElement which is not allowed in the desired state.")),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), CLOSED, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_COMPOUND_EXPRESSIONS, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_MATHEMATICAL_FUNCTIONS, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_VARIABLES, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_UNARY_OPERATORS, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS, null),
+                of(new ExpressionStack<RationalNumber>().addNumber(ONE).addBinaryOperator(getMethodMapping("+", 2, BINARY_OPERATION)).addNumber(ONE), DIGESTED, new IllegalArgumentException("Can not change state of expression stack from CLOSED to DIGESTED. Stack contains element of type BinaryOperatorStackElement which is not allowed in the desired state.")),
 
                 of(new ExpressionStack<RationalNumber>().addNumber(ONE), INITIALIZED, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state INITIALIZED.")),
                 of(new ExpressionStack<RationalNumber>().addNumber(ONE), APPENDABLE, new IllegalArgumentException("Can not close expression stack and change state of expression stack from current state APPENDABLE to requested state APPENDABLE.")),

@@ -69,7 +69,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
             throw new IllegalStateException(format("The number of arguments of method '%s' (%s) does not comply to its type of %s.", name, method, type));
         }
 
-        signature = getMathematicalMethodSignature();
+        signature = makeMathematicalMethodSignature();
     }
 
     public String getName() {
@@ -157,7 +157,7 @@ public class MathematicalFunctionMethodMapping<N extends Number> {
         return Objects.hash(name, parameterCount, isVararg);
     }
 
-    private String getMathematicalMethodSignature() {
+    private String makeMathematicalMethodSignature() {
         return name + "(" +
                 getMathematicalMethodGenericParameterTypesAsString() + ")";
     }

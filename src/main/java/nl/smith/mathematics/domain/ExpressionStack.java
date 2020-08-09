@@ -3,7 +3,6 @@ package nl.smith.mathematics.domain;
 import nl.smith.mathematics.annotation.MathematicalFunction.Type;
 import nl.smith.mathematics.domain.StackElement.*;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 import static java.lang.String.format;
@@ -11,7 +10,7 @@ import static nl.smith.mathematics.domain.ExpressionStack.State.DIGESTED;
 
 public class ExpressionStack<N extends Number> {
 
-    private static final String OUTPUT_FORMAT = "%-30s%s%s%n";
+    private static final String OUTPUT_FORMAT = "%-45s%s%s%n";
 
     private ExpressionStack<N> sibling;
 
@@ -40,7 +39,7 @@ public class ExpressionStack<N extends Number> {
                         BinaryOperatorStackElement.class,
                         NumberStackElement.class))),
         DIGESTED_VARIABLES("<Digested stack - Variables>",
-                           DIGESTED_UNARY_OPERATORS,
+                DIGESTED_UNARY_OPERATORS,
                 new HashSet<>(Arrays.asList(
                         UnaryOperatorStackElement.class,
                         HighPriorityBinaryOperatorStackElement.class,
@@ -74,7 +73,7 @@ public class ExpressionStack<N extends Number> {
                         BinaryOperatorStackElement.class,
                         NumberStackElement.class))),
         APPENDABLE("<Appendable stack>",
-                   CLOSED,
+                CLOSED,
                 new HashSet<>(Arrays.asList(
                         CompoundExpressionStackElement.class,
                         MathematicalFunctionStackElement.class,
@@ -429,69 +428,108 @@ public class ExpressionStack<N extends Number> {
      * Protected for test purposes.
      */
     protected ExpressionStack<N> digestHighPriorityBinaryOperators() {
-        State requestedState = State.DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS;
-        if (getState().getNextState() != requestedState) {
-            throw new IllegalStateException(format("Can not digest (substitute high priority binary operators) an expression stack when it is in state %s.", getState()));
-        }
-
-        return digestSpecifiedBinaryOperators(HighPriorityBinaryOperatorStackElement.class, requestedState);
+        return digestBinaryOperators(true);
     }
 
     /**
      * Protected for test purposes.
      */
     protected ExpressionStack<N> digestBinaryOperators() {
-        State requestedState = State.DIGESTED;
-        if (getState().getNextState() != requestedState) {
-            throw new IllegalStateException(format("Can not digest (substitute binary operators) an expression stack when it is in state %s.", getState()));
-        }
-
-        return digestSpecifiedBinaryOperators(BinaryOperatorStackElement.class, requestedState);
+        return digestBinaryOperators(false);
     }
 
-    private ExpressionStack<N> digestSpecifiedBinaryOperators(Class<? extends BinaryOperatorStackElement> stackElementType, State requestedState) {
-        ExpressionStack<N> digestedExpressionStack;
-        LinkedList<StackElement<N, ?>> elements = stackElements;
-        boolean encounteredBinaryOperatorStackElement;
+    /**
+     * Protected for test purposes.
+     */
+    private ExpressionStack<N> digestBinaryOperators(boolean highPriority) {
+        State requestedState = State.DIGESTED_HIGH_PRIORITY_BINARY_OPERATORS;
+        if (getState().getNextState() != requestedState) {
+            throw new IllegalStateException(format("Can not digest (substitute high priority binary operators) an expression stack when it is in state %s.", getState()));
+        }
 
-        do {
-            digestedExpressionStack = new ExpressionStack<>();
-            int i = elements.size();
-            encounteredBinaryOperatorStackElement = false;
-            while (i > 0) {
-                StackElement<N, ?> stackElement = stackElements.get(--i);
+        ExpressionStack<N> digestedExpressionStack = new ExpressionStack<>();
 
-                if (!encounteredBinaryOperatorStackElement && stackElement instanceof MathematicalFunctionMethodMappingStackElement && stackElement.getClass() == stackElementType) {
-                    MathematicalFunctionMethodMapping<N> methodMapping = ((MathematicalFunctionMethodMappingStackElement<N>) stackElement).getValue();
-                    StackElement<N, ?> previousStackElement = stackElements.get(i + 1);
-                    stackElement = stackElements.get(--i);
-                    if (previousStackElement instanceof NumberStackElement && stackElement instanceof NumberStackElement) {
-                        NumberStackElement<N> previousNumberStackElement = (NumberStackElement<N>) stackElement;
-                        N previousNumber = previousNumberStackElement.getValue();
-                        NumberStackElement<N> numberStackElement = (NumberStackElement<N>) stackElement;
-                        N number = numberStackElement.getValue();
+        int i = stackElements.size();
+        NumberStackElement<N> firstNumberStackElement = null;
+        NumberStackElement<N> secondNumberStackElement = null;
+        BinaryOperatorStackElement<N> binaryOperatorStackElement = null;
 
-                        N result = methodMapping.invokeWithNumbers(previousNumber, number);
-                        digestedExpressionStack.addNumber(result);
-                        encounteredBinaryOperatorStackElement = true;
-                    } else {
-                        throw new IllegalStateException(format("Expected a stack elements of type %s surrounding the binary operator %s but the types where %s and %s.",
-                                NumberStackElement.class.getSimpleName(),
-                                methodMapping.getName(),
-                                previousStackElement.getClass().getSimpleName(),
-                                stackElement.getClass().getSimpleName()));
-                    }
+        while (i > 0) {
+            StackElement<N, ?> stackElement = stackElements.get(--i);
+            if (stackElement instanceof NumberStackElement) {
+                if (firstNumberStackElement == null) {
+                    firstNumberStackElement = (NumberStackElement<N>) stackElement;
                 } else {
-                    digestedExpressionStack.push(stackElement);
+                    secondNumberStackElement = (NumberStackElement<N>) stackElement;
+                    N result = binaryOperatorStackElement.getValue().invokeWithNumbers(firstNumberStackElement.getValue(), secondNumberStackElement.getValue());
+                    firstNumberStackElement = new NumberStackElement<>(result);
+                }
+
+            } else if (highPriority) {
+                if (stackElement instanceof HighPriorityBinaryOperatorStackElement) {
+                    binaryOperatorStackElement = (BinaryOperatorStackElement) stackElement;
+                } else {
+                    digestedExpressionStack.push(firstNumberStackElement);
+                    digestedExpressionStack.push(stackElement); // Push the low priority binary operator on the stack
+                    firstNumberStackElement = null;
+                }
+            } else {
+                if (stackElement instanceof BinaryOperatorStackElement) {
+                    binaryOperatorStackElement = (HighPriorityBinaryOperatorStackElement) stackElement;
                 }
             }
-            elements = digestedExpressionStack.stackElements;
-        } while (encounteredBinaryOperatorStackElement);
+        }
+
+        if (firstNumberStackElement != null) {
+            digestedExpressionStack.push(firstNumberStackElement);
+        }
 
         return digestedExpressionStack.closeWithState(requestedState);
     }
 
     private static boolean isValidStackSequence(Class<?> previousStackElementClass, Class<?> stackElementClass) {
+        if (previousStackElementClass == null) {
+            return new HashSet<>(Arrays.asList(
+                    UnaryOperatorStackElement.class,
+                    NumberStackElement.class,
+                    MathematicalFunctionStackElement.class,
+                    VariableNameStackElement.class,
+                    CompoundExpressionStackElement.class)).contains(stackElementClass);
+        }
+
+        if (previousStackElementClass == UnaryOperatorStackElement.class) {
+            return new HashSet<>(Arrays.asList(
+                    NumberStackElement.class,
+                    MathematicalFunctionStackElement.class,
+                    VariableNameStackElement.class,
+                    CompoundExpressionStackElement.class)).contains(stackElementClass);
+        }
+
+        if (new HashSet<>(Arrays.asList(
+                NumberStackElement.class,
+                VariableNameStackElement.class,
+                CompoundExpressionStackElement.class)).contains(previousStackElementClass)) {
+            return BinaryOperatorStackElement.class.isAssignableFrom(stackElementClass);
+        }
+
+        if (previousStackElementClass == MathematicalFunctionStackElement.class) {
+            return stackElementClass == CompoundExpressionStackElement.class;
+        }
+
+        if (BinaryOperatorStackElement.class.isAssignableFrom(previousStackElementClass)) {
+            return new HashSet<>(Arrays.asList(
+                    UnaryOperatorStackElement.class,
+                    NumberStackElement.class,
+                    MathematicalFunctionStackElement.class,
+                    VariableNameStackElement.class,
+                    CompoundExpressionStackElement.class)).contains(stackElementClass);
+        }
+
+        return false;
+    }
+
+    private static boolean isValidStackSequenceOld(Class<?> previousStackElementClass, Class<?>
+            stackElementClass) {
         if (previousStackElementClass == null || previousStackElementClass == BinaryOperatorStackElement.class) {
             return stackElementClass != BinaryOperatorStackElement.class;
         }
@@ -519,20 +557,16 @@ public class ExpressionStack<N extends Number> {
             indent.append("\t\t");
         }
 
-        value.append(format(OUTPUT_FORMAT, "", indent, state.getDescription()));
+        value.append(format(OUTPUT_FORMAT, "Size: " + stackElements.size(), indent, state.getDescription()));
 
         for (StackElement<N, ?> stackElement : stackElements) {
             Object elementValue = stackElement.getValue();
-            if (elementValue instanceof Method) {
-                value.append(format(OUTPUT_FORMAT, stackElement.getClass().getSimpleName(), indent, ((Method) elementValue).getName()));
-            } else if (elementValue instanceof ExpressionStack) {
+            if (elementValue instanceof ExpressionStack) {
                 value.append(format(OUTPUT_FORMAT, stackElement.getClass().getSimpleName(), indent, "--- <Stack> ---"));
                 value.append(((ExpressionStack<?>) elementValue).toStringBuilder(1));
                 value.append(format(OUTPUT_FORMAT, stackElement.getClass().getSimpleName(), indent, "--- <Stack> ---"));
-
-
             } else {
-                value.append(format(OUTPUT_FORMAT, stackElement.getClass().getSimpleName(), indent, stackElement.getValue()));
+                value.append(format(OUTPUT_FORMAT, stackElement.getClass().getSimpleName(), indent, stackElement.toString()));
             }
         }
 
@@ -544,9 +578,4 @@ public class ExpressionStack<N extends Number> {
         return toStringBuilder(0).toString();
     }
 
-
-    public static void main(String[] args) {
-
-        HashSet<Class<? extends StackElement>> classes1 = new HashSet<>(Arrays.asList(UnaryOperatorStackElement.class, BinaryOperatorStackElement.class));
-    }
 }

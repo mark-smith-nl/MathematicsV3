@@ -79,6 +79,11 @@ public abstract class StackElement<N, T> {
         protected Type getRequiredType() {
             return Type.UNARY_OPERATION;
         }
+
+        @Override
+        public String toString() {
+            return getValue().getName();
+        }
     }
 
     public static class BinaryOperatorStackElement<N extends Number> extends MathematicalFunctionMethodMappingStackElement<N> {
@@ -91,6 +96,10 @@ public abstract class StackElement<N, T> {
             return Type.BINARY_OPERATION;
         }
 
+        @Override
+        public String toString() {
+            return getValue().getName();
+        }
     }
 
     public static class HighPriorityBinaryOperatorStackElement<N extends Number> extends BinaryOperatorStackElement<N> {
@@ -115,6 +124,10 @@ public abstract class StackElement<N, T> {
             return Type.FUNCTION;
         }
 
+        @Override
+        public String toString() {
+            return getValue().getName();
+        }
     }
 
     public static class VariableNameStackElement<N extends Number> extends StackElement<N, String> {
@@ -136,6 +149,11 @@ public abstract class StackElement<N, T> {
         public boolean canBeLastStackElement() {
             return true;
         }
+
+        @Override
+        public String toString() {
+            return getValue();
+        }
     }
 
     public static class NumberStackElement<N extends Number> extends StackElement<N, N> {
@@ -154,6 +172,11 @@ public abstract class StackElement<N, T> {
         @Override
         public boolean canBeLastStackElement() {
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return getValue().toString();
         }
     }
 
@@ -177,6 +200,11 @@ public abstract class StackElement<N, T> {
         @Override
         public boolean canBeLastStackElement() {
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(getValue().size());
         }
     }
 
