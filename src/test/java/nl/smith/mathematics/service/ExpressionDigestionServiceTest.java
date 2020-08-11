@@ -1,6 +1,5 @@
 package nl.smith.mathematics.service;
 
-import javafx.util.Pair;
 import nl.smith.mathematics.domain.RawExpression;
 import nl.smith.mathematics.exception.InValidExpressionStringException;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -67,13 +67,13 @@ public class ExpressionDigestionServiceTest {
     @DisplayName("Testing digest(String) with invalid arguments")
     @ParameterizedTest
     @MethodSource("getRawExpression_preconditionsNotMet")
-    public void getRawExpression_preconditionsNotMet(String text, Set<Pair<String, String>> expectedConstraintViolations) {
+    public void getRawExpression_preconditionsNotMet(String text, Set<AbstractMap.SimpleEntry<String, String>> expectedConstraintViolations) {
         ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> expressionDigestionService.getRawExpression(text));
 
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         assertEquals(expectedConstraintViolations.size(), constraintViolations.size(), "The number of constraint violations actually thrown is not equal to the specified number.");
 
-        Set<Pair<String, String>> actualConstraintViolations = constraintViolations.stream().map(cv -> new Pair<>(cv.getPropertyPath().toString(), cv.getMessage())).collect(Collectors.toSet());
+        Set<AbstractMap.SimpleEntry<String, String>> actualConstraintViolations = constraintViolations.stream().map(cv -> new AbstractMap.SimpleEntry<>(cv.getPropertyPath().toString(), cv.getMessage())).collect(Collectors.toSet());
         assertTrue(actualConstraintViolations.containsAll(expectedConstraintViolations),
                 "Constraint path/messages violations thrown are not identical to that which are specified:\nActual constraint path/messages violations thrown:\n" +
                         actualConstraintViolations.stream().map(acv -> acv.getKey() + "(" + acv.getValue() + ")").collect(Collectors.joining("\n")) +
@@ -148,21 +148,21 @@ public class ExpressionDigestionServiceTest {
         return Stream.of(
                 // Null text String
                 Arguments.of(null, new HashSet<>(Collections.singletonList(
-                        new Pair<>("getRawExpression.text", "Please specify an expression.")
+                        new AbstractMap.SimpleEntry<>("getRawExpression.text", "Please specify an expression.")
                 ))),
                 // Empty text string
                 Arguments.of("", new HashSet<>(Collections.singletonList(
-                        new Pair<>("getRawExpression.text", "Please specify an expression.")
+                        new AbstractMap.SimpleEntry<>("getRawExpression.text", "Please specify an expression.")
                 ))),
                 Arguments.of("2+3\t", new HashSet<>(Collections.singletonList(
-                        new Pair<>("getRawExpression.text", "The provided text has lines with trailing whitespace characters at position(s): 3.")
+                        new AbstractMap.SimpleEntry<>("getRawExpression.text", "The provided text has lines with trailing whitespace characters at position(s): 3.")
                 ))),
                 Arguments.of("2+3\n+5\t\n", new HashSet<>(Collections.singletonList(
-                        new Pair<>("getRawExpression.text", "The provided text has lines with trailing whitespace characters at position(s): 6.")
+                        new AbstractMap.SimpleEntry<>("getRawExpression.text", "The provided text has lines with trailing whitespace characters at position(s): 6.")
 
                 ))),
                 Arguments.of("2+3!@#$%&?", new HashSet<>(Collections.singletonList(
-                        new Pair<>("getRawExpression.text", "The provided text has reserved characters at position(s): 3, 4, 5, 6, 7, 8, 9.\n" +
+                        new AbstractMap.SimpleEntry<>("getRawExpression.text", "The provided text has reserved characters at position(s): 3, 4, 5, 6, 7, 8, 9.\n" +
                                 "Do not use the characters in the set {@, !, #, $, %, &, =, ?} since they have a special meaning.\n" +
                                 "Text:\n" +
                                 "2+3!@#$%&?")

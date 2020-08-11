@@ -1,6 +1,5 @@
 package nl.smith.mathematics.service;
 
-import javafx.util.Pair;
 import nl.smith.mathematics.annotation.constraint.TextWithoutReservedCharacters;
 import nl.smith.mathematics.domain.ExpressionStack;
 import nl.smith.mathematics.domain.MathematicalFunctionMethodMapping;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -29,9 +29,9 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
     private final MethodRunnerService methodRunnerService;
 
-    private static final Set<Pair<Character, Character>> AGGREGATION_TOKEN_PAIRS = new HashSet<>(Arrays.asList(
-            new Pair<>('(', ')'),
-            new Pair<>('{', '}')));
+    private static final Set<SimpleEntry<Character, Character>> AGGREGATION_TOKEN_PAIRS = new HashSet<>(Arrays.asList(
+            new SimpleEntry<>('(', ')'),
+            new SimpleEntry<>('{', '}')));
 
     private static final char START_SIBLING_CHARACTER = ',';
 
@@ -80,7 +80,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
     protected RawExpression getRawExpression(@NotBlank(message = "Please specify an expression.") @TextWithoutLinesWithTrailingBlanks @TextWithoutReservedCharacters String text) {
         RawExpression rawExpression = new RawExpression(text); // Note: the expression has not been initialized.
         RawExpression mainRawExpression = rawExpression;
-        LinkedList<Pair<Character, Integer>> openingAggregationTokenStack = new LinkedList<>();
+        LinkedList<SimpleEntry<Character, Integer>> openingAggregationTokenStack = new LinkedList<>();
 
         int position;
         for (position = 0; position < text.length(); position++) {
@@ -105,7 +105,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
 
                     rawExpression = rawExpression.addSubExpression();
 
-                    openingAggregationTokenStack.push(new Pair<>(c, position));
+                    openingAggregationTokenStack.push(new SimpleEntry<>(c, position));
                     break;
                 case END_SUBEXPRESSION:
                     // Validate proper nesting of aggregation tokens.
@@ -132,7 +132,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
      * Protected for test purposes.
      */
     protected static char getMatchingOpenToken(char c) {
-        for (Pair<Character, Character> atp : AGGREGATION_TOKEN_PAIRS) {
+        for (SimpleEntry<Character, Character> atp : AGGREGATION_TOKEN_PAIRS) {
             if (atp.getValue() == c) {
                 return atp.getKey();
             }
@@ -145,7 +145,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
      * Protected for test purposes.
      */
     protected static char getMatchingCloseToken(char c) {
-        for (Pair<Character, Character> atp : AGGREGATION_TOKEN_PAIRS) {
+        for (SimpleEntry<Character, Character> atp : AGGREGATION_TOKEN_PAIRS) {
             if (atp.getKey() == c) {
                 return atp.getValue();
             }
@@ -161,7 +161,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
             return CharacterType.BEGIN_SIBLING;
         }
 
-        for (Pair<Character, Character> atp : AGGREGATION_TOKEN_PAIRS) {
+        for (SimpleEntry<Character, Character> atp : AGGREGATION_TOKEN_PAIRS) {
             if (atp.getKey() == c) {
                 return CharacterType.BEGIN_SUBEXPRESSION;
             }
@@ -206,8 +206,8 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         }
     }
 
-    private void assertTokenStackIsNotEmptyAndClosedTokenMatchesOpenToken(LinkedList<Pair<Character, Integer>> openingAggregationTokenStack, String text, int currentPosition, char closeToken) {
-        Pair<Character, Integer> openingAggregationTokenPair = openingAggregationTokenStack.peek();
+    private void assertTokenStackIsNotEmptyAndClosedTokenMatchesOpenToken(LinkedList<SimpleEntry<Character, Integer>> openingAggregationTokenStack, String text, int currentPosition, char closeToken) {
+        SimpleEntry<Character, Integer> openingAggregationTokenPair = openingAggregationTokenStack.peek();
         char openingAggregationToken;
         if (openingAggregationTokenPair == null) {
             String message = format("Missing matching open token '%c' for '%c' at position %d.%nDid you forget to begin the subexpression?",
@@ -230,8 +230,8 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         }
     }
 
-    private void assertTokenStackIsEmpty(LinkedList<Pair<Character, Integer>> openingAggregationTokenStack, String text) {
-        Set<Integer> positions = openingAggregationTokenStack.stream().map(Pair::getValue).collect(Collectors.toSet());
+    private void assertTokenStackIsEmpty(LinkedList<SimpleEntry<Character, Integer>> openingAggregationTokenStack, String text) {
+        Set<Integer> positions = openingAggregationTokenStack.stream().map(SimpleEntry::getValue).collect(Collectors.toSet());
 
         if (!positions.isEmpty()) {
             String message = format("Encountered unmatched open tokens at positions %s.%nDid you forget to close some subexpressions?", positions.stream().sorted().map(Object::toString).collect(Collectors.joining(", ")));
