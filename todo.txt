@@ -1,1 +1,1 @@
-Tests
+Fix test who fail on Window machines due to newline character.
