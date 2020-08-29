@@ -6,14 +6,14 @@ public class RationalNumberOutputType extends ConstantConfiguration<RationalNumb
     public enum Type {
         COMPONENTS("Represent exactly a rational number as <numerator>/<denominator>. " +
                 "For instance 1051/495 for rational number 1051/495."),
-        EXACT("Represents exactly a rational a number using different string components. " +
-                "For instance 2.1{23}R for rational number 1051/495."),
+        EXACT("Represents exactly a rational number using different string components. " +
+                "For instance 2.1[23]R for rational number 1051/495."),
         COMPONENTS_AND_EXACT("Represent a rational number using " + COMPONENTS + " and " + EXACT +
                 "For instance: 1051/495 ---> 2.1[23]R for rational number 1051/495."),
         TRUNCATED("Representation of a rational number truncated using the specified scale." +
                 "For instance 2.1 for rational number 1051/495 using scale 1."),
         ALL("Represent a rational number using " + COMPONENTS + ", " + EXACT + " and " + TRUNCATED +
-                "For instance 1051/495 ---> 2.1[23]R ~ 2.1 for rational number 1051/495 using scale 1.");
+                " For instance 1051/495 ---> 2.1[23]R ~ 2.1 for rational number 1051/495 using scale 1.");
 
         private final String description;
 

@@ -18,6 +18,7 @@
             font-size: 15px;
             vertical-align: super;
         }
+
         .asteriskMarkAfter:after {
             content: "*";
             color: red;
@@ -31,12 +32,13 @@
     <h2>Examples</h2>
     <br>
     <h3>Calculate sinus</h3>
-    <form method="get" th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_SIN}" th:action="${mapping}" th:target="${mapping}">
+    <form method="get" th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_SIN}"
+          th:action="${mapping}" th:target="${mapping}">
         <table class="table table-bordered">
             <thead class="thead-dark">
             <tr>
                 <th>Argument</th>
-                <th>Output type</th>
+                <th class="asteriskMarkAfter">Output type</th>
                 <th class="questionMarkAfter"
                     data-toggle="popover"
                     title="Scale"
@@ -44,7 +46,7 @@
                     data-placement="right">
                     Scale
                 </th>
-                <th>Maximum degree polynomial function</th>
+                <th colspan="2">Maximum degree polynomial function</th>
                 <th></th>
             </tr>
             </thead>
@@ -52,20 +54,40 @@
             <tr>
                 <td>
                     <input name="rationalNumber" title="RationalNumber as string" value="0.785398163397448"></td>
-                <td><input name="outputType" title="The format of the output"
-                           th:value="${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).COMPONENTS}"
-                           READONLY></td>
+                <td><select id="outputType" name="outputType">
+                    <option
+                            th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
+                            th:value="${outputType}"
+                            th:text="${outputType}"></option>
+                </select></td>
                 <td><input name="scale" value="20" maxlength="2" size="3"></td>
                 <td><input name="maximumDegreeOfPolynomial"
                            title="Calculate value using polynomial value of degree 0...specified degree." value="50">
-                <td class="text-right"><input class="btn btn-primary" type="submit" value="Calculate sinus using Taylor series"></td>
+                <td class="text-right"><input class="btn btn-primary" type="submit"
+                                              value="Calculate sinus using Taylor series"></td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th class="asteriskMarkAfter">Output type</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}">
+                <td th:text="${outputType.name()}"></td>
+                <td th:text="${outputType.getDescription()}"></td>
             </tr>
             </tbody>
         </table>
     </form>
     <br>
     <h3>Calculate value of a RationalNumber created from a numerator and denominator</h3>
-    <form method="get" th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_VALUE_OF_USING_NUMERATOR_DENOMINATOR}" th:action="${mapping}" th:target="${mapping}">
+    <form method="get"
+          th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_VALUE_OF_USING_NUMERATOR_DENOMINATOR}"
+          th:action="${mapping}" th:target="${mapping}">
         <table class="table table-bordered">
             <thead class="thead-dark">
             <tr>
@@ -101,7 +123,9 @@
     </form>
     <br>
     <h3>Create RationalNumber from a String</h3>
-    <form method="get" th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_VALUE_OF_USING_STRING}" th:action="${mapping}" th:target="${mapping}">
+    <form method="get"
+          th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_VALUE_OF_USING_STRING}"
+          th:action="${mapping}" th:target="${mapping}">
         <table class="table table-bordered">
             <thead class="thead-dark">
             <tr>
@@ -132,8 +156,10 @@
             </tr>
             <tr>
                 <td colspan="3" class="form-group">
-                    <label for="exampleFormControlTextarea1" class="asteriskMarkAfter">Rational number string format pattern</label>
-                    <textarea style="font-family: courier" class="form-control" id="exampleFormControlTextarea1" rows="3" th:inline="text">[[${T(nl.smith.mathematics.util.RationalNumberUtil).NUMBER_PATTERN.toString()}]]</textarea>
+                    <label for="exampleFormControlTextarea1" class="asteriskMarkAfter">Rational number string format
+                        pattern</label>
+                    <textarea style="font-family: courier" class="form-control" id="exampleFormControlTextarea1"
+                              rows="3" th:inline="text">[[${T(nl.smith.mathematics.util.RationalNumberUtil).NUMBER_PATTERN.toString()}]]</textarea>
                 </td>
             </tr>
             </tbody>
