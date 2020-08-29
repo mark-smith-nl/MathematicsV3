@@ -20,15 +20,22 @@ import static nl.smith.mathematics.configuration.constant.NumberConstant.integer
 @RequestMapping("/")
 public class DefaultController {
 
-    private final RationalNumberGoniometricFunctions goniometricFunctions;
+    public static final String MAPPING_SIN = "sin";
+    public static final String MAPPING_VALUE_OF_USING_NUMERATOR_DENOMINATOR = "valueOfUsingNumeratorDenominator";
+    public static final String MAPPING_VALUE_OF_USING_STRING = "valueOfUsingString";
 
+    private final RationalNumberGoniometricFunctions goniometricFunctions;
 
     public DefaultController(@Qualifier("rationalNumberGoniometricFunctions") RationalNumberGoniometricFunctions goniometricFunctions) {
         this.goniometricFunctions = goniometricFunctions;
     }
 
+    @GetMapping("echo")
+    public @ResponseBody  String echo(@RequestParam String value) {
+        return "Echo: " + value;
+    }
 
-    @GetMapping("sin")
+    @GetMapping(MAPPING_SIN)
     public @ResponseBody Map<Integer, String> sin(@RequestParam("rationalNumber") String rationalNumberAsString, RationalNumberOutputType.Type outputType, int scale, int maximumDegreeOfPolynomial) {
         Map<Integer, String> result = new HashMap<>();
 
@@ -43,7 +50,7 @@ public class DefaultController {
         return result;
     }
 
-    @GetMapping("valueOfUsingNumeratorDenominator")
+    @GetMapping(MAPPING_VALUE_OF_USING_NUMERATOR_DENOMINATOR)
     public @ResponseBody Map<RationalNumberOutputType.Type, String> valueOf(int numerator, int denominator, int scale) {
         Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 
@@ -60,7 +67,7 @@ public class DefaultController {
         return result;
     }
 
-    @GetMapping("valueOfUsingString")
+    @GetMapping(MAPPING_VALUE_OF_USING_STRING)
     public @ResponseBody Map<RationalNumberOutputType.Type, String> valueOf(@RequestParam("rationalNumber") String rationalNumberAsString, int scale) {
         Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 

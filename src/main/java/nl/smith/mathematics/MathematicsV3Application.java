@@ -12,6 +12,7 @@ import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -37,6 +38,9 @@ import static nl.smith.mathematics.configuration.constant.RationalNumberOutputTy
 public class MathematicsV3Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MathematicsV3Application.class);
+
+    @Value("${server.port}")
+    private String serverPort;
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MathematicsV3Application.class, args);
@@ -96,6 +100,9 @@ public class MathematicsV3Application {
         Scale.set(3);
         RoundingMode.set(java.math.RoundingMode.CEILING);
         LOGGER.info(new BigDecimal(16).divide(new BigDecimal(3), Scale.get(), RoundingMode.get()).toString());
+
+        MathematicsV3Application application = context.getBean(MathematicsV3Application.class);
+        LOGGER.info("Application url: http://localhost:{}", application.serverPort);
     }
 
     @Bean

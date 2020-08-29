@@ -25,7 +25,6 @@ public class CharacterPositionsInRangeValidator implements ConstraintValidator<C
 
         if (value.length != 2) {
             throw new IllegalStateException("Method should have at exactly two parameters to be validated.");
-
         }
 
         // Null values result in a positive validation.

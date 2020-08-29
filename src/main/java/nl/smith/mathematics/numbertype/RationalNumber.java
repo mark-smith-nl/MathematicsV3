@@ -318,8 +318,8 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
                 remainder = remainder.multiply(BigInteger.TEN);
                 Integer positionStartRepetition = resultDivisionAtPosition.get(remainder);
                 if (positionStartRepetition != null) {
-                    fractionalPart.insert(positionStartRepetition, "{");
-                    fractionalPart.append("}R");
+                    fractionalPart.insert(positionStartRepetition, "[");
+                    fractionalPart.append("]R");
                     remainder = BigInteger.ZERO;
                 } else {
                     resultDivisionAtPosition.put(remainder, position);

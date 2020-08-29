@@ -26,7 +26,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class ExpressionStackTest {
 
     private final ExpressionStack<RationalNumber> expressionStack = new ExpressionStack<>();
