@@ -10,11 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,18 +82,11 @@ public class DefaultController {
 
     @GetMapping(MAPPING_FACULTY)
     @ResponseBody
-    public Map<Integer, String> faculty(String rationalNumberAsString, RationalNumberOutputType.Type outputType, int scale, int maximumDegreeOfPolynomial) {
-        Map<Integer, String> result = new HashMap<>();
-
+    public String faculty(@NotBlank(message = "Please specify a not blank number string") String rationalNumberAsString) {
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        RationalNumberOutputType.set(outputType);
-        Scale.set(scale);
-        for (int i = 0; i < maximumDegreeOfPolynomial; i++) {
-            TaylorDegreeOfPolynom.set(i);
-            result.put(i, logarithmicFunctions.exp(rationalNumber).toString());
-        }
+        RationalNumberOutputType.set(RationalNumberOutputType.Type.EXACT);
 
-        return result;
+        return auxiliaryFunctions.faculty(rationalNumber).toString();
     }
 
     @GetMapping(MAPPING_VALUE_OF_USING_NUMERATOR_DENOMINATOR)

@@ -4,7 +4,6 @@ import java.math.BigInteger;
 
 public abstract class ArithmeticOperations<T extends Number> extends Number {
 
-
     public abstract T add(long augend) ;
 
     public abstract T add(BigInteger augend) ;
