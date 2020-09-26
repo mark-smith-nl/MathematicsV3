@@ -106,7 +106,7 @@ public class MathematicsV3Application {
         LOGGER.info(new BigDecimal(16).divide(new BigDecimal(3), Scale.get(), RoundingMode.get()).toString());
 
         MathematicsV3Application application = context.getBean(MathematicsV3Application.class);
-        LOGGER.info("Aaaahhhhhhhhapplication url: http://localhost:{}", application.serverPort);
+        LOGGER.info("Application url: http://localhost:{}", application.serverPort);
     }
 
     @Bean
