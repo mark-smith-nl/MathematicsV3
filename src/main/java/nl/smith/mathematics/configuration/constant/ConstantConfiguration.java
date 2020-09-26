@@ -2,10 +2,10 @@ package nl.smith.mathematics.configuration.constant;
 
 import nl.smith.mathematics.util.StringToObjectUtil;
 import nl.smith.mathematics.util.UserSystemContext;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
 
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 import static java.lang.String.format;
@@ -18,7 +18,7 @@ import static java.lang.String.format;
  */
 public abstract class ConstantConfiguration<T> {
 
-    public static final String PROPERTY_FILE_NAME = "classpath:application.properties";
+    public static final String PROPERTY_FILE_NAME = "application.properties";
 
     private final T defaultValue;
 
@@ -55,10 +55,10 @@ public abstract class ConstantConfiguration<T> {
         if (value == null) {
             try {
                 Properties properties = new Properties();
-                properties.load(new FileInputStream(ResourceUtils.getFile(PROPERTY_FILE_NAME)));
+                properties.load(new ClassPathResource(PROPERTY_FILE_NAME).getInputStream());
                 value = (String) properties.get(propertyName);
-            } catch (Exception e) {
-                //
+            } catch (IOException e) {
+
             }
         }
         if (StringUtils.isEmpty(value)) {

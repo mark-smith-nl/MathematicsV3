@@ -2,6 +2,7 @@ package nl.smith.mathematics;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.configuration.constant.RoundingMode;
+import nl.smith.mathematics.development.hva._smith.componentscan.byannotation.AnnotationForFilter;
 import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunctions;
@@ -33,8 +34,11 @@ import static nl.smith.mathematics.configuration.constant.RationalNumberOutputTy
 import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.set;
 
 @SpringBootApplication
-@ComponentScan(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-        classes = {RecursiveFunctionContainer.class}))
+@ComponentScan(includeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {RecursiveFunctionContainer.class}),
+        @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = AnnotationForFilter.class)},
+        excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*\\.development\\..*") // Ignore everything in the development package
+)
 public class MathematicsV3Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MathematicsV3Application.class);
@@ -102,7 +106,7 @@ public class MathematicsV3Application {
         LOGGER.info(new BigDecimal(16).divide(new BigDecimal(3), Scale.get(), RoundingMode.get()).toString());
 
         MathematicsV3Application application = context.getBean(MathematicsV3Application.class);
-        LOGGER.info("Application url: http://localhost:{}", application.serverPort);
+        LOGGER.info("Aaaahhhhhhhhapplication url: http://localhost:{}", application.serverPort);
     }
 
     @Bean
