@@ -2,7 +2,6 @@ package nl.smith.mathematics;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.configuration.constant.RoundingMode;
-import nl.smith.mathematics.development.hva._smith.componentscan.byannotation.AnnotationForFilter;
 import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunctions;
@@ -35,8 +34,7 @@ import static nl.smith.mathematics.configuration.constant.RationalNumberOutputTy
 
 @SpringBootApplication
 @ComponentScan(includeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {RecursiveFunctionContainer.class}),
-        @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = AnnotationForFilter.class)},
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {RecursiveFunctionContainer.class})},
         excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*\\.development\\..*") // Ignore everything in the development package
 )
 public class MathematicsV3Application {
