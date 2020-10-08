@@ -32,3 +32,6 @@ build/
 /src/main/java/nl/smith/mathematics/development/
 
 **/.DS_Store
+/src/main/resources/application-HvA.properties
+/src/main/resources/static/HvA/
+/src/main/resources/static/HvA/

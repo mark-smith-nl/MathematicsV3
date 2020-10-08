@@ -69,7 +69,7 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
      * Protected for validation purposes. Note: private functions will never be validated when called by a sibling service.
      */
     @CharacterPositionsInRange()
-    protected String getAnnotatedText(@NotEmpty(message = "Please specify one or more lines.")  List<@NotBlank(message = "Line element can not be blank.") @LineWithoutNewLinesAndTrailingBlanks String> lines,
+    public String getAnnotatedText(@NotEmpty(message = "Please specify one or more lines.")  List<@NotBlank(message = "Line element can not be blank.") @LineWithoutNewLinesAndTrailingBlanks String> lines,
                                       @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<@NotNull @Min(value = 0, message = "Negative positions (${validatedValue}) are not allowed.")Integer> positions) {
         List<String> annotatedTextLines = new ArrayList<>();
         ObjectWrapper<Integer> offSet = new ObjectWrapper<>(0);
