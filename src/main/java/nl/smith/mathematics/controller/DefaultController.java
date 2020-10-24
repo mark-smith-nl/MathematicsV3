@@ -1,19 +1,24 @@
 package nl.smith.mathematics.controller;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.development.hva.wef.componentscan.Person;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberAuxiliaryFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberGoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
@@ -27,8 +32,8 @@ public class DefaultController {
     public static final String MAPPING_SIN = "sin";
     public static final String MAPPING_EXP = "exp";
     public static final String MAPPING_FACULTY = "faculty";
-    public static final String MAPPING_VALUE_OF_USING_NUMERATOR_DENOMINATOR = "valueOfUsingNumeratorDenominator";
-    public static final String MAPPING_VALUE_OF_USING_STRING = "valueOfUsingString";
+    public static final String MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR = "rationalValueOfUsingNumeratorDenominator";
+    public static final String MAPPING_RATIONAL_VALUE_FROM_STRING = "rationalValueOfUsingString";
 
     private final RationalNumberGoniometricFunctions goniometricFunctions;
     private final RationalNumberLogarithmicFunctions logarithmicFunctions;
@@ -42,13 +47,12 @@ public class DefaultController {
         this.auxiliaryFunctions = auxiliaryFunctions;
     }
 
-    @GetMapping("echo")
-    @ResponseBody
-    public String echo(String value) {
-        return "Echo: " + value;
+    @GetMapping(MAPPING_SIN)
+    public String sin() {
+        return "examples/sinus.html";
     }
 
-    @GetMapping(MAPPING_SIN)
+    @PostMapping(MAPPING_SIN)
     @ResponseBody
     public Map<Integer, String> sin(String rationalNumberAsString, RationalNumberOutputType.Type outputType, int scale, int maximumDegreeOfPolynomial) {
         Map<Integer, String> result = new HashMap<>();
@@ -65,6 +69,11 @@ public class DefaultController {
     }
 
     @GetMapping(MAPPING_EXP)
+    public String exp() {
+        return "examples/exp.html";
+    }
+
+    @PostMapping(MAPPING_EXP)
     @ResponseBody
     public Map<Integer, String> exp(String rationalNumberAsString, RationalNumberOutputType.Type outputType, int scale, int maximumDegreeOfPolynomial) {
         Map<Integer, String> result = new HashMap<>();
@@ -81,6 +90,11 @@ public class DefaultController {
     }
 
     @GetMapping(MAPPING_FACULTY)
+    public String faculty() {
+        return "examples/faculty.html";
+    }
+
+    @PostMapping(MAPPING_FACULTY)
     @ResponseBody
     public String faculty(@NotBlank(message = "Please specify a not blank number string") String rationalNumberAsString) {
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
@@ -89,9 +103,14 @@ public class DefaultController {
         return auxiliaryFunctions.faculty(rationalNumber).toString();
     }
 
-    @GetMapping(MAPPING_VALUE_OF_USING_NUMERATOR_DENOMINATOR)
+    @GetMapping(MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR)
+    public String rationalValueOfUsingNumeratorDenominator() {
+        return "examples/faculty.html";
+    }
+
+    @PostMapping(MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR)
     @ResponseBody
-    public Map<RationalNumberOutputType.Type, String> valueOf(int numerator, int denominator, int scale) {
+    public Map<RationalNumberOutputType.Type, String> rationalValueOfUsingNumeratorDenominator(int numerator, int denominator, int scale) {
         Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = new RationalNumber(numerator, denominator);
@@ -107,9 +126,14 @@ public class DefaultController {
         return result;
     }
 
-    @GetMapping(MAPPING_VALUE_OF_USING_STRING)
+    @GetMapping(MAPPING_RATIONAL_VALUE_FROM_STRING)
+    public String rationalValueOfUsingString() {
+        return "examples/faculty.html";
+    }
+
+    @PostMapping(MAPPING_RATIONAL_VALUE_FROM_STRING)
     @ResponseBody
-    public Map<RationalNumberOutputType.Type, String> valueOf(@NotBlank(message = "Please specify a not blank number string") String rationalNumberAsString, int scale) {
+    public Map<RationalNumberOutputType.Type, String> rationalValueOfUsingString(@NotBlank(message = "Please specify a not blank number string") String rationalNumberAsString, int scale) {
         Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);

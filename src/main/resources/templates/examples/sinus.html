@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Examples</title>
+    <style type="text/css">
+        .questionMarkAfter:after {
+            content: "?";
+            color: red;
+            font-size: 15px;
+            vertical-align: super;
+        }
+
+        .asteriskMarkAfter:after {
+            content: "*";
+            color: red;
+            font-size: 15px;
+            vertical-align: super;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Examples</h2>
+    <br>
+    <h3>Calculate sinus</h3>
+    <form id="sinusForm" method="post"
+          th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_SIN}"
+          th:action="${mapping}" th:target="${mapping}">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>Argument</th>
+                <th class="asteriskMarkAfter" onclick="$('#outputTypeDescription').toggle('toggle')">
+                    Output type
+                </th>
+                <th class="questionMarkAfter" onclick="$('#scaleDescription').toggle('toggle')">
+                    Scale
+                </th>
+                <th colspan="2">Maximum polynomial function</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="width: 30%"><input name="rationalNumberAsString" title="RationalNumber as string"
+                                              value="0.785398163397448">
+                </td>
+                <td style="width: 30%"><select id="outputType" name="outputType">
+                    <option
+                            th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
+                            th:value="${outputType}"
+                            th:text="${outputType}"></option>
+                </select></td>
+                <td style="width: 10%"><input name="scale" value="20" maxlength="2" size="3"></td>
+                <td style="width: 10%"><input style="width: 100%" name="maximumDegreeOfPolynomial" maxlength="2"
+                                              value="50">
+                <td style="width: 20%" class="text-right">
+                    <input class="btn btn-primary"
+                           onclick="submitFormAndLoadResultInTarget($('#sinusForm'), $('#result'))"
+                           value="Calculate"></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <object th:replace="fragments :: outputType"></object>
+    <object th:replace="fragments :: scale"></object>
+    <form>
+        <div class="form-group">
+            <label for="result">Example textarea</label>
+            <textarea id="result" class="form-control" style="font-family:monospace;"  wrap="off" rows="30"></textarea>
+        </div>
+    </form>
+</div>
+</body>
+</html>

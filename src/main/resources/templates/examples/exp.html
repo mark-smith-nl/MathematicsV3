@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Examples</title>
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
+    <style type="text/css">
+        .questionMarkAfter:after {
+            content: "?";
+            color: red;
+            font-size: 15px;
+            vertical-align: super;
+        }
+
+        .asteriskMarkAfter:after {
+            content: "*";
+            color: red;
+            font-size: 15px;
+            vertical-align: super;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Examples</h2>
+    <br>
+    <h3>Calculate exp</h3>
+    <form method="post" th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_EXP}"
+          th:action="${mapping}" th:target="${mapping}">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>Argument</th>
+                <th class="asteriskMarkAfter" onclick="$('#outputTypeDescription').toggle('toggle')">Output type</th>
+                <th class="questionMarkAfter" onclick="$('#scaleDescription').toggle('toggle')">Scale</th>
+                <th colspan="2">Maximum degree polynomial function</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <input name="rationalNumberAsString" title="RationalNumber as string" value="1"></td>
+                <td><select id="outputType" name="outputType">
+                    <option
+                            th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
+                            th:value="${outputType}"
+                            th:text="${outputType}"></option>
+                </select></td>
+                <td><input name="scale" value="20" maxlength="2" size="3"></td>
+                <td><input name="maximumDegreeOfPolynomial"
+                           title="Calculate value using polynomial value of degree 0...specified degree."
+                           value="50">
+                <td class="text-right"><input class="btn btn-primary" type="submit"
+                                              value="Calculate exp using Taylor series"></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <br>
+    <object th:replace="fragments :: outputType"></object>
+    <br>
+    <object th:replace="fragments :: scale"></object>
+    <br>
+    <object th:replace="fragments :: scale"></object>
+</div>
+</body>
+</html>

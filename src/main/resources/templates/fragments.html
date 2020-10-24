@@ -1,6 +1,86 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
+<div th:fragment="bootstrap">
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+</div>
+<div th:fragment="staticCssJs">
+    <script th:src="@{/resources/js/utillity.js}"></script>
+</div>
+<div th:fragment="navigationbar">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <!-- Brand -->
+        <a class="navbar-brand" href="/"><img src="resources/images/coccolith.jpg" width="95" height="60"
+                                              alt="Coccolith"></a>
+
+        <!-- Links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+            </li>
+
+            <!-- Dropdown -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Examples
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item"
+                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_SIN}"
+                       onclick="return loadUrlInElementWithId($(this).attr('href'), 'body');">Sinus</a>
+                    <a class="dropdown-item"
+                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_EXP}"
+                       onclick="return loadUrlInElementWithId($(this).attr('href'), 'body');">Exp</a>
+                    <a class="dropdown-item"
+                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR}"
+                       onclick="return loadUrlInElementWithId($(this).attr('href'), 'body');">Rational number created from a numerator and
+                        denominator</a>
+                    <a class="dropdown-item"
+                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_RATIONAL_VALUE_FROM_STRING}"
+                       onclick="return loadUrlInElementWithId($(this).attr('href'), 'body');">Rational number created from a string</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</div>
+<div th:fragment="outputType">
+    <br>
+    <table id="outputTypeDescription" class="table table-bordered collapse" onclick="$(this).toggle('hide')">
+        <thead class="thead-dark">
+        <tr>
+            <th colspan="2" class="asteriskMarkAfter">Output type</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}">
+            <td th:text="${outputType.name()}"></td>
+            <td th:text="${outputType.getDescription()}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:fragment="scale">
+    <br>
+    <table id="scaleDescription" class="table table-bordered collapse" onclick="$(this).toggle('hide')">
+        <thead class="thead-dark">
+        <tr>
+            <th class="questionMarkAfter">Scale
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Number of decimals after the decimal point</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 <div th:fragment="formField (field, value, size)">
     <div>
         <label th:for="${#strings.toLowerCase(field)}"> <span
