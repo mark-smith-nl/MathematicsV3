@@ -1,51 +1,29 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Examples</title>
+    <title>MathematicsV3</title>
     <th:block th:include="fragments :: bootstrap"></th:block>
     <th:block th:include="fragments :: staticCssJs"></th:block>
     <script>
         $(document).ready(function () {
             $('[data-toggle="popover"]').popover();
+            highLightOptions(['RationalNumberOutputType', 'AngleType']);
         });
     </script>
-    <style type="text/css">
-        .questionMarkAfter:after {
-            content: "?";
-            color: red;
-            font-size: 15px;
-            vertical-align: super;
-        }
-
-        .asteriskMarkAfter:after {
-            content: "*";
-            color: red;
-            font-size: 15px;
-            vertical-align: super;
-        }
-    </style>
 </head>
 <body>
 <th:block th:replace="fragments :: navigationbar"></th:block>
 <div id="body" class="container">
+    <br>
     <div class="row">
-        <div class="col-sm">
-            <button class="btn btn-warning" onclick="submitFormAndLoadResultInTarget(null, null)">Test</button>
+        <div class="col-sm-1">
+
         </div>
         <div class="col-sm">
-            <button class="btn btn-warning" onclick="loadUrlInElementWithId('sin', 'body');">Sin...</button>
+            <h2>Welcome to MathematicsV3</h2>
         </div>
-        <div class="col-sm">
-            <button class="btn btn-warning" onclick="osama('sin');">Osama...</button>
-        </div>
-        <div class="col-sm">
-            One of three columns
-        </div>
-        <div class="col-sm">
-            One of three columns
-        </div>
-        <div class="col-sm">
-            One of three columns
+        <div class="col-sm-1">
+
         </div>
     </div>
 </div>

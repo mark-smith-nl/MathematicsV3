@@ -2,21 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Examples</title>
-    <style type="text/css">
-        .questionMarkAfter:after {
-            content: "?";
-            color: red;
-            font-size: 15px;
-            vertical-align: super;
-        }
-
-        .asteriskMarkAfter:after {
-            content: "*";
-            color: red;
-            font-size: 15px;
-            vertical-align: super;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
@@ -24,7 +9,7 @@
     <br>
     <h3>Calculate sinus</h3>
     <form id="sinusForm" method="post"
-          th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_SIN}"
+          th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_FUNCTION + '/' + T(nl.smith.mathematics.controller.DefaultController).MAPPING_SIN}"
           th:action="${mapping}" th:target="${mapping}">
         <table class="table table-bordered">
             <thead class="thead-dark">

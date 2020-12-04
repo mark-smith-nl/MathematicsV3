@@ -421,21 +421,4 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
         return numerator.multiply(o.denominator).compareTo(o.numerator.multiply(denominator));
     }
 
-
-    public static void main(String[] args) {
-        RationalNumberOutputType.set(RationalNumberOutputType.Type.COMPONENTS);
-
-        RationalNumber number = valueOf("1.23[456]R");
-        System.out.println(number);
-        number = valueOf("1.23[456]RE[01]");
-        System.out.println(number);
-        System.out.println("----");
-        RationalNumberNormalize.set(true);
-        number = new RationalNumber(2, 14);
-        System.out.println(number);
-        System.out.println("----");
-        number = number.negate();
-        System.out.println(number);
-
-    }
 }

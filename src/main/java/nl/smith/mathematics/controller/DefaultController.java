@@ -1,7 +1,6 @@
 package nl.smith.mathematics.controller;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
-import nl.smith.mathematics.development.hva.wef.componentscan.Person;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberAuxiliaryFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberGoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
@@ -10,10 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
@@ -25,11 +21,12 @@ import static nl.smith.mathematics.configuration.constant.NumberConstant.integer
 import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
 
 @Controller
-@RequestMapping("/")
 @Validated
+@RequestMapping(DefaultController.MAPPING_FUNCTION)
 public class DefaultController {
 
-    public static final String MAPPING_SIN = "sin";
+    public static final String MAPPING_FUNCTION = "/function";
+    public static final String MAPPING_SIN = "sinus";
     public static final String MAPPING_EXP = "exp";
     public static final String MAPPING_FACULTY = "faculty";
     public static final String MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR = "rationalValueOfUsingNumeratorDenominator";
@@ -47,9 +44,9 @@ public class DefaultController {
         this.auxiliaryFunctions = auxiliaryFunctions;
     }
 
-    @GetMapping(MAPPING_SIN)
-    public String sin() {
-        return "examples/sinus.html";
+    @GetMapping("{functionName}")
+    public String sin(@PathVariable String functionName ) {
+        return "examples/" + functionName;
     }
 
     @PostMapping(MAPPING_SIN)
@@ -68,11 +65,6 @@ public class DefaultController {
         return result;
     }
 
-    @GetMapping(MAPPING_EXP)
-    public String exp() {
-        return "examples/exp.html";
-    }
-
     @PostMapping(MAPPING_EXP)
     @ResponseBody
     public Map<Integer, String> exp(String rationalNumberAsString, RationalNumberOutputType.Type outputType, int scale, int maximumDegreeOfPolynomial) {
@@ -89,11 +81,6 @@ public class DefaultController {
         return result;
     }
 
-    @GetMapping(MAPPING_FACULTY)
-    public String faculty() {
-        return "examples/faculty.html";
-    }
-
     @PostMapping(MAPPING_FACULTY)
     @ResponseBody
     public String faculty(@NotBlank(message = "Please specify a not blank number string") String rationalNumberAsString) {
@@ -103,10 +90,6 @@ public class DefaultController {
         return auxiliaryFunctions.faculty(rationalNumber).toString();
     }
 
-    @GetMapping(MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR)
-    public String rationalValueOfUsingNumeratorDenominator() {
-        return "examples/faculty.html";
-    }
 
     @PostMapping(MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR)
     @ResponseBody
@@ -124,11 +107,6 @@ public class DefaultController {
         result.put(outputType, rationalNumber.toString(outputType));
 
         return result;
-    }
-
-    @GetMapping(MAPPING_RATIONAL_VALUE_FROM_STRING)
-    public String rationalValueOfUsingString() {
-        return "examples/faculty.html";
     }
 
     @PostMapping(MAPPING_RATIONAL_VALUE_FROM_STRING)

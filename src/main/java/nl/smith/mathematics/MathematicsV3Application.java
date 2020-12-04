@@ -2,6 +2,8 @@ package nl.smith.mathematics;
 
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.configuration.constant.RoundingMode;
+import nl.smith.mathematics.controller.DefaultController;
+import nl.smith.mathematics.controller.RequestFilter;
 import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunctions;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -123,4 +126,12 @@ public class MathematicsV3Application {
         return bean;
     }
 
+    @Bean
+    public FilterRegistrationBean<RequestFilter> logFilter() {
+        FilterRegistrationBean<RequestFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new RequestFilter());
+        registrationBean.addUrlPatterns("/" + DefaultController.MAPPING_FUNCTION +"*");
+        registrationBean.addUrlPatterns("/function/*");
+        return registrationBean;
+    }
 }

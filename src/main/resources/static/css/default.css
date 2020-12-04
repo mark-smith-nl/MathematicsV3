@@ -1,0 +1,13 @@
+.asteriskMarkAfter:after {
+    content: "*";
+    color: red;
+    font-size: 15px;
+    vertical-align: super;
+}
+
+.questionMarkAfter:after {
+    content: "?";
+    color: red;
+    font-size: 15px;
+    vertical-align: super;
+}
