@@ -28,9 +28,10 @@
     <h2>Examples</h2>
     <br>
     <h3>Calculate exp</h3>
-    <form method="post" th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_EXP}"
+    <form id="expForm" method="post"
+          th:with="mapping=${T(nl.smith.mathematics.controller.DefaultController).MAPPING_FUNCTION + '/' + T(nl.smith.mathematics.controller.DefaultController).MAPPING_EXP}"
           th:action="${mapping}" th:target="${mapping}">
-        <table class="table table-bordered">
+    <table class="table table-bordered">
             <thead class="thead-dark">
             <tr>
                 <th>Argument</th>

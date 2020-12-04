@@ -9,6 +9,7 @@
 </div>
 <div th:fragment="staticCssJs">
     <script th:src="@{/resources/js/utillity.js}"></script>
+    <link rel="stylesheet" th:href="@{/resources/css/default.css}">
 </div>
 <div th:fragment="navigationbar">
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -32,18 +33,53 @@
                 </a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item"
-                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_SIN}"
+                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_FUNCTION + '/' + T(nl.smith.mathematics.controller.DefaultController).MAPPING_SIN}"
                        onclick="return loadUrlInElementWithId($(this).attr('href'), 'body');">Sinus</a>
                     <a class="dropdown-item"
-                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_EXP}"
+                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_FUNCTION + '/' + T(nl.smith.mathematics.controller.DefaultController).MAPPING_EXP}"
                        onclick="return loadUrlInElementWithId($(this).attr('href'), 'body');">Exp</a>
                     <a class="dropdown-item"
-                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR}"
+                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_FUNCTION + '/' + T(nl.smith.mathematics.controller.DefaultController).MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR}"
                        onclick="return loadUrlInElementWithId($(this).attr('href'), 'body');">Rational number created from a numerator and
                         denominator</a>
                     <a class="dropdown-item"
-                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_RATIONAL_VALUE_FROM_STRING}"
+                       th:href="${T(nl.smith.mathematics.controller.DefaultController).MAPPING_FUNCTION + '/' + T(nl.smith.mathematics.controller.DefaultController).MAPPING_RATIONAL_VALUE_FROM_STRING}"
                        onclick="return loadUrlInElementWithId($(this).attr('href'), 'body');">Rational number created from a string</a>
+                </div>
+            </li>
+            <!-- Dropdown -->
+            <li class="nav-item dropdown" th:with="cookieName=${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType).getSimpleName()}">
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"
+                   th:id="${cookieName}">
+                    Output
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item"
+                       href="#"
+                       th:each="cookieValue: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
+                       th:text="${cookieValue}"
+                       th:cookieName="${cookieName}"
+                       th:cookieValue="${cookieValue}"
+                       th:title="${cookieValue.getDescription()}"
+                       onclick="return setConstantAsCookie($(this).attr('cookieName'), $(this).attr('cookieValue'));"
+                    ></a><br><br>
+                </div>
+            </li>
+            <li class="nav-item dropdown" th:with="cookieName=${T(nl.smith.mathematics.configuration.constant.AngleType).getSimpleName()}">
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"
+                   th:id="${cookieName}">
+                    AngleType
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item"
+                       href="#"
+                       th:each="cookieValue: ${T(nl.smith.mathematics.configuration.constant.AngleType.Type).values()}"
+                       th:text="${cookieValue}"
+                       th:cookieName="${cookieName}"
+                       th:cookieValue="${cookieValue}"
+                       th:title="${cookieValue.getDescription()}"
+                       onclick="return setConstantAsCookie($(this).attr('cookieName'), $(this).attr('cookieValue'));"
+                    ></a><br><br>
                 </div>
             </li>
         </ul>
