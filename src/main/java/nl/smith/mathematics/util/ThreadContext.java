@@ -11,7 +11,7 @@ import static java.lang.String.format;
 /** Utility to store thread specific key value pairs in a map and associate them with a specific thread.
  * This class is intended to store user specific properties which can be retrieved anywhere in the thread.
  * Null values are not stored. Adding a property with a null value results in the removal of the property. */
-public class UserSystemContext {
+public class ThreadContext {
 
     private static final ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
 
@@ -26,6 +26,10 @@ public class UserSystemContext {
 
     public static void removeValue(String propertyName) {
         getMap().remove(propertyName);
+    }
+
+    public static void clear() {
+        getMap().clear();
     }
 
     public static void setValue(String propertyName, String stringValue, Class<?> clazz) {
@@ -45,6 +49,7 @@ public class UserSystemContext {
         throw new IllegalArgumentException(format("Value for property %s was not found or was not of type %s", propertyName, clazz.getCanonicalName()));
 
     }
+
     public static <T> Map<String, T> getValueOfTypes(Class<T> clazz) {
         return (Map<String, T>) getMap().entrySet().stream()
                 .filter(e -> clazz.isAssignableFrom(e.getValue().getClass()))
@@ -77,7 +82,6 @@ public class UserSystemContext {
 
     public static Map<String, Object> getValues() {
         return getMap();
-
     }
 
     /** Retrieves the property map associated with a thread.

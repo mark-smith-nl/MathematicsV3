@@ -5,20 +5,22 @@ function loadUrlInElementWithId(url, id) {
 
 function setConstantAsCookie(cookieName, cookieValue) {
     var expires = "";
-    var experationDate = new Date();
-    experationDate.setTime(experationDate.getTime() + 365 * 24 * 60 * 60 * 1000);
-    document.cookie = cookieName + "=" + cookieValue + "; expires=" + experationDate.toUTCString();
-    highLightOption(cookieName);
+    var result = cookieName + "=" + cookieValue + ";expires=-1;path=/";
+    console.log("===>" + document.cookie);
+    document.cookie = result;
+    console.log("===>" + result);
+    console.log("===>" + document.cookie);
+    highlightConfigurationOption(cookieName);
     return false;
 }
 
-function highLightOptions(cookieNames) {
+function highlightConfigurationOptions(cookieNames) {
     $.each(cookieNames, function (index, cookieName) {
-        highLightOption(cookieName)
+        highlightConfigurationOption(cookieName)
     });
 }
 
-function highLightOption(cookieName) {
+function highlightConfigurationOption(cookieName) {
     $("[cookieName='" + cookieName + "']").removeClass('asteriskMarkAfter');
     $("[cookieName='" + cookieName + "'][cookieValue='" + getCookie(cookieName) + "']").addClass('asteriskMarkAfter');
 }
@@ -33,7 +35,8 @@ function getCookie(cookieName) {
             c = c.substring(1);
         }
         if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
+            var value = c.substring(name.length, c.length);
+            return value;
         }
     }
     return "";
@@ -44,17 +47,23 @@ function highLightSelectedOptions() {
 }
 
 function submitFormAndLoadResultInTarget(form, targetElement) {
+    var button = $(event.target);
+    button.attr("disabled", true);
+    button.removeClass("btn-primary")
+    button.addClass("btn-secondary")
     $.ajax({
         url: form.attr('action'),
         type: form.attr('method'),
         dataType: 'json',
         data: form.serialize(),
         success: function (result) {
+            button.attr("disabled", false);
+            button.removeClass("btn-secondary")
+            button.addClass("btn-primary")
             var resultAsstring = "";
             $.each(result, function (i, rationalNumber) {
                 resultAsstring += i + "\n" + rationalNumber + "\n\n";
             });
-            alert(resultAsstring)
             targetElement.val(resultAsstring);
         },
         error: function (xhr, resp, text) {
@@ -62,5 +71,3 @@ function submitFormAndLoadResultInTarget(form, targetElement) {
         }
     });
 }
-
-

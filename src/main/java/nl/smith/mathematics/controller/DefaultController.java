@@ -6,21 +6,18 @@ import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
 import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
 
-@Controller
+//@Controller
 @Validated
 @RequestMapping(DefaultController.MAPPING_FUNCTION)
 public class DefaultController {
@@ -51,13 +48,13 @@ public class DefaultController {
 
     @PostMapping(MAPPING_SIN)
     @ResponseBody
-    public Map<Integer, String> sin(String rationalNumberAsString, RationalNumberOutputType.Type outputType, int scale, int maximumDegreeOfPolynomial) {
+    public Map<Integer, String> sin(String rationalNumberAsString, int scale, int maximumDegreeOfPolynomial) {
         Map<Integer, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        RationalNumberOutputType.set(outputType);
+
         Scale.set(scale);
-        for (int i = 0; i < maximumDegreeOfPolynomial; i++) {
+        for (int i = 0; i <= maximumDegreeOfPolynomial; i++) {
             TaylorDegreeOfPolynom.set(i);
             result.put(i, goniometricFunctions.sin(rationalNumber).toString());
         }
@@ -67,11 +64,11 @@ public class DefaultController {
 
     @PostMapping(MAPPING_EXP)
     @ResponseBody
-    public Map<Integer, String> exp(String rationalNumberAsString, RationalNumberOutputType.Type outputType, int scale, int maximumDegreeOfPolynomial) {
+    public Map<Integer, String> exp(String rationalNumberAsString, RationalNumberOutputType.PredefinedType outputPredefinedType, int scale, int maximumDegreeOfPolynomial) {
         Map<Integer, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        RationalNumberOutputType.set(outputType);
+        RationalNumberOutputType.set(outputPredefinedType);
         Scale.set(scale);
         for (int i = 0; i < maximumDegreeOfPolynomial; i++) {
             TaylorDegreeOfPolynom.set(i);
@@ -85,7 +82,7 @@ public class DefaultController {
     @ResponseBody
     public String faculty(@NotBlank(message = "Please specify a not blank number string") String rationalNumberAsString) {
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        RationalNumberOutputType.set(RationalNumberOutputType.Type.EXACT);
+        RationalNumberOutputType.set(RationalNumberOutputType.PredefinedType.EXACT);
 
         return auxiliaryFunctions.faculty(rationalNumber).toString();
     }
@@ -93,36 +90,36 @@ public class DefaultController {
 
     @PostMapping(MAPPING_RATIONAL_VALUE_FROM_NUMERATOR_DENOMINATOR)
     @ResponseBody
-    public Map<RationalNumberOutputType.Type, String> rationalValueOfUsingNumeratorDenominator(int numerator, int denominator, int scale) {
-        Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
+    public Map<RationalNumberOutputType.PredefinedType, String> rationalValueOfUsingNumeratorDenominator(int numerator, int denominator, int scale) {
+        Map<RationalNumberOutputType.PredefinedType, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = new RationalNumber(numerator, denominator);
         Scale.set(scale);
 
-        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
-        result.put(outputType, rationalNumber.toString(outputType));
-        outputType = RationalNumberOutputType.Type.EXACT;
-        result.put(outputType, rationalNumber.toString(outputType));
-        outputType = RationalNumberOutputType.Type.TRUNCATED;
-        result.put(outputType, rationalNumber.toString(outputType));
+        RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
+        result.put(outputPredefinedType, rationalNumber.toString(outputPredefinedType));
+        outputPredefinedType = RationalNumberOutputType.PredefinedType.EXACT;
+        result.put(outputPredefinedType, rationalNumber.toString(outputPredefinedType));
+        outputPredefinedType = RationalNumberOutputType.PredefinedType.TRUNCATED;
+        result.put(outputPredefinedType, rationalNumber.toString(outputPredefinedType));
 
         return result;
     }
 
     @PostMapping(MAPPING_RATIONAL_VALUE_FROM_STRING)
     @ResponseBody
-    public Map<RationalNumberOutputType.Type, String> rationalValueOfUsingString(@NotBlank(message = "Please specify a not blank number string") String rationalNumberAsString, int scale) {
-        Map<RationalNumberOutputType.Type, String> result = new HashMap<>();
+    public Map<RationalNumberOutputType.PredefinedType, String> rationalValueOfUsingString(@NotBlank(message = "Please specify a not blank number string") String rationalNumberAsString, int scale) {
+        Map<RationalNumberOutputType.PredefinedType, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
         Scale.set(scale);
 
-        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
-        result.put(outputType, rationalNumber.toString(outputType));
-        outputType = RationalNumberOutputType.Type.EXACT;
-        result.put(outputType, rationalNumber.toString(outputType));
-        outputType = RationalNumberOutputType.Type.TRUNCATED;
-        result.put(outputType, rationalNumber.toString(outputType));
+        RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
+        result.put(outputPredefinedType, rationalNumber.toString(outputPredefinedType));
+        outputPredefinedType = RationalNumberOutputType.PredefinedType.EXACT;
+        result.put(outputPredefinedType, rationalNumber.toString(outputPredefinedType));
+        outputPredefinedType = RationalNumberOutputType.PredefinedType.TRUNCATED;
+        result.put(outputPredefinedType, rationalNumber.toString(outputPredefinedType));
 
         return result;
     }

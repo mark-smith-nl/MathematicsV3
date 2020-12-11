@@ -1,15 +1,21 @@
 package nl.smith.mathematics.configuration.constant;
 
-public class AngleType extends ConstantConfiguration<AngleType.Type> {
+import nl.smith.mathematics.exception.StringToConstantConfigurationException;
 
-    public enum Type {
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class AngleType extends ConstantConfiguration<AngleType.PredefinedType> {
+
+    public enum PredefinedType {
         DEG ("Degrees"),
         GRAD("Gradients"),
         RAD("Radians");
 
         private final String description;
 
-        Type(String description) {
+        PredefinedType(String description) {
             this.description = description;
         }
 
@@ -21,15 +27,23 @@ public class AngleType extends ConstantConfiguration<AngleType.Type> {
     private static final AngleType instance = new AngleType();
 
     private AngleType() {
-        super(AngleType.Type.class);
+        super(PredefinedType.class);
     }
 
-    public static AngleType.Type get() {
+    public static PredefinedType get() {
         return instance.getValue();
     }
 
-    public static void set(AngleType.Type value) {
+    public static void set(PredefinedType value) {
         instance.setValue(value);
     }
 
+    public static Set<String> values() {
+        return Arrays.stream(AngleType.PredefinedType.values()).map(Enum::name).collect(Collectors.toSet());
+    }
+
+    public static void set(String value) throws StringToConstantConfigurationException {
+        if (!values().contains(value)) throw new StringToConstantConfigurationException(RationalNumberOutputType.PredefinedType.class, value, values());
+        set(AngleType.PredefinedType.valueOf(value));
+    }
 }

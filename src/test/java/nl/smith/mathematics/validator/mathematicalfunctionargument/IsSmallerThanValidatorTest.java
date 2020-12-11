@@ -42,9 +42,9 @@ class IsSmallerThanValidatorTest {
 
     @BeforeEach
     public void init() {
-        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
-        LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
-        RationalNumberOutputType.set(outputType);
+        RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
+        LOGGER.info("Setting rational number output type to {} ({})", outputPredefinedType.name(), outputPredefinedType.getDescription());
+        RationalNumberOutputType.set(outputPredefinedType);
     }
 
     @DisplayName("Checking if a validated number service method argument is smaller than a specified value")

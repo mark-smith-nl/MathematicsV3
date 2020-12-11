@@ -52,11 +52,11 @@
             <tr>
                 <td>
                     <input name="rationalNumberAsString" title="RationalNumber as string" value="0.785398163397448"></td>
-                <td><select id="outputType" name="outputType">
+                <td><select id="outputPredefinedType" name="outputPredefinedType">
                     <option
-                            th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
-                            th:value="${outputType}"
-                            th:text="${outputType}"></option>
+                            th:each="outputPredefinedType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.PredefinedType).values()}"
+                            th:value="${outputPredefinedType}"
+                            th:text="${outputPredefinedType}"></option>
                 </select></td>
                 <td><input name="scale" value="20" maxlength="2" size="3"></td>
                 <td><input name="maximumDegreeOfPolynomial"
@@ -91,11 +91,11 @@
             <tr>
                 <td>
                     <input name="rationalNumberAsString" title="RationalNumber as string" value="1"></td>
-                <td><select id="outputType" name="outputType">
+                <td><select id="outputPredefinedType" name="outputPredefinedType">
                     <option
-                            th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
-                            th:value="${outputType}"
-                            th:text="${outputType}"></option>
+                            th:each="outputPredefinedType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
+                            th:value="${outputPredefinedType}"
+                            th:text="${outputPredefinedType}"></option>
                 </select></td>
                 <td><input name="scale" value="20" maxlength="2" size="3"></td>
                 <td><input name="maximumDegreeOfPolynomial"
@@ -114,9 +114,9 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}">
-                <td th:text="${outputType.name()}"></td>
-                <td th:text="${outputType.getDescription()}"></td>
+            <tr th:each="outputPredefinedType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}">
+                <td th:text="${outputPredefinedType.name()}"></td>
+                <td th:text="${outputPredefinedType.getDescription()}"></td>
             </tr>
             </tbody>
         </table>

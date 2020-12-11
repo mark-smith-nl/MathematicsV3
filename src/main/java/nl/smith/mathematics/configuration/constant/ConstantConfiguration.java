@@ -1,22 +1,39 @@
 package nl.smith.mathematics.configuration.constant;
 
+import nl.smith.mathematics.exception.StringToConstantConfigurationException;
 import nl.smith.mathematics.util.StringToObjectUtil;
-import nl.smith.mathematics.util.UserSystemContext;
+import nl.smith.mathematics.util.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
+import java.util.Set;
 
 import static java.lang.String.format;
 
 /**
+ * <pre>
  * Default values for all implementing classes are specified in {@link ConstantConfiguration#PROPERTY_FILE_NAME}.
  * The specified values are associated with the thread in which the value is set.
- * Setting and retrieval of a value can be done using static methods in the implementing class.
+ *
+ * Setting and retrieving values can be done using:
+ *          - static methods in the concrete implementing class but also
+ *          - in the abstract class by the static method {@link ConstantConfiguration#getValue(Class)}.
+ *
+ * Values are enums either:
+ *          - stateless (only the enum value is specified to set the value) or
+ *          - stateful (the enum itself has a value which is set)
+ *
+ *</pre>
  * @param <T>
  */
 public abstract class ConstantConfiguration<T> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConstantConfiguration.class);
 
     public static final String PROPERTY_FILE_NAME = "application.properties";
 
@@ -24,26 +41,52 @@ public abstract class ConstantConfiguration<T> {
 
     private final String propertyName;
 
-    private final Class<T> clazz;
+    private final Class<T> valueTypeClass;
 
-    public ConstantConfiguration(Class<T> clazz) {
+    public ConstantConfiguration(Class<T> valueTypeClass) {
         this.propertyName = getClass().getCanonicalName();
-        this.clazz = clazz;
+        this.valueTypeClass = valueTypeClass;
         defaultValue = getDefaultValueFromSystem();
     }
 
-    public ConstantConfiguration(String propertyName, Class<T> clazz) {
+    public ConstantConfiguration(Class<T> valueTypeClass, String propertyName) {
         this.propertyName = propertyName;
-        this.clazz = clazz;
+        this.valueTypeClass = valueTypeClass;
         defaultValue = getDefaultValueFromSystem();
     }
 
     public void setValue(T value) {
-        UserSystemContext.setValue(propertyName, value);
+        ThreadContext.setValue(propertyName, value);
     }
 
     public T getValue() {
-        return (T) UserSystemContext.getValue(propertyName).orElseGet(this::defaultValue);
+        return (T) ThreadContext.getValue(propertyName).orElseGet(this::defaultValue);
+    }
+
+    public static Set<String> values(Class<? extends ConstantConfiguration<?>> configurationClass) {
+        try {
+            Object values = configurationClass.getDeclaredMethod("values", new Class[0]).invoke(null);
+            return (Set<String>) values;
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static void setValue(Class<? extends ConstantConfiguration<?>> configurationClass, String value) throws StringToConstantConfigurationException {
+        try {
+            LOGGER.info("Set configuration {} {} ---> {} ", configurationClass.getCanonicalName(), getValue(configurationClass), value);
+            configurationClass.getDeclaredMethod("set", new Class[]{String.class}).invoke(null, value);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new StringToConstantConfigurationException(configurationClass, value, values(configurationClass));
+        }
+    }
+
+    public static String getValue(Class<? extends ConstantConfiguration> configurationClass) {
+        try {
+            return configurationClass.getDeclaredMethod("get").invoke(null, new Object[0]).toString();
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException();
+        }
     }
 
     private T defaultValue() {
@@ -67,7 +110,7 @@ public abstract class ConstantConfiguration<T> {
                     "\nor specify it as %1$s=<value> in file %2$s.", propertyName, PROPERTY_FILE_NAME));
         }
 
-        return StringToObjectUtil.valueOf(value, clazz);
+        return StringToObjectUtil.valueOf(value, valueTypeClass);
     }
 
     public T getDefaultValue() {
@@ -78,7 +121,7 @@ public abstract class ConstantConfiguration<T> {
         return propertyName;
     }
 
-    public Class<T> getClazz() {
-        return clazz;
+    public Class<T> getValueTypeClass() {
+        return valueTypeClass;
     }
 }

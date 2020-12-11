@@ -2,15 +2,12 @@ package nl.smith.mathematics.domain;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
-import nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.Map;
@@ -32,7 +29,7 @@ class ExpressionStackTest {
 
     @BeforeEach
     public void init() {
-        RationalNumberOutputType.set(Type.COMPONENTS);
+        RationalNumberOutputType.set(RationalNumberOutputType.PredefinedType.COMPONENTS);
     }
 
     @Test

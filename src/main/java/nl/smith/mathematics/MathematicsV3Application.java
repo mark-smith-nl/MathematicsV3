@@ -3,7 +3,7 @@ package nl.smith.mathematics;
 import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
 import nl.smith.mathematics.configuration.constant.RoundingMode;
 import nl.smith.mathematics.controller.DefaultController;
-import nl.smith.mathematics.controller.RequestFilter;
+import nl.smith.mathematics.controller.RequestHeaderFilter;
 import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunctions;
@@ -12,6 +12,7 @@ import nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal.BigD
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberGoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
+import nl.smith.mathematics.service.MethodRunnerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +33,7 @@ import static nl.smith.mathematics.configuration.constant.NumberConstant.bigDeci
 import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
 import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
 import static nl.smith.mathematics.configuration.constant.NumberConstant.rationalValueOf;
-import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type;
+import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.PredefinedType;
 import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.set;
 
 @SpringBootApplication
@@ -57,13 +58,13 @@ public class MathematicsV3Application {
             LOGGER.info("Example: {}", new RationalNumber(2, 14));
             Scale.set(10);
             LOGGER.info("Example: {}", new RationalNumber(2, 14));
-            RationalNumberOutputType.set(Type.COMPONENTS_AND_EXACT);
+            RationalNumberOutputType.set(RationalNumberOutputType.PredefinedType.COMPONENTS_AND_EXACT);
             LOGGER.info("Example 2/14 * 1/3: {}", (new RationalNumber(2, 14)).multiply(new RationalNumber(1, 3)));
             LOGGER.info("Example create number from string literal 12.345[6789]R: {}", RationalNumber.valueOf("12.345[6789]R"));
 
             GoniometricFunctions<RationalNumber, ?> rationalNumberGoniometricFunctions = context.getBean("rationalNumberGoniometricFunctions", RationalNumberGoniometricFunctions.class);
 
-            set(Type.TRUNCATED);
+            set(RationalNumberOutputType.PredefinedType.TRUNCATED);
             Scale.set(150);
             LOGGER.info("Calculate sin(𝝅/4) using Taylor series:");
             RationalNumber piDividedByFour = rationalValueOf.Pi.get().divide(4);
@@ -81,14 +82,14 @@ public class MathematicsV3Application {
                 LOGGER.info("Taylor ({}): {}", TaylorDegreeOfPolynom.get(), bigDecimalGoniometricFunctions.cos(piDividedBySix));
             }
 
-            RationalNumberOutputType.set(Type.TRUNCATED);
+            RationalNumberOutputType.set(PredefinedType.TRUNCATED);
             for (int i = 0; i < 150; i++) {
                 Scale.set(i);
                 LOGGER.info(rationalValueOf.Pi.get().toString());
             }
 
             LogarithmicFunctions<RationalNumber, ?> logarithmicFunctions = context.getBean("rationalNumberLogarithmicFunctions", RationalNumberLogarithmicFunctions.class);
-            RationalNumberOutputType.set(Type.TRUNCATED);
+            RationalNumberOutputType.set(RationalNumberOutputType.PredefinedType.TRUNCATED);
             LOGGER.info("Calculate Eulers's number:");
             for (int i = 0; i < 150; i++) {
                 Scale.set(i);
@@ -126,12 +127,18 @@ public class MathematicsV3Application {
         return bean;
     }
 
+    /**
+     * Filter bean that filters function urls i.e. urls that begin with @{@link DefaultController#MAPPING_FUNCTION}
+     *
+     * @return Returns a filterbean.
+     */
     @Bean
-    public FilterRegistrationBean<RequestFilter> logFilter() {
-        FilterRegistrationBean<RequestFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new RequestFilter());
-        registrationBean.addUrlPatterns("/" + DefaultController.MAPPING_FUNCTION +"*");
+    public FilterRegistrationBean<RequestHeaderFilter> logFilter(MethodRunnerService methodRunnerService) {
+        FilterRegistrationBean<RequestHeaderFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new RequestHeaderFilter(methodRunnerService.getNumberTypes()));
+        registrationBean.addUrlPatterns("/", DefaultController.MAPPING_FUNCTION + "/*");
         registrationBean.addUrlPatterns("/function/*");
         return registrationBean;
     }
+
 }

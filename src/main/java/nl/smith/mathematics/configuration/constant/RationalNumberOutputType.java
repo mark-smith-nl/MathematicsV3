@@ -1,9 +1,15 @@
 package nl.smith.mathematics.configuration.constant;
 
 
-public class RationalNumberOutputType extends ConstantConfiguration<RationalNumberOutputType.Type> {
+import nl.smith.mathematics.exception.StringToConstantConfigurationException;
 
-    public enum Type {
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class RationalNumberOutputType extends ConstantConfiguration<RationalNumberOutputType.PredefinedType> {
+
+    public enum PredefinedType {
         COMPONENTS("Represent exactly a rational number as <numerator>/<denominator>. " +
                 "For instance 1051/495 for rational number 1051/495."),
         EXACT("Represents exactly a rational number using different string components. " +
@@ -17,7 +23,7 @@ public class RationalNumberOutputType extends ConstantConfiguration<RationalNumb
 
         private final String description;
 
-        Type(String description) {
+        PredefinedType(String description) {
             this.description = description;
         }
 
@@ -29,15 +35,24 @@ public class RationalNumberOutputType extends ConstantConfiguration<RationalNumb
     private static final RationalNumberOutputType instance = new RationalNumberOutputType();
 
     private RationalNumberOutputType() {
-        super(RationalNumberOutputType.Type.class);
+        super(PredefinedType.class);
     }
 
-    public static RationalNumberOutputType.Type get() {
+    public static PredefinedType get() {
         return instance.getValue();
     }
 
-    public static void set(RationalNumberOutputType.Type value) {
+    public static void set(PredefinedType value) {
         instance.setValue(value);
+    }
+
+    public static Set<String> values() {
+        return Arrays.stream(PredefinedType.values()).map(Enum::name).collect(Collectors.toSet());
+    }
+
+    public static void set(String value) throws StringToConstantConfigurationException {
+        if (!values().contains(value)) throw new StringToConstantConfigurationException(PredefinedType.class, value, values());
+        set(PredefinedType.valueOf(value));
     }
 
 }

@@ -35,7 +35,6 @@
             <thead class="thead-dark">
             <tr>
                 <th>Argument</th>
-                <th class="asteriskMarkAfter" onclick="$('#outputTypeDescription').toggle('toggle')">Output type</th>
                 <th class="questionMarkAfter" onclick="$('#scaleDescription').toggle('toggle')">Scale</th>
                 <th colspan="2">Maximum degree polynomial function</th>
             </tr>
@@ -44,12 +43,6 @@
             <tr>
                 <td>
                     <input name="rationalNumberAsString" title="RationalNumber as string" value="1"></td>
-                <td><select id="outputType" name="outputType">
-                    <option
-                            th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
-                            th:value="${outputType}"
-                            th:text="${outputType}"></option>
-                </select></td>
                 <td><input name="scale" value="20" maxlength="2" size="3"></td>
                 <td><input name="maximumDegreeOfPolynomial"
                            title="Calculate value using polynomial value of degree 0...specified degree."
@@ -61,9 +54,7 @@
         </table>
     </form>
     <br>
-    <object th:replace="fragments :: outputType"></object>
-    <br>
-    <object th:replace="fragments :: scale"></object>
+    <object th:replace="fragments :: outputPredefinedType"></object>
     <br>
     <object th:replace="fragments :: scale"></object>
 </div>

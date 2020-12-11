@@ -43,9 +43,9 @@ class IsNumberValidatorTest {
 
     @BeforeEach
     public void init() {
-        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
-        LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
-        RationalNumberOutputType.set(outputType);
+        RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
+        LOGGER.info("Setting rational number output type to {} ({})", outputPredefinedType.name(), outputPredefinedType.getDescription());
+        RationalNumberOutputType.set(outputPredefinedType);
     }
 
     @DisplayName("Checking if a method's argument is a number")

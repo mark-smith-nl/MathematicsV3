@@ -15,9 +15,6 @@
             <thead class="thead-dark">
             <tr>
                 <th>Argument</th>
-                <th class="asteriskMarkAfter" onclick="$('#outputTypeDescription').toggle('toggle')">
-                    Output type
-                </th>
                 <th class="questionMarkAfter" onclick="$('#scaleDescription').toggle('toggle')">
                     Scale
                 </th>
@@ -29,24 +26,18 @@
                 <td style="width: 30%"><input name="rationalNumberAsString" title="RationalNumber as string"
                                               value="0.785398163397448">
                 </td>
-                <td style="width: 30%"><select id="outputType" name="outputType">
-                    <option
-                            th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
-                            th:value="${outputType}"
-                            th:text="${outputType}"></option>
-                </select></td>
                 <td style="width: 10%"><input name="scale" value="20" maxlength="2" size="3"></td>
                 <td style="width: 10%"><input style="width: 100%" name="maximumDegreeOfPolynomial" maxlength="2"
                                               value="50">
                 <td style="width: 20%" class="text-right">
-                    <input class="btn btn-primary"
+                    <input id = 'Osama' class="btn btn-primary"
                            onclick="submitFormAndLoadResultInTarget($('#sinusForm'), $('#result'))"
                            value="Calculate"></td>
             </tr>
             </tbody>
         </table>
     </form>
-    <object th:replace="fragments :: outputType"></object>
+    <object th:replace="fragments :: outputPredefinedType"></object>
     <object th:replace="fragments :: scale"></object>
     <form>
         <div class="form-group">

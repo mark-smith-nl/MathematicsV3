@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,7 +43,7 @@ public class StringToObjectUtil {
                 return (T) valueOf.invoke(null, stringValue);
             } catch (Exception e) {
                 String arguments = Stream.of(FACTORY_METHOD_ARGUMENT_TYPES).map(Class::getCanonicalName).collect(Collectors.joining(", "));
-                String message ;
+                String message;
                 if (e instanceof InvocationTargetException) {
                     message = ((InvocationTargetException) e).getTargetException().getMessage();
                 } else {
@@ -70,8 +72,10 @@ public class StringToObjectUtil {
         throw new IllegalStateException(format("Can not convert %s(%s) to an instance of %s.", stringValue, String.class.getCanonicalName(), clazz.getCanonicalName()));
     }
 
-    /** Method returns the corresponding wrapper class of a primitive class
-     * or null if no class is specified or if the class is not a primitive class. */
+    /**
+     * Method returns the corresponding wrapper class of a primitive class
+     * or null if no class is specified or if the class is not a primitive class.
+     */
     public static Class<?> getPrimitiveClassToWrapperClass(Class<?> clazz) {
         if (clazz == null || !clazz.isPrimitive()) {
             return null;
@@ -91,11 +95,12 @@ public class StringToObjectUtil {
             return Float.class;
         } else if (clazz == char.class) {
             return Character.class;
-        }else if (clazz == boolean.class) {
+        } else if (clazz == boolean.class) {
             return Boolean.class;
         }
 
         return Void.class;
 
     }
+
 }

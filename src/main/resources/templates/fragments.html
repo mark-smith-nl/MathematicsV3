@@ -8,7 +8,7 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
 </div>
 <div th:fragment="staticCssJs">
-    <script th:src="@{/resources/js/utillity.js}"></script>
+    <script th:src="@{/resources/js/utility.js}"></script>
     <link rel="stylesheet" th:href="@{/resources/css/default.css}">
 </div>
 <div th:fragment="navigationbar">
@@ -49,23 +49,23 @@
             </li>
             <!-- Dropdown -->
             <li class="nav-item dropdown" th:with="cookieName=${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType).getSimpleName()}">
-                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"
-                   th:id="${cookieName}">
-                    Output
+                <a class="nav-link dropdown-toggle oncontextmenu" href="#" data-toggle="dropdown"
+                   th:id="${cookieName}" oncontextmenu="$('#outputTypeDescription').toggle('toggle'); return false">
+                    Output type
                 </a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item"
                        href="#"
-                       th:each="cookieValue: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}"
+                       th:each="cookieValue: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.PredefinedType).values()}"
                        th:text="${cookieValue}"
                        th:cookieName="${cookieName}"
                        th:cookieValue="${cookieValue}"
                        th:title="${cookieValue.getDescription()}"
                        onclick="return setConstantAsCookie($(this).attr('cookieName'), $(this).attr('cookieValue'));"
-                    ></a><br><br>
+                    ></a>
                 </div>
             </li>
-            <li class="nav-item dropdown" th:with="cookieName=${T(nl.smith.mathematics.configuration.constant.AngleType).getSimpleName()}">
+            <li class="nav-item dropdown oncontextmenu" th:with="cookieName=${T(nl.smith.mathematics.configuration.constant.AngleType).getSimpleName()}">
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"
                    th:id="${cookieName}">
                     AngleType
@@ -73,19 +73,19 @@
                 <div class="dropdown-menu">
                     <a class="dropdown-item"
                        href="#"
-                       th:each="cookieValue: ${T(nl.smith.mathematics.configuration.constant.AngleType.Type).values()}"
+                       th:each="cookieValue: ${T(nl.smith.mathematics.configuration.constant.AngleType.PredefinedType).values()}"
                        th:text="${cookieValue}"
                        th:cookieName="${cookieName}"
                        th:cookieValue="${cookieValue}"
                        th:title="${cookieValue.getDescription()}"
                        onclick="return setConstantAsCookie($(this).attr('cookieName'), $(this).attr('cookieValue'));"
-                    ></a><br><br>
+                    ></a>
                 </div>
             </li>
         </ul>
     </nav>
 </div>
-<div th:fragment="outputType">
+<div th:fragment="outputPredefinedType">
     <br>
     <table id="outputTypeDescription" class="table table-bordered collapse" onclick="$(this).toggle('hide')">
         <thead class="thead-dark">
@@ -94,9 +94,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="outputType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.Type).values()}">
-            <td th:text="${outputType.name()}"></td>
-            <td th:text="${outputType.getDescription()}"></td>
+        <tr th:each="outputPredefinedType: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.PredefinedType).values()}">
+            <td th:text="${outputPredefinedType.name()}"></td>
+            <td th:text="${outputPredefinedType.getDescription()}"></td>
         </tr>
         </tbody>
     </table>

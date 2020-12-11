@@ -106,6 +106,15 @@ public class MethodRunnerService {
         return recursiveFunctionContainers;
     }
 
+    /**
+     * Finds a method for the specified mathematicalMethodName and numberType.
+     * Invokes this method with the specified arguments and returns the result.
+     * @param numberType The number type class. This is a subclass of {@link Number}.
+     * @param mathematicalMethodName The name of the method.
+     * @param arguments The arguments as an arry of the numberType the method uses.
+     * @param <N>
+     * @return The result of the method invocation. The result is of type numberType.
+     */
     public <N extends Number> N invokeMathematicalMethodForNumberType(@NotNull(message = "Please specify a valid number type (class).") Class<N> numberType, @NotEmpty String mathematicalMethodName, @NotEmpty N[] arguments) {
         MathematicalFunctionMethodMapping<N> mathematicalFunctionMethodMapping = getMathematicalFunctionMethodMapping(functionContainersByNumberType.get(numberType), mathematicalMethodName, arguments.length, numberType);
 

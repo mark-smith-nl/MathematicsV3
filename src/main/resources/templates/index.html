@@ -4,11 +4,32 @@
     <title>MathematicsV3</title>
     <th:block th:include="fragments :: bootstrap"></th:block>
     <th:block th:include="fragments :: staticCssJs"></th:block>
-    <script>
+    <script th:inline="javascript">
         $(document).ready(function () {
             $('[data-toggle="popover"]').popover();
-            highLightOptions(['RationalNumberOutputType', 'AngleType']);
+            // Annotate selected configuration options
+            highlightConfigurationOptions([ [[${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType).getCanonicalName()}]],
+                [[${T(nl.smith.mathematics.configuration.constant.AngleType).getCanonicalName()}]] ]);
+            $('[oncontextmenu]').attr('title', 'Click option menus for explanation')
         });
+    </script>
+    <script>
+        function makeGetCall() {
+            $.ajax({
+                contentType : 'application/json',
+                url : 'http://localhost:8082/function/MyTestMapping',
+                method : "post",
+                data : JSON.stringify({"functionName": "faculty", "rationalNumberAsString": "2.123"}),
+                dataType : "json",
+                success : function (res) {
+                    console.log(res);
+                },
+                error : function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
@@ -21,11 +42,15 @@
         </div>
         <div class="col-sm">
             <h2>Welcome to MathematicsV3</h2>
+            <button class="btn btn-primary" onclick="makeGetCall()">AJAX-Get..</button>
         </div>
         <div class="col-sm-1">
 
         </div>
     </div>
+    <object th:replace="fragments :: outputPredefinedType"></object>
+    <br>
+    <object th:replace="fragments :: scale"></object>
 </div>
 </body>
 

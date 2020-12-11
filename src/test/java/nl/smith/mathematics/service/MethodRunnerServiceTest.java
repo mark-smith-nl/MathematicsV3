@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.stubbing.OngoingStubbing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +39,9 @@ public class MethodRunnerServiceTest {
 
     @BeforeEach
     public void init() {
-        RationalNumberOutputType.Type outputType = RationalNumberOutputType.Type.COMPONENTS;
-        LOGGER.info("Setting rational number output type to {} ({})", outputType.name(), outputType.getDescription());
-        RationalNumberOutputType.set(outputType);
+        RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
+        LOGGER.info("Setting rational number output type to {} ({})", outputPredefinedType.name(), outputPredefinedType.getDescription());
+        RationalNumberOutputType.set(outputPredefinedType);
     }
 
     @Test

@@ -4,6 +4,7 @@ import nl.smith.mathematics.numbertype.RationalNumber;
 import nl.smith.mathematics.util.NumberUtil;
 
 import java.math.BigDecimal;
+import java.sql.NClob;
 
 /**
  * Default values for all implementing classes are specified in {@link NumberConstant#PROPERTY_FILE_NAME}.
@@ -12,7 +13,6 @@ import java.math.BigDecimal;
  * @param <T>
  */
 public class NumberConstant<T extends Number> extends ConstantConfiguration<T>{
-
 
     public enum integerValueOf {
         Scale("nl.smith.mathematics.configuration.constant.Scale"),
@@ -24,13 +24,14 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T>{
 
         integerValueOf(String propertyName) {
             clazz = Integer.class;
-            numberConstant = new NumberConstant<>(propertyName, clazz);
+            numberConstant = new NumberConstant<>(clazz, propertyName);
         }
 
         public Integer get() {
             return numberConstant.getValue();
         }
 
+        // TODO Check if this is thread save.
         public void set(Integer number) {
             numberConstant.setValue(number);
         }
@@ -51,13 +52,14 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T>{
 
         rationalValueOf(String propertyName) {
             clazz = RationalNumber.class;
-            numberConstant = new NumberConstant<>(propertyName, clazz);
+            numberConstant = new NumberConstant<>(clazz, propertyName);
         }
 
         public RationalNumber get() {
             return numberConstant.getValue();
         }
 
+        // TODO Check if this is thread save.
         public void set(RationalNumber number) {
             numberConstant.setValue(number);
         }
@@ -78,7 +80,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T>{
 
         bigDecimalValueOf(String propertyName) {
             clazz = BigDecimal.class;
-            numberConstant = new NumberConstant<>(propertyName, clazz);
+            numberConstant = new NumberConstant<>(clazz, propertyName);
         }
 
         public BigDecimal get() {
@@ -94,8 +96,8 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T>{
         }
     }
 
-    public NumberConstant(String propertyName, Class<T> clazz) {
-        super(propertyName, clazz);
+    public NumberConstant(Class<T> clazz, String propertyName) {
+        super(clazz, propertyName);
     }
 
 }

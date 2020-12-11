@@ -1,5 +1,11 @@
 package nl.smith.mathematics.configuration.constant;
 
+import nl.smith.mathematics.exception.StringToConstantConfigurationException;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * Utility class to specify how a division of two numbers ({@link Number}) should be rounded.
   */
@@ -19,4 +25,12 @@ public class RoundingMode extends ConstantConfiguration<java.math.RoundingMode> 
         instance.setValue(value);
     }
 
+    public static Set<String> values() {
+        return Arrays.stream(java.math.RoundingMode.values()).map(Enum::name).collect(Collectors.toSet());
+    }
+
+    public static void set(String value) throws StringToConstantConfigurationException {
+        if (!values().contains(value)) throw new StringToConstantConfigurationException(RoundingMode.class, value, values());
+        set(java.math.RoundingMode.valueOf(value));
+    }
 }

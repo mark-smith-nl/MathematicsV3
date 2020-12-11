@@ -384,11 +384,11 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
         }
     }
 
-    public String toString(RationalNumberOutputType.Type outputType) {
+    public String toString(RationalNumberOutputType.PredefinedType outputPredefinedType) {
         int scale = Scale.get();
 
         String result;
-        switch (outputType) {
+        switch (outputPredefinedType) {
             case COMPONENTS:
                 result = toStringComponents();
                 break;
@@ -410,7 +410,7 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
                 }
                 break;
             default:
-                result = format("toString(%s) is not implemented", outputType.name());
+                result = format("toString(%s) is not implemented", outputPredefinedType.name());
         }
 
         return result;
