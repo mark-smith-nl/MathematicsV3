@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.Scale;
 
 public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDecimal, BigDecimalStatisticalFunctions> {
 

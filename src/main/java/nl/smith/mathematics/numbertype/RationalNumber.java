@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.Scale;
 
 /**
  * Immutable class to store rational numbers

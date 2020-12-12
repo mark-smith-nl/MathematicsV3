@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.TaylorDegreeOfPolynom;
 
 public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDecimal, BigDecimalLogarithmicFunctions> {
 
@@ -45,7 +45,7 @@ public class BigDecimalLogarithmicFunctions extends LogarithmicFunctions<BigDeci
     public BigDecimal ln(BigDecimal number) {
         BigDecimal sum = ZERO;
 
-        BigDecimal euler = NumberConstant.bigDecimalValueOf.Euler.get();
+        BigDecimal euler = NumberConstant.BigDecimalValueOf.Euler.get();
         while (number.compareTo(ONE) > 0) {
             sum = sum.add(ONE);
             number = number.divide(euler, Scale.get(), RoundingMode.get());

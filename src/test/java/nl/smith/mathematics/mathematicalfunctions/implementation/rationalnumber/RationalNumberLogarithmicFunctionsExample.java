@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.rationalValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.RationalValueOf;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,7 +52,7 @@ class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContain
             } else {
                 error = functionValue.subtract(expectedResult).divide(expectedResult).multiply(100).abs();
             }
-            assertEquals(-1, error.compareTo(rationalValueOf.MaximumError.get()));
+            assertEquals(-1, error.compareTo(RationalValueOf.MaximumError.get()));
         }
     }
 
@@ -84,7 +84,7 @@ class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContain
             } else {
                 error = functionValue.subtract(expectedResult).divide(expectedResult).multiply(100).abs();
             }
-             assertEquals(-1, error.compareTo(rationalValueOf.MaximumError.get()));
+             assertEquals(-1, error.compareTo(RationalValueOf.MaximumError.get()));
         }
     }
 

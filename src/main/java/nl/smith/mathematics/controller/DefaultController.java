@@ -6,7 +6,6 @@ import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +13,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.Map;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.TaylorDegreeOfPolynom;
 
 //@Controller
 @Validated

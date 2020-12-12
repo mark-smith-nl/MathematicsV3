@@ -29,10 +29,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.math.BigDecimal;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.bigDecimalValueOf;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.rationalValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.BigDecimalValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.TaylorDegreeOfPolynom;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.RationalValueOf;
 import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.PredefinedType;
 import static nl.smith.mathematics.configuration.constant.RationalNumberOutputType.set;
 
@@ -67,7 +67,7 @@ public class MathematicsV3Application {
             set(RationalNumberOutputType.PredefinedType.TRUNCATED);
             Scale.set(150);
             LOGGER.info("Calculate sin(𝝅/4) using Taylor series:");
-            RationalNumber piDividedByFour = rationalValueOf.Pi.get().divide(4);
+            RationalNumber piDividedByFour = RationalValueOf.Pi.get().divide(4);
             for (int i = 0; i < 20; i++) {
                 TaylorDegreeOfPolynom.set(i);
                 LOGGER.info("Taylor ({}): {}", TaylorDegreeOfPolynom.get(), rationalNumberGoniometricFunctions.sin(piDividedByFour));
@@ -75,7 +75,7 @@ public class MathematicsV3Application {
 
             GoniometricFunctions<BigDecimal, ?> bigDecimalGoniometricFunctions = context.getBean("bigDecimalGoniometricFunctions", BigDecimalGoniometricFunctions.class);
 
-            BigDecimal piDividedBySix = bigDecimalValueOf.Pi.get().divide(new BigDecimal(6), Scale.get(), RoundingMode.get());
+            BigDecimal piDividedBySix = BigDecimalValueOf.Pi.get().divide(new BigDecimal(6), Scale.get(), RoundingMode.get());
             LOGGER.info("Calculate cos(𝝅/6) using Taylor series:");
             for (int i = 0; i < 20; i++) {
                 TaylorDegreeOfPolynom.set(i);
@@ -85,7 +85,7 @@ public class MathematicsV3Application {
             RationalNumberOutputType.set(PredefinedType.TRUNCATED);
             for (int i = 0; i < 150; i++) {
                 Scale.set(i);
-                LOGGER.info(rationalValueOf.Pi.get().toString());
+                LOGGER.info(RationalValueOf.Pi.get().toString());
             }
 
             LogarithmicFunctions<RationalNumber, ?> logarithmicFunctions = context.getBean("rationalNumberLogarithmicFunctions", RationalNumberLogarithmicFunctions.class);

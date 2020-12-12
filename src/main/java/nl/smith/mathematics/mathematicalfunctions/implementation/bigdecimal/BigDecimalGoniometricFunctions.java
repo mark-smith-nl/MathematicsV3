@@ -8,8 +8,8 @@ import java.math.BigDecimal;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.TaylorDegreeOfPolynom;
 
 public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDecimal, BigDecimalGoniometricFunctions> {
 

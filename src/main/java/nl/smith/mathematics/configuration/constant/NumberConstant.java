@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  */
 public class NumberConstant<T extends Number> extends ConstantConfiguration<T> {
 
-    public enum integerValueOf implements ConfigurationConstant<Integer> {
+    public enum IntegerValueOf implements ConfigurationConstant<Integer> {
         Scale("nl.smith.mathematics.configuration.constant.Scale"),
         TaylorDegreeOfPolynom("nl.smith.mathematics.configuration.constant.TaylorDegreeOfPolynom");
 
@@ -25,7 +25,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T> {
 
         private final Class<Integer> numberType = Integer.class;
 
-        integerValueOf(String propertyName) {
+        IntegerValueOf(String propertyName) {
             numberConstant = new NumberConstant<>(numberType, propertyName);
         }
 
@@ -48,7 +48,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T> {
         }
     }
 
-    public enum rationalValueOf implements ConfigurationConstant<RationalNumber> {
+    public enum RationalValueOf implements ConfigurationConstant<RationalNumber> {
         Pi("nl.smith.mathematics.configuration.constant.Pi"),
         Euler("nl.smith.mathematics.configuration.constant.Euler"),
         MaximumError("nl.smith.mathematics.configuration.constant.error");
@@ -57,7 +57,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T> {
 
         private final Class<RationalNumber> numberType = RationalNumber.class;
 
-        rationalValueOf(String propertyName) {
+        RationalValueOf(String propertyName) {
             numberConstant = new NumberConstant<>(numberType, propertyName);
         }
 
@@ -80,7 +80,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T> {
         }
     }
 
-    public enum bigDecimalValueOf implements ConfigurationConstant<BigDecimal> {
+    public enum BigDecimalValueOf implements ConfigurationConstant<BigDecimal> {
         Pi("nl.smith.mathematics.configuration.constant.Pi"),
         Euler("nl.smith.mathematics.configuration.constant.Euler"),
         MaximumError("nl.smith.mathematics.configuration.constant.error");
@@ -89,7 +89,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T> {
 
         private final Class<BigDecimal> numberClass = BigDecimal.class;
 
-        bigDecimalValueOf(String propertyName) {
+        BigDecimalValueOf(String propertyName) {
             numberConstant = new NumberConstant<>(numberClass, propertyName);
         }
 

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.Scale;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.Scale;
 
 public class BigDecimalArithmeticFunctions extends ArithmeticFunctions<BigDecimal, BigDecimalArithmeticFunctions> {
 

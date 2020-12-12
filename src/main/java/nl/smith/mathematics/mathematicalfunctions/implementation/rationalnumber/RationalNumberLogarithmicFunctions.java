@@ -4,8 +4,8 @@ import nl.smith.mathematics.mathematicalfunctions.definition.LogarithmicFunction
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.context.annotation.Bean;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
-import static nl.smith.mathematics.configuration.constant.NumberConstant.rationalValueOf;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.TaylorDegreeOfPolynom;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.RationalValueOf;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 
@@ -31,7 +31,7 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
         }
 
         if (number.compareTo(ONE) > 0) {
-            RationalNumber euler = rationalValueOf.Euler.get();
+            RationalNumber euler = RationalValueOf.Euler.get();
             RationalNumber[] divideAndRemainder = number.divideAndRemainder(ONE);
             RationalNumber i = divideAndRemainder[0];
             RationalNumber result = euler;
@@ -61,7 +61,7 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
     public RationalNumber ln(RationalNumber number) {
         RationalNumber sum = ZERO;
 
-        RationalNumber euler = rationalValueOf.Euler.get();
+        RationalNumber euler = RationalValueOf.Euler.get();
         while (number.compareTo(ONE) > 0) {
             sum = sum.add(ONE);
             number = number.divide(euler);

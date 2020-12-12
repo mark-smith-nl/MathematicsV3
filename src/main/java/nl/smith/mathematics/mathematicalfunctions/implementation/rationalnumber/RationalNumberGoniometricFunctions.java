@@ -5,7 +5,7 @@ import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunction
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.springframework.context.annotation.Bean;
 
-import static nl.smith.mathematics.configuration.constant.NumberConstant.integerValueOf.TaylorDegreeOfPolynom;
+import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.TaylorDegreeOfPolynom;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 
