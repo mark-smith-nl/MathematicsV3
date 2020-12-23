@@ -1,13 +1,19 @@
-.asteriskMarkAfter:after {
+.asterisk:after {
     content: "*";
     color: red;
     font-size: 15px;
     vertical-align: super;
 }
 
-.questionMarkAfter:after {
+.question:after {
     content: "?";
     color: red;
     font-size: 15px;
     vertical-align: super;
+}
+
+
+.selected {
+    background-color: black;
+    color: white;
 }

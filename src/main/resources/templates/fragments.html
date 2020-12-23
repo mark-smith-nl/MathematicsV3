@@ -48,37 +48,21 @@
                 </div>
             </li>
             <!-- Dropdown -->
-            <li class="nav-item dropdown" th:with="cookieName=${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType).getSimpleName()}">
-                <a class="nav-link dropdown-toggle oncontextmenu" href="#" data-toggle="dropdown"
-                   th:id="${cookieName}" oncontextmenu="$('#outputTypeDescription').toggle('toggle'); return false">
-                    Output type
-                </a>
+            <li class="nav-item dropdown"
+                th:each="constant: ${T(nl.smith.mathematics.configuration.constant.ConstantConfiguration).getEnumConstants()}">
+                <a class="nav-link dropdown-toggle oncontextmenu"
+                   href="#" data-toggle="dropdown"
+                   th:id="${constant.class.getSimpleName()}"
+                   th:title="${constant.getDescription()}"
+                   th:text="${constant.getLabel()}"></a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item"
                        href="#"
-                       th:each="cookieValue: ${T(nl.smith.mathematics.configuration.constant.RationalNumberOutputType.PredefinedType).values()}"
-                       th:text="${cookieValue}"
-                       th:cookieName="${cookieName}"
-                       th:cookieValue="${cookieValue}"
-                       th:title="${cookieValue.getDescription()}"
-                       onclick="return setConstantAsCookie($(this).attr('cookieName'), $(this).attr('cookieValue'));"
-                    ></a>
-                </div>
-            </li>
-            <li class="nav-item dropdown oncontextmenu" th:with="cookieName=${T(nl.smith.mathematics.configuration.constant.AngleType).getSimpleName()}">
-                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"
-                   th:id="${cookieName}">
-                    AngleType
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item"
-                       href="#"
-                       th:each="cookieValue: ${T(nl.smith.mathematics.configuration.constant.AngleType.PredefinedType).values()}"
-                       th:text="${cookieValue}"
-                       th:cookieName="${cookieName}"
-                       th:cookieValue="${cookieValue}"
-                       th:title="${cookieValue.getDescription()}"
-                       onclick="return setConstantAsCookie($(this).attr('cookieName'), $(this).attr('cookieValue'));"
+                       th:each="value: ${T(nl.smith.mathematics.configuration.constant.ConstantConfiguration).values(constant.class)}"
+                       th:text="${value}"
+                       th:cookieName="${value}"
+                       th:cookieValue="${value}"
+                       onclick="return highlightConfigurationOption($(this).attr('cookieName'), $(this).attr('cookieValue'));"
                     ></a>
                 </div>
             </li>
@@ -90,7 +74,7 @@
     <table id="outputTypeDescription" class="table table-bordered collapse" onclick="$(this).toggle('hide')">
         <thead class="thead-dark">
         <tr>
-            <th colspan="2" class="asteriskMarkAfter">Output type</th>
+            <th colspan="2" class="asterisk">Output type</th>
         </tr>
         </thead>
         <tbody>
@@ -106,7 +90,7 @@
     <table id="scaleDescription" class="table table-bordered collapse" onclick="$(this).toggle('hide')">
         <thead class="thead-dark">
         <tr>
-            <th class="questionMarkAfter">Scale
+            <th class="question">Scale
             </th>
         </tr>
         </thead>

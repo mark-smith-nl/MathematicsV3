@@ -26,6 +26,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T> {
         private final Class<Integer> numberType = Integer.class;
 
         IntegerValueOf(String propertyName) {
+            System.out.println(this.getClass().getCanonicalName() + "." + this.name());
             numberConstant = new NumberConstant<>(numberType, propertyName);
         }
 
@@ -80,7 +81,7 @@ public class NumberConstant<T extends Number> extends ConstantConfiguration<T> {
         }
     }
 
-    public enum BigDecimalValueOf implements ConfigurationConstant<BigDecimal> {
+        public enum BigDecimalValueOf implements ConfigurationConstant<BigDecimal> {
         Pi("nl.smith.mathematics.configuration.constant.Pi"),
         Euler("nl.smith.mathematics.configuration.constant.Euler"),
         MaximumError("nl.smith.mathematics.configuration.constant.error");

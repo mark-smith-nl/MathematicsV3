@@ -3,17 +3,6 @@ function loadUrlInElementWithId(url, id) {
     return false;
 }
 
-function setConstantAsCookie(cookieName, cookieValue) {
-    var expires = "";
-    var result = cookieName + "=" + cookieValue + ";expires=-1;path=/";
-    console.log("===>" + document.cookie);
-    document.cookie = result;
-    console.log("===>" + result);
-    console.log("===>" + document.cookie);
-    highlightConfigurationOption(cookieName);
-    return false;
-}
-
 function highlightConfigurationOptions(cookieNames) {
     $.each(cookieNames, function (index, cookieName) {
         highlightConfigurationOption(cookieName)
@@ -21,8 +10,8 @@ function highlightConfigurationOptions(cookieNames) {
 }
 
 function highlightConfigurationOption(cookieName) {
-    $("[cookieName='" + cookieName + "']").removeClass('asteriskMarkAfter');
-    $("[cookieName='" + cookieName + "'][cookieValue='" + getCookie(cookieName) + "']").addClass('asteriskMarkAfter');
+    $("[cookieName='" + cookieName + "']").removeClass('select');
+    $("[cookieName='" + cookieName + "'][cookieValue='" + getCookie(cookieName) + "']").addClass('select');
 }
 
 function getCookie(cookieName) {

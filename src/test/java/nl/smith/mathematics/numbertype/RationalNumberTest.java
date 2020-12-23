@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import java.math.BigInteger;
 import java.util.stream.Stream;
 
+import static nl.smith.mathematics.configuration.constant.RationalNumberNormalize.PredefinedType.NO;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +71,7 @@ public class RationalNumberTest {
 
     @Test
     void constructorUsingBigIntegers() {
-        RationalNumberNormalize.set(false);
+        RationalNumberNormalize.set(NO);
         for (int n = -10; n <= 10; n++) {
             for (int d = -10; d <= 10; d++) {
                 long numerator = d < 0 ? -n : n;
