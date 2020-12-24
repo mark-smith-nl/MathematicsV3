@@ -1,4 +1,4 @@
-package nl.smith.mathematics.configuration.newconstant;
+package nl.smith.mathematics.configuration.constant;
 
 import nl.smith.mathematics.exception.StringToConstantConfigurationException;
 
@@ -22,24 +22,24 @@ public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> e
         throw new IllegalStateException();
     }
 
-    public Set<T> values() {
+    public Set<T> withSiblings() {
         return Arrays.stream(getEnumClass().getEnumConstants()).collect(Collectors.toCollection(TreeSet::new));
     }
 
     public Map<T, String> valuesWithDescriptions() {
-        return Arrays.stream(getEnumClass().getEnumConstants()).collect(Collectors.toMap(v -> v, EnumConstant::description));
+        return Arrays.stream(getEnumClass().getEnumConstants()).collect(Collectors.toMap(v -> v, EnumConstant::valueDescription));
     }
 
     public Set<String> valuesAsString() {
         return Arrays.stream(getEnumClass().getEnumConstants()).map(Enum::name).collect(Collectors.toCollection(TreeSet::new));
     }
 
-    public Map<String, String> valuesAsStringWithDescriptions() {
-        return Arrays.stream(getEnumClass().getEnumConstants()).collect(Collectors.toMap(Enum::name, EnumConstant::description));
+    public Map<String, String> withSiblingsAsStringWithDescriptions() {
+        return Arrays.stream(getEnumClass().getEnumConstants()).collect(Collectors.toMap(Enum::name, EnumConstant::valueDescription));
     }
 
     public void set(String stringValue) throws StringToConstantConfigurationException {
-        for (T value : values()) {
+        for (T value : withSiblings()) {
             if (value.name().equals(stringValue)) {
                 set(value);
                 return;
@@ -64,7 +64,7 @@ public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> e
                 this.description = description;
             }
 
-            public String description() {
+            public String valueDescription() {
                 return description;
             }
         }
@@ -80,7 +80,7 @@ public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> e
         }
 
         @Override
-        public String description() {
+        public String constantDescription() {
             return "Specification the way angles are specified.";
         }
 
@@ -104,7 +104,7 @@ public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> e
                 this.description = description;
             }
 
-            public String description() {
+            public String valueDescription() {
                 return description;
             }
         }
@@ -121,7 +121,7 @@ public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> e
         }
 
         @Override
-        public String description() {
+        public String constantDescription() {
             return "Specification whether rational numbers are normalized.";
         }
 
@@ -152,7 +152,7 @@ public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> e
                 this.description = description;
             }
 
-            public String description() {
+            public String valueDescription() {
                 return description;
             }
         }
@@ -169,7 +169,7 @@ public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> e
         }
 
         @Override
-        public String description() {
+        public String constantDescription() {
             return "Specification how rational numbers are displayed.";
         }
 
@@ -195,13 +195,21 @@ public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> e
 
             private final String description;
 
-            PredefinedType(String description, java.math.RoundingMode roundinMode) {
+            private final java.math.RoundingMode mathRoundingMode;
+
+            PredefinedType(String description, java.math.RoundingMode mathRoundingMode) {
                 this.description = description;
+                this.mathRoundingMode = mathRoundingMode;
             }
 
-            public String description() {
+            public String valueDescription() {
                 return description;
             }
+
+            public java.math.RoundingMode mathRoundingMode() {
+                return mathRoundingMode;
+            }
+
         }
 
         private static final RoundingMode instance = new RoundingMode();
@@ -216,7 +224,7 @@ public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> e
         }
 
         @Override
-        public String description() {
+        public String constantDescription() {
             return "Specification how numbers are rounded.";
         }
 

@@ -1,7 +1,8 @@
 package nl.smith.mathematics.validator.mathematicalfunctionargument;
 
 import nl.smith.mathematics.annotation.constraint.mathematicalfunctionargument.IsBetween;
-import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,8 +44,8 @@ class IsBetweenValidatorTest {
     @BeforeEach
     public void init() {
         RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
-        LOGGER.info("Setting rational number output type to {} ({})", outputPredefinedType.name(), outputPredefinedType.getDescription());
-        RationalNumberOutputType.set(outputPredefinedType);
+        LOGGER.info("Setting rational number output type to {} ({})", outputPredefinedType.name(), outputPredefinedType.valueDescription());
+        RationalNumberOutputType.value().set(outputPredefinedType);
     }
 
     @DisplayName("Checking if a validated number service method argument is between two a specified values including boundaries")

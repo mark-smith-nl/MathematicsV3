@@ -1,8 +1,8 @@
 package nl.smith.mathematics.numbertype;
 
-import nl.smith.mathematics.configuration.constant.RationalNumberNormalize;
-import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
-import nl.smith.mathematics.configuration.constant.RoundingMode;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberNormalize;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RoundingMode;
 import nl.smith.mathematics.util.RationalNumberUtil;
 
 import java.math.BigDecimal;
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberNormalize.PredefinedType.YES;
 import static nl.smith.mathematics.configuration.constant.NumberConstant.IntegerValueOf.Scale;
 
 /**
@@ -53,7 +54,7 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
         BigInteger n = rationalNumber.numerator;
         BigInteger d = rationalNumber.denominator;
 
-        if (Boolean.TRUE.equals(RationalNumberNormalize.get())) {
+        if (YES.equals(RationalNumberNormalize.value().get())) {
             BigInteger[] normalizedComponents = getNormalizedComponents(n, d);
             n = normalizedComponents[0];
             d = normalizedComponents[1];
@@ -77,7 +78,7 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
             denominator = denominator.abs();
         }
 
-        if (Boolean.TRUE.equals(RationalNumberNormalize.get())) {
+        if (YES.equals(RationalNumberNormalize.value().get())) {
             BigInteger[] normalizedComponents = getNormalizedComponents(numerator, denominator);
             numerator = normalizedComponents[0];
             denominator = normalizedComponents[1];
@@ -145,13 +146,13 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
     //TODO Test
     @Override
     public float floatValue() {
-        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), Scale.get(), RoundingMode.get()).floatValue();
+        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), Scale.value().get(), RoundingMode.value().get().mathRoundingMode()).floatValue();
     }
 
     //TODO Test
     @Override
     public double doubleValue() {
-        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), Scale.get(), RoundingMode.get()).doubleValue();
+        return (new BigDecimal(numerator)).divide(new BigDecimal(denominator), Scale.value().get(), RoundingMode.value().get().mathRoundingMode()).doubleValue();
     }
 
     @Override
@@ -296,7 +297,7 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
 
     @Override
     public String toString() {
-        return toString(RationalNumberOutputType.get());
+        return toString(RationalNumberOutputType.value().get());
     }
 
     public String toStringComponents() {
@@ -385,7 +386,7 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
     }
 
     public String toString(RationalNumberOutputType.PredefinedType outputPredefinedType) {
-        int scale = Scale.get();
+        int scale = Scale.value().get();
 
         String result;
         switch (outputPredefinedType) {

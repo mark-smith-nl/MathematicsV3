@@ -1,6 +1,7 @@
 package nl.smith.mathematics.controller;
 
-import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberAuxiliaryFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberGoniometricFunctions;
 import nl.smith.mathematics.mathematicalfunctions.implementation.rationalnumber.RationalNumberLogarithmicFunctions;
@@ -52,9 +53,9 @@ public class DefaultController {
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
 
-        Scale.set(scale);
+        Scale.value().set(scale);
         for (int i = 0; i <= maximumDegreeOfPolynomial; i++) {
-            TaylorDegreeOfPolynom.set(i);
+            TaylorDegreeOfPolynom.value().set(i);
             result.put(i, goniometricFunctions.sin(rationalNumber).toString());
         }
 
@@ -67,10 +68,10 @@ public class DefaultController {
         Map<Integer, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        RationalNumberOutputType.set(outputPredefinedType);
-        Scale.set(scale);
+        RationalNumberOutputType.value().set(outputPredefinedType);
+        Scale.value().set(scale);
         for (int i = 0; i < maximumDegreeOfPolynomial; i++) {
-            TaylorDegreeOfPolynom.set(i);
+            TaylorDegreeOfPolynom.value().set(i);
             result.put(i, logarithmicFunctions.exp(rationalNumber).toString());
         }
 
@@ -81,7 +82,7 @@ public class DefaultController {
     @ResponseBody
     public String faculty(@NotBlank(message = "Please specify a not blank number string") String rationalNumberAsString) {
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        RationalNumberOutputType.set(RationalNumberOutputType.PredefinedType.EXACT);
+        RationalNumberOutputType.value().set(RationalNumberOutputType.PredefinedType.EXACT);
 
         return auxiliaryFunctions.faculty(rationalNumber).toString();
     }
@@ -93,7 +94,7 @@ public class DefaultController {
         Map<RationalNumberOutputType.PredefinedType, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = new RationalNumber(numerator, denominator);
-        Scale.set(scale);
+        Scale.value().set(scale);
 
         RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
         result.put(outputPredefinedType, rationalNumber.toString(outputPredefinedType));
@@ -111,7 +112,7 @@ public class DefaultController {
         Map<RationalNumberOutputType.PredefinedType, String> result = new HashMap<>();
 
         RationalNumber rationalNumber = RationalNumber.valueOf(rationalNumberAsString);
-        Scale.set(scale);
+        Scale.value().set(scale);
 
         RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
         result.put(outputPredefinedType, rationalNumber.toString(outputPredefinedType));

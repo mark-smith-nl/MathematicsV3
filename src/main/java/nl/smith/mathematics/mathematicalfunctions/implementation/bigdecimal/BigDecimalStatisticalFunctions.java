@@ -1,6 +1,7 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
-import nl.smith.mathematics.configuration.constant.RoundingMode;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RoundingMode;
 import nl.smith.mathematics.mathematicalfunctions.definition.StatisticalFunctions;
 import nl.smith.mathematics.util.ObjectWrapper;
 import org.springframework.context.annotation.Bean;
@@ -45,7 +46,7 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 
 	@Override
 	public BigDecimal average(BigDecimal... numbers) {
-		return sibling.sum(numbers).divide(new BigDecimal(numbers.length), Scale.get(), RoundingMode.get());
+		return sibling.sum(numbers).divide(new BigDecimal(numbers.length), Scale.value().get(), RoundingMode.value().get().mathRoundingMode());
 	}
 
 	@Override
@@ -58,7 +59,7 @@ public class BigDecimalStatisticalFunctions extends StatisticalFunctions<BigDeci
 			sum.setValue(difference.multiply(difference).add(sum.getValue()));
 		});
 
-		return sum.getValue().divide(new BigDecimal(numbers.length), Scale.get(), RoundingMode.get());
+		return sum.getValue().divide(new BigDecimal(numbers.length), Scale.value().get(), RoundingMode.value().get().mathRoundingMode());
 	}
 
 	@Override

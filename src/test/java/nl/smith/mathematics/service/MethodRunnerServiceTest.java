@@ -1,6 +1,7 @@
 package nl.smith.mathematics.service;
 
-import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType;
 import nl.smith.mathematics.domain.MathematicalFunctionMethodMapping;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,8 +41,8 @@ public class MethodRunnerServiceTest {
     @BeforeEach
     public void init() {
         RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
-        LOGGER.info("Setting rational number output type to {} ({})", outputPredefinedType.name(), outputPredefinedType.getDescription());
-        RationalNumberOutputType.set(outputPredefinedType);
+        LOGGER.info("Setting rational number output type to {} ({})", outputPredefinedType.name(), outputPredefinedType.valueDescription());
+        RationalNumberOutputType.value().set(outputPredefinedType);
     }
 
     @Test

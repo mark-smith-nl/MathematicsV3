@@ -52,7 +52,7 @@ class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContain
             } else {
                 error = functionValue.subtract(expectedResult).divide(expectedResult).multiply(100).abs();
             }
-            assertEquals(-1, error.compareTo(RationalValueOf.MaximumError.get()));
+            assertEquals(-1, error.compareTo(RationalValueOf.MaximumError.value().get()));
         }
     }
 
@@ -84,7 +84,7 @@ class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContain
             } else {
                 error = functionValue.subtract(expectedResult).divide(expectedResult).multiply(100).abs();
             }
-             assertEquals(-1, error.compareTo(RationalValueOf.MaximumError.get()));
+             assertEquals(-1, error.compareTo(RationalValueOf.MaximumError.value().get()));
         }
     }
 

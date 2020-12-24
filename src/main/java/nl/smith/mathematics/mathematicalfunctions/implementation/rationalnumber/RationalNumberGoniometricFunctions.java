@@ -31,7 +31,7 @@ public class RationalNumberGoniometricFunctions extends GoniometricFunctions<Rat
     public RationalNumber sin(RationalNumber angle) {
         RationalNumber sum = ZERO;
 
-        int iMax = TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.value().get();
         if (iMax > 0) {
             RationalNumber T = angle;
             sum = sum.add(T);
@@ -54,7 +54,7 @@ public class RationalNumberGoniometricFunctions extends GoniometricFunctions<Rat
     public RationalNumber cos(RationalNumber angle) {
         RationalNumber sum = ONE;
 
-        int iMax = TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.value().get();
         if (iMax > 0) {
             RationalNumber T = ONE;
             RationalNumber squareAngle = angle.multiply(angle);

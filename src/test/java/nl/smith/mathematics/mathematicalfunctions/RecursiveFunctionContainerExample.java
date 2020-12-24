@@ -1,6 +1,7 @@
 package nl.smith.mathematics.mathematicalfunctions;
 
-import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class RecursiveFunctionContainerExample<S extends RecursiveFunctionContai
     @BeforeEach
     public void init() {
         RationalNumberOutputType.PredefinedType outputPredefinedType = RationalNumberOutputType.PredefinedType.COMPONENTS;
-        logger.info("Setting rational number output type to {} ({})", outputPredefinedType.name(), outputPredefinedType.getDescription());
-        RationalNumberOutputType.set(outputPredefinedType);
+        logger.info("Setting rational number output type to {} ({})", outputPredefinedType.name(), outputPredefinedType.valueDescription());
+        RationalNumberOutputType.value().set(outputPredefinedType);
     }
 }

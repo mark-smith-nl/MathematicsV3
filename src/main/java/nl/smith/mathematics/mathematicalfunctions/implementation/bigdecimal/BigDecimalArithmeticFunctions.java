@@ -1,6 +1,7 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
-import nl.smith.mathematics.configuration.constant.RoundingMode;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RoundingMode;
 import nl.smith.mathematics.mathematicalfunctions.definition.ArithmeticFunctions;
 import org.springframework.context.annotation.Bean;
 
@@ -46,7 +47,7 @@ public class BigDecimalArithmeticFunctions extends ArithmeticFunctions<BigDecima
 
 	@Override
 	public BigDecimal divideBy(@NotNull BigDecimal number, @NotNull BigDecimal divisor) {
-		return number.divide(divisor, Scale.get(), RoundingMode.get());
+		return number.divide(divisor, Scale.value().get(), RoundingMode.value().get().mathRoundingMode());
 	}
 
 }

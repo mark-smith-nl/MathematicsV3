@@ -1,6 +1,10 @@
 package nl.smith.mathematics.controller;
 
 import nl.smith.mathematics.configuration.constant.*;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.AngleType;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberNormalize;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RoundingMode;
 import nl.smith.mathematics.exception.StringToConstantConfigurationException;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import nl.smith.mathematics.util.ThreadContext;
@@ -37,10 +41,10 @@ public class RequestHeaderFilter extends OncePerRequestFilter {
     private static Map<Class<? extends ConstantConfiguration<?>>, Set<String>> getConstantConfigurationOptions() {
         Map<Class<? extends ConstantConfiguration<?>>, Set<String>> constantConfigurationOptions = new HashMap<>();
 
-        constantConfigurationOptions.put(AngleType.class, AngleType.values());
-        constantConfigurationOptions.put(RationalNumberNormalize.class, RationalNumberNormalize.values());
-        constantConfigurationOptions.put(RationalNumberOutputType.class, RationalNumberOutputType.values());
-        constantConfigurationOptions.put(RoundingMode.class, RoundingMode.values());
+        constantConfigurationOptions.put(AngleType.class, AngleType.value().valuesAsString());
+        constantConfigurationOptions.put(RationalNumberNormalize.class, RationalNumberNormalize.value().valuesAsString());
+        constantConfigurationOptions.put(RationalNumberOutputType.class, RationalNumberOutputType.value().valuesAsString());
+        constantConfigurationOptions.put(RoundingMode.class, RoundingMode.value().valuesAsString());
 
         return constantConfigurationOptions;
     }
@@ -49,12 +53,13 @@ public class RequestHeaderFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         processConstantConfigurationHeaders(request, response);
         processNumberTypeConfigurationHeader(request, response);
-        RationalNumberOutputType.set(RationalNumberOutputType.PredefinedType.EXACT);
+        RationalNumberOutputType.value().set(RationalNumberOutputType.PredefinedType.EXACT);
         chain.doFilter(request, response);
     }
 
     private void processConstantConfigurationHeaders(HttpServletRequest request, HttpServletResponse response) {
-        for (Class<? extends ConstantConfiguration<?>> configurationClass : configurationOptionsMap.keySet()) {
+        //TODO activate
+        /*for (Class<? extends ConstantConfiguration<?>> configurationClass : configurationOptionsMap.keySet()) {
             String headerName = configurationClass.getSimpleName();
             String headerValue = request.getHeader(headerName);
             if (headerValue != null && !headerValue.isEmpty() && configurationOptionsMap.get(configurationClass).contains(headerValue)) {
@@ -70,7 +75,7 @@ public class RequestHeaderFilter extends OncePerRequestFilter {
                 response.setHeader(headerName, ConstantConfiguration.getValue(configurationClass));
             }
 
-        }
+        }*/
     }
 
     private void processNumberTypeConfigurationHeader(HttpServletRequest request, HttpServletResponse response) {

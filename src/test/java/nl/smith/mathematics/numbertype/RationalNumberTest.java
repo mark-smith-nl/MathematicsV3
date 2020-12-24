@@ -1,6 +1,7 @@
 package nl.smith.mathematics.numbertype;
 
-import nl.smith.mathematics.configuration.constant.RationalNumberNormalize;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberNormalize;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,7 +12,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import java.math.BigInteger;
 import java.util.stream.Stream;
 
-import static nl.smith.mathematics.configuration.constant.RationalNumberNormalize.PredefinedType.NO;
+import static nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberNormalize.PredefinedType.NO;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +31,7 @@ public class RationalNumberTest {
 
     @Test
     void constructorUsingLongs() {
+        RationalNumberNormalize.value().set(NO);
         for (long n = -10; n <= 10; n++) {
             for (int d = -10; d <= 10; d++) {
                 long numerator = d < 0 ? -n : n;
@@ -71,7 +73,7 @@ public class RationalNumberTest {
 
     @Test
     void constructorUsingBigIntegers() {
-        RationalNumberNormalize.set(NO);
+        RationalNumberNormalize.value().set(NO);
         for (int n = -10; n <= 10; n++) {
             for (int d = -10; d <= 10; d++) {
                 long numerator = d < 0 ? -n : n;

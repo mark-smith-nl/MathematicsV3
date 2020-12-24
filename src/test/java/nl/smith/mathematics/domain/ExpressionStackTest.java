@@ -1,7 +1,8 @@
 package nl.smith.mathematics.domain;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
-import nl.smith.mathematics.configuration.constant.RationalNumberOutputType;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static nl.smith.mathematics.annotation.MathematicalFunction.Type.*;
+import static nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType.PredefinedType.COMPONENTS;
 import static nl.smith.mathematics.domain.ExpressionStack.State.*;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.TEN;
@@ -29,7 +31,7 @@ class ExpressionStackTest {
 
     @BeforeEach
     public void init() {
-        RationalNumberOutputType.set(RationalNumberOutputType.PredefinedType.COMPONENTS);
+        RationalNumberOutputType.value().set(COMPONENTS);
     }
 
     @Test

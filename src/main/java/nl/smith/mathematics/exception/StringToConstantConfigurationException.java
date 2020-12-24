@@ -1,7 +1,5 @@
 package nl.smith.mathematics.exception;
 
-import nl.smith.mathematics.configuration.constant.ConstantConfiguration;
-
 import java.util.Set;
 import java.util.stream.Collectors;
 

@@ -31,7 +31,7 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
         }
 
         if (number.compareTo(ONE) > 0) {
-            RationalNumber euler = RationalValueOf.Euler.get();
+            RationalNumber euler = RationalValueOf.Euler.value().get();
             RationalNumber[] divideAndRemainder = number.divideAndRemainder(ONE);
             RationalNumber i = divideAndRemainder[0];
             RationalNumber result = euler;
@@ -49,7 +49,7 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
 
         RationalNumber T = ONE;
         RationalNumber sum = T;
-        for (int i = 1; i <= TaylorDegreeOfPolynom.get(); i++) {
+        for (int i = 1; i <= TaylorDegreeOfPolynom.value().get(); i++) {
             T = T.multiply(number).divide(i);
             sum = sum.add(T);
         }
@@ -61,7 +61,7 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
     public RationalNumber ln(RationalNumber number) {
         RationalNumber sum = ZERO;
 
-        RationalNumber euler = RationalValueOf.Euler.get();
+        RationalNumber euler = RationalValueOf.Euler.value().get();
         while (number.compareTo(ONE) > 0) {
             sum = sum.add(ONE);
             number = number.divide(euler);
@@ -70,7 +70,7 @@ public class RationalNumberLogarithmicFunctions extends LogarithmicFunctions<Rat
         RationalNumber delta = ONE.subtract(number);
 
 
-        int iMax = TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.value().get();
         if (!delta.equals(ZERO) && iMax > 0) {
             sum = sum.subtract(delta);
             RationalNumber deltaRaiseToPowI = delta;

@@ -1,6 +1,7 @@
 package nl.smith.mathematics.mathematicalfunctions.implementation.bigdecimal;
 
-import nl.smith.mathematics.configuration.constant.RoundingMode;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
+import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RoundingMode;
 import nl.smith.mathematics.mathematicalfunctions.definition.GoniometricFunctions;
 import org.springframework.context.annotation.Bean;
 
@@ -32,10 +33,10 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
     public BigDecimal sin(BigDecimal angle) {
         BigDecimal sum = ZERO;
 
-        int iMax = TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.value().get();
         if (iMax > 0) {
-            Integer scale = Scale.get();
-            java.math.RoundingMode roundingMode = RoundingMode.get();
+            Integer scale = Scale.value().get();
+            java.math.RoundingMode roundingMode = RoundingMode.value().get().mathRoundingMode();
 
             BigDecimal T = angle;
             sum = sum.add(T);
@@ -53,10 +54,10 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
     public BigDecimal cos(BigDecimal angle) {
         BigDecimal sum = ONE;
 
-        int iMax = TaylorDegreeOfPolynom.get();
+        int iMax = TaylorDegreeOfPolynom.value().get();
         if (iMax > 0) {
-            Integer scale = Scale.get();
-            java.math.RoundingMode roundingMode = RoundingMode.get();
+            Integer scale = Scale.value().get();
+            java.math.RoundingMode roundingMode = RoundingMode.value().get().mathRoundingMode();
 
             BigDecimal T = ONE;
             BigDecimal squareAngle = angle.multiply(angle);
@@ -71,6 +72,6 @@ public class BigDecimalGoniometricFunctions extends GoniometricFunctions<BigDeci
 
     @Override
     public BigDecimal tan(BigDecimal angle) {
-        return sin(angle).divide(cos(angle), Scale.get(), RoundingMode.get());
+        return sin(angle).divide(cos(angle), Scale.value().get(), RoundingMode.value().get().mathRoundingMode());
     }
 }
