@@ -210,6 +210,7 @@ public class ExpressionDigestionService extends RecursiveValidatedService<Expres
         SimpleEntry<Character, Integer> openingAggregationTokenPair = openingAggregationTokenStack.peek();
         char openingAggregationToken;
         if (openingAggregationTokenPair == null) {
+
             String message = format("Missing matching open token '%c' for '%c' at position %d.%nDid you forget to begin the subexpression?",
                     getMatchingOpenToken(closeToken),
                     closeToken,

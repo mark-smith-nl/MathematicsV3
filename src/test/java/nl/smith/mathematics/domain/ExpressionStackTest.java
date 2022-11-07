@@ -1,7 +1,6 @@
 package nl.smith.mathematics.domain;
 
 import nl.smith.mathematics.annotation.MathematicalFunction;
-import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration;
 import nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType;
 import nl.smith.mathematics.numbertype.RationalNumber;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,15 +13,15 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static nl.smith.mathematics.annotation.MathematicalFunction.Type.*;
 import static nl.smith.mathematics.configuration.constant.EnumConstantConfiguration.RationalNumberOutputType.PredefinedType.COMPONENTS;
 import static nl.smith.mathematics.domain.ExpressionStack.State.*;
 import static nl.smith.mathematics.numbertype.RationalNumber.ONE;
 import static nl.smith.mathematics.numbertype.RationalNumber.TEN;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.of;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 class ExpressionStackTest {
@@ -66,25 +65,30 @@ class ExpressionStackTest {
     @Test
     public void setSibling_expressionStackStateInitialized() {
         IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.setSibling(getExpressionStack(CLOSED)));
-        assertEquals("Can not add an expression stack sibling to the current expression stack with state INITIALIZED.\nThe state of the current expression stack should be CLOSED.", actualException.getMessage());
+        assertEquals(format("Can not add an expression stack sibling to the current expression stack with state INITIALIZED.%nThe state of the current expression stack " +
+                "should be" +
+                " CLOSED."), actualException.getMessage());
     }
 
     @Test
     public void setSibling_expressionStackStateAppendable() {
         IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.addNumber(ONE).setSibling(getExpressionStack(CLOSED)));
-        assertEquals("Can not add an expression stack sibling to the current expression stack with state APPENDABLE.\nThe state of the current expression stack should be CLOSED.", actualException.getMessage());
+        assertEquals(format("Can not add an expression stack sibling to the current expression stack with state APPENDABLE.%nThe state of the current expression stack should be " +
+                "CLOSED."), actualException.getMessage());
     }
 
     @Test
     public void setSibling_expressionStackStateClosed_siblingStateInitialized() {
         IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.addNumber(ONE).close().setSibling(getExpressionStack(INITIALIZED)));
-        assertEquals("Can not add an expression stack sibling with state INITIALIZED to the current expression stack.\nThe state of the sibling expression stack should be CLOSED.", actualException.getMessage());
+        assertEquals(format("Can not add an expression stack sibling with state INITIALIZED to the current expression stack.%nThe state of the sibling expression stack should be" +
+                " CLOSED."), actualException.getMessage());
     }
 
     @Test
     public void setSibling_expressionStackStateClosed_siblingStateAppendable() {
         IllegalStateException actualException = assertThrows(IllegalStateException.class, () -> expressionStack.addNumber(ONE).close().setSibling(getExpressionStack(APPENDABLE)));
-        assertEquals("Can not add an expression stack sibling with state APPENDABLE to the current expression stack.\nThe state of the sibling expression stack should be CLOSED.", actualException.getMessage());
+        assertEquals(format("Can not add an expression stack sibling with state APPENDABLE to the current expression stack.%nThe state of the sibling expression stack should be " +
+                "CLOSED."), actualException.getMessage());
     }
 
     @Test

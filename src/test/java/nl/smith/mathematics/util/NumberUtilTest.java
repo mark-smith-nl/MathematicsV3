@@ -43,7 +43,7 @@ class NumberUtilTest {
                 Arguments.of("1", BigInteger.class, new BigInteger("1"), null),
                 Arguments.of("1", BigDecimal.class, new BigDecimal("1"), null),
                 Arguments.of("1", RationalNumber.class, RationalNumber.valueOf("1"), null),
-                Arguments.of("1", String.class, null , "Can not determine number value.\nSpecified class java.lang.String does not extend java.lang.Number")
+                Arguments.of("1", String.class, null , String.format("Can not determine number value.%nSpecified class java.lang.String does not extend java.lang.Number"))
         );
     }
 

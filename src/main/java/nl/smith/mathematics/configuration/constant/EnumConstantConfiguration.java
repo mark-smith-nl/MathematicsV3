@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 //TODO Javadoc
-public abstract class EnumConstantConfiguration<T extends Enum & EnumConstant> extends ConstantConfiguration<T> {
+public abstract class EnumConstantConfiguration<T extends Enum<?> & EnumConstant> extends ConstantConfiguration<T> {
 
     public EnumConstantConfiguration(Class<T> valueTypeClass) {
         super(valueTypeClass);

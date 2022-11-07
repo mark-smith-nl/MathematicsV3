@@ -82,7 +82,7 @@ public class MethodRunnerService {
                     .map(MathematicalFunctionMethodMapping::toString)
                     .collect(Collectors.joining("\n"));
 
-            throw new IllegalStateException("Duplicate mathematical method references found in multiple classes.\n" + error);
+            throw new IllegalStateException("Duplicate mathematical method references found in multiple classes.%n" + error);
         });
     }
 

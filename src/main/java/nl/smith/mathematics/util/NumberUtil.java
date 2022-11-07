@@ -29,7 +29,8 @@ public class NumberUtil {
         }
 
         if (!Number.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException(format("Can not determine number value.\nSpecified class %s does not extend %s", clazz.getCanonicalName(), Number.class.getCanonicalName()));
+            throw new IllegalArgumentException(format("Can not determine number value.%nSpecified class %s does not extend %s", clazz.getCanonicalName(),
+                    Number.class.getCanonicalName()));
         }
 
         return StringToObjectUtil.valueOf(stringNumber, clazz);

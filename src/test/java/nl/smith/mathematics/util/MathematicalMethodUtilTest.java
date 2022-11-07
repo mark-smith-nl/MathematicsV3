@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
+import static java.lang.String.format;
+import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -24,7 +26,7 @@ class MathematicalMethodUtilTest {
     void checkGenericsEnclosingClass_notDirectlyExtendingRecursiveFunctionContainer() {
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> MathematicalMethodUtil.checkGenericsEnclosingClass(String.class));
 
-        assertEquals("Improper use of generics.\n" +
+        assertEquals("Improper use of generics." + lineSeparator() +
                 "Define your class as public abstract <N extends Number, S extends String> extends RecursiveFunctionContainer<N, S>", exception.getMessage());
     }
 
@@ -70,8 +72,8 @@ class MathematicalMethodUtilTest {
         Method method = clazz.getDeclaredMethod("four", BigDecimal.class);
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> MathematicalMethodUtil.checkReturnType(method));
 
-        assertEquals("The return type of AbstractExampleRecursiveFunctionContainer.four is not valid.\n" +
-                "It should be: T or T[] with <T extends Number>", exception.getMessage());
+        assertEquals(format("The return type of AbstractExampleRecursiveFunctionContainer.four is not valid.%n" +
+                "It should be: T or T[] with <T extends Number>"), exception.getMessage());
     }
 
     @Test

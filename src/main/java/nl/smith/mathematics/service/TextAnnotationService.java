@@ -11,6 +11,8 @@ import javax.validation.constraints.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.System.lineSeparator;
+
 /**
  * Service to annotate texts.
  * <pre>
@@ -74,7 +76,7 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
         List<String> annotatedTextLines = new ArrayList<>();
         ObjectWrapper<Integer> offSet = new ObjectWrapper<>(0);
         lines.forEach(line -> processLine(line, positions, offSet, annotatedTextLines));
-        return String.join("\n", annotatedTextLines);
+        return String.join(lineSeparator(), annotatedTextLines);
     }
 
     private static List<String> split(String text) {

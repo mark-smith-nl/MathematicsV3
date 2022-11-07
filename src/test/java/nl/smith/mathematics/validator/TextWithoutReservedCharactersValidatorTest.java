@@ -14,6 +14,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -40,10 +41,10 @@ class TextWithoutReservedCharactersValidatorTest {
         Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
         assertTrue(constraintViolationOption.isPresent());
         ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
-            assertEquals("The provided text has reserved characters at position(s): 2, 5, 8, 10.\n" +
-                    "Do not use the characters in the set {@, !, #, $, %, &, =, ?} since they have a special meaning.\n" +
-                    "Text:\n" +
-                    "1+%2*$a+#4?", constraintViolation.getMessage());
+            assertEquals(String.format("The provided text has reserved characters at position(s): 2, 5, 8, 10.%n" +
+                    "Do not use the characters in the set {@, !, #, $, %%, &, =, ?} since they have a special meaning.%n" +
+                    "Text:%n" +
+                    "1+%%2*$a+#4?"), constraintViolation.getMessage());
 
     }
 
@@ -56,10 +57,10 @@ class TextWithoutReservedCharactersValidatorTest {
         Optional<ConstraintViolation<?>> constraintViolationOption = constraintViolations.stream().findFirst();
         assertTrue(constraintViolationOption.isPresent());
         ConstraintViolation<?> constraintViolation = constraintViolationOption.get();
-        assertEquals("The provided text has reserved characters at position(s): 2, 10.\n" +
-                "Do not use the characters in the set {@, %, &, ?} since they have a special meaning.\n" +
-                "Text:\n" +
-                "1+%2*$a+#4?", constraintViolation.getMessage());
+        assertEquals(format("The provided text has reserved characters at position(s): 2, 10.%n" +
+                "Do not use the characters in the set {@, %%, &, ?} since they have a special meaning.%n" +
+                "Text:%n" +
+                "1+%%2*$a+#4?"), constraintViolation.getMessage());
 
     }
 
@@ -78,4 +79,5 @@ class TextWithoutReservedCharactersValidatorTest {
         public void validatedMethodUsingTextWithoutReservedCharactersCharactersSpecified(@TextWithoutReservedCharacters(reservedCharacters = {'@', '%', '&', '?'}) String text) {
             LOGGER.debug("Calling method validatedMethodUsingTextWithoutReservedCharactersCharactersSpecified");}
     }
+
 }

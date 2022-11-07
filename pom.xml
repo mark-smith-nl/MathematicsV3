@@ -87,6 +87,14 @@
 
         <!-- End Only for development. Remove this -->
 
+        <!-- Start Only for development. Remove this Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- End Only for development. Remove this -->
     </dependencies>
 
     <build>

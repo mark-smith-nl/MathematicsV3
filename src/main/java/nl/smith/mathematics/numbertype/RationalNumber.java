@@ -103,7 +103,9 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
     }
 
 
-    /** Returns the current instance if it is normalized else returns a new normalized rational number instance.*/
+    /**
+     * Returns the current instance if it is normalized else returns a new normalized rational number instance.
+     */
     public RationalNumber getNormalized() {
         BigInteger[] normalizedComponents = getNormalizedComponents(numerator, denominator);
 
@@ -133,7 +135,9 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
         return numerator.divideAndRemainder(denominator)[0].intValue();
     }
 
-    /** The truncated value as {@link java.math.BigInteger} */
+    /**
+     * The truncated value as {@link java.math.BigInteger}
+     */
     public BigInteger bigIntValue() {
         return numerator.divideAndRemainder(denominator)[0];
     }
@@ -194,6 +198,7 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
 
         return subtract(new RationalNumber(subtrahend));
     }
+
     @Override
     public RationalNumber subtract(RationalNumber subtrahend) {
         if (subtrahend == null) {
@@ -359,9 +364,7 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
                 if (positionStartRepetition != null) {
                     int totalDecimalsToAppend = scale - fractionalPart.length();
                     String repeatingFractionalPart = fractionalPart.substring(positionStartRepetition);
-                    for (int i = 0; i < totalDecimalsToAppend / repeatingFractionalPart.length(); i++) {
-                        fractionalPart.append(repeatingFractionalPart);
-                    }
+                    fractionalPart.append(repeatingFractionalPart.repeat(Math.max(0, totalDecimalsToAppend / repeatingFractionalPart.length())));
 
                     fractionalPart.append(repeatingFractionalPart, 0, totalDecimalsToAppend % repeatingFractionalPart.length());
                     remainder = BigInteger.ZERO;
@@ -390,28 +393,19 @@ public class RationalNumber extends ArithmeticOperations<RationalNumber> impleme
 
         String result;
         switch (outputPredefinedType) {
-            case COMPONENTS:
-                result = toStringComponents();
-                break;
-            case EXACT:
-                result = toStringExact();
-                break;
-            case COMPONENTS_AND_EXACT:
-                result = toStringComponents() + " ---> " + toStringExact();
-                break;
-            case TRUNCATED:
-                result = toStringTruncated(scale);
-                break;
-            case ALL:
+            case COMPONENTS -> result = toStringComponents();
+            case EXACT -> result = toStringExact();
+            case COMPONENTS_AND_EXACT -> result = toStringComponents() + " ---> " + toStringExact();
+            case TRUNCATED -> result = toStringTruncated(scale);
+            case ALL -> {
                 String stringExact = toStringExact();
                 result = toStringComponents() + " ---> " + toStringExact();
                 String stringTruncated = toStringTruncated(scale);
                 if (!stringExact.equals(stringTruncated)) {
-                    result = result + " ~ " + stringTruncated + " (scale = "+ scale + ")";
+                    result = result + " ~ " + stringTruncated + " (scale = " + scale + ")";
                 }
-                break;
-            default:
-                result = format("toString(%s) is not implemented", outputPredefinedType.name());
+            }
+            default -> result = format("toString(%s) is not implemented", outputPredefinedType.name());
         }
 
         return result;

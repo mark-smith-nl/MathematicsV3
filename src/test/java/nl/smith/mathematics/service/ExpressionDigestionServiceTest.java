@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -82,12 +83,11 @@ public class ExpressionDigestionServiceTest {
     }
 
     @DisplayName("Testing digest(String) with valid arguments but invalid use of open/close tokens")
-    @ParameterizedTest
-    @MethodSource("getRawExpression_invalidCloseTag")
+    @ParameterizedTest(name = "{index}: {0} improper use of aggregation tag")
+    @MethodSource()
     public void getRawExpression_invalidCloseTag(String text, InValidExpressionStringException expectedInValidExpressionStringException) {
         InValidExpressionStringException exception = assertThrows(InValidExpressionStringException.class, () -> expressionDigestionService.getRawExpression(text));
-
-        assertEquals(expectedInValidExpressionStringException.getSimpleMessage(), exception.getSimpleMessage());
+        assertEquals(expectedInValidExpressionStringException, exception);
     }
 
     @DisplayName("Testing digest(String) with valid arguments but with uninitialized/empty/blank sibling or subexpressions")
@@ -162,10 +162,10 @@ public class ExpressionDigestionServiceTest {
 
                 ))),
                 Arguments.of("2+3!@#$%&?", new HashSet<>(Collections.singletonList(
-                        new AbstractMap.SimpleEntry<>("getRawExpression.text", "The provided text has reserved characters at position(s): 3, 4, 5, 6, 7, 8, 9.\n" +
-                                "Do not use the characters in the set {@, !, #, $, %, &, =, ?} since they have a special meaning.\n" +
-                                "Text:\n" +
-                                "2+3!@#$%&?")
+                        new AbstractMap.SimpleEntry<>("getRawExpression.text", format("The provided text has reserved characters at position(s): 3, 4, 5, 6, 7, 8, 9.%n" +
+                                "Do not use the characters in the set {@, !, #, $, %%, &, =, ?} since they have a special meaning.%n" +
+                                "Text:%n" +
+                                "2+3!@#$%%&?"))
                 )))
         );
     }
@@ -174,41 +174,56 @@ public class ExpressionDigestionServiceTest {
         return Stream.of(
                 // Unmatched close token at position 6
                 Arguments.of("2 + 3 )",
-                        new InValidExpressionStringException("Missing matching open token '(' for ')' at position 6.\nDid you forget to begin the subexpression?", "Not specified annotated expression")),
+                        new InValidExpressionStringException(format("Missing matching open token '(' for ')' at position 6.%nDid you forget to begin the subexpression?"),
+                                format("2 + 3 )¶%n\u001B[31m      ^ \u001B[0m"))),
                 // Unmatched close token at position 13 (second line)
-                Arguments.of("2 + 3 *\n\t\t\t4+9)+8",
-                        new InValidExpressionStringException("Missing matching open token '(' for ')' at position 14.\nDid you forget to begin the subexpression?", "Not specified annotated expression")),
+                Arguments.of("2 + 3 * 4+9)+8",
+                        new InValidExpressionStringException(format("Missing matching open token '(' for ')' at position 11.%nDid you forget to begin the subexpression?"),
+                                format("2 + 3 * 4+9)+8¶%n\u001B[31m           ^   \u001B[0m"))),
                 // Wrong close token at position 13
                 Arguments.of("2 + 3 * (6 - 2} + 4",
-                        new InValidExpressionStringException("Wrong open token '(' for closing token '}' at position 14.\nYou should close the subexpression with ')' instead of '}'.", "Not specified annotated expression")),
+                        new InValidExpressionStringException(format("Wrong open token '(' for closing token '}' at position 14.%nYou should close the subexpression with ')' " +
+                                "instead of '}'."),
+                                format("2 + 3 * (6 - 2} + 4¶%n\u001B[31m              ^     \u001B[0m"))),
                 Arguments.of("2 + {3 * ( (6 -2) + 4",
-                        new InValidExpressionStringException("Encountered unmatched open tokens at positions 4, 9.\nDid you forget to close some subexpressions?", "Not specified annotated expression"))
-        );
+                        new InValidExpressionStringException(format("Encountered unmatched open tokens at positions 4, 9.%nDid you forget to close some subexpressions?"),
+                                format("2 + {3 * ( (6 -2) + 4¶%n\u001B[31m    ^    ^            \u001B[0m"))));
     }
 
     private static Stream<Arguments> getRawExpression_uninitializedOrEmptyExpression() {
-        return Stream.of(
+        Stream<Arguments> of = Stream.of(
                 // Expected expression before position 8
-                Arguments.of("1 + sum(,4+5)", new InValidExpressionStringException("Expected an expression before position 8.\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                Arguments.of("1 + sum(,4+5)", new InValidExpressionStringException(format("Expected an expression before position 8.%nDid you forget to specify the " +
+                        "expression?"), "Not specified annotated expression")),
                 // Blank sibling expression at position [8-8]
-                Arguments.of("1 + sum( ,4+5)", new InValidExpressionStringException("Blank expression from [8-8].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                Arguments.of("1 + sum( ,4+5)", new InValidExpressionStringException(format("Blank expression from [8-8].%nDid you forget to specify the expression?"), "Not " +
+                        "specified annotated expression")),
                 // Blank sibling expression at position [8-9]
-                Arguments.of("1 + sum(  ,4+5)", new InValidExpressionStringException("Blank expression from [8-9].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                Arguments.of("1 + sum(  ,4+5)", new InValidExpressionStringException(format("Blank expression from [8-9].%nDid you forget to specify the expression?"), "Not " +
+                        "specified annotated expression")),
                 // Blank sibling expression (tab) at position [8-8]
-                Arguments.of("1 + sum(\t,4+5)", new InValidExpressionStringException("Blank expression from [8-8].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                Arguments.of("1 + sum(\t,4+5)", new InValidExpressionStringException(format("Blank expression from [8-8].%nDid you forget to specify the expression?"), "Not " +
+                        "specified annotated expression")),
                 // Blank sibling expression (two tabs) at position [8-9]
-                Arguments.of("1 + sum(\t\t,4+5)", new InValidExpressionStringException("Blank expression from [8-9].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                Arguments.of("1 + sum(\t\t,4+5)", new InValidExpressionStringException(format("Blank expression from [8-9].%nDid you forget to specify the expression?"), "Not " +
+                        "specified annotated expression")),
                 // Blank sibling expression (<CR> followed by two tabs) at position [8-9]
-                Arguments.of("1 + sum(\n\t\t,4+5)", new InValidExpressionStringException("Blank expression from [8-10].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                Arguments.of("1 + sum(\n\t\t,4+5)", new InValidExpressionStringException(format("Blank expression from [8-10].%nDid you forget to specify the expression?"), "Not" +
+                        " specified annotated expression")),
                 // Expected expression before position 5
-                Arguments.of("1 + ()", new InValidExpressionStringException("Expected an expression before position 5.\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                Arguments.of("1 + ()", new InValidExpressionStringException(format("Expected an expression before position 5.%nDid you forget to specify the expression?"), "Not " +
+                        "specified annotated expression")),
                 // Blank subexpression at position [9-11]
-                Arguments.of("1 + (   {   } )", new InValidExpressionStringException("Blank expression from [9-11].\nDid you forget to specify the expression?", "Not specified annotated expression")),
+                Arguments.of("1 + (   {   } )", new InValidExpressionStringException(format("Blank expression from [9-11].%nDid you forget to specify the expression?"), "Not " +
+                        "specified annotated expression")),
                 // Blank subexpression with one subexpression at position [9-11]
-                Arguments.of("1 + (   { 3  } )", new InValidExpressionStringException("Essentially blank expression (contains only subexpressions) from [5-15].\nRemove unnecessary aggregation tokens and blank characters.", "Not specified annotated expression")),
+                Arguments.of("1 + (   { 3  } )", new InValidExpressionStringException(format("Essentially blank expression (contains only subexpressions) from [5-15].%nRemove " +
+                        "unnecessary aggregation tokens and blank characters."), "Not specified annotated expression")),
                 // Blank subexpression with one subexpression at position [9-18]
-                Arguments.of("1 + (   { 3  } (4))", new InValidExpressionStringException("Essentially blank expression (contains only subexpressions) from [5-18].\nRemove unnecessary aggregation tokens and blank characters.", "Not specified annotated expression"))
+                Arguments.of("1 + (   { 3  } (4))", new InValidExpressionStringException(format("Essentially blank expression (contains only subexpressions) from [5-18].%nRemove" +
+                        " unnecessary aggregation tokens and blank characters."), "Not specified annotated expression"))
         );
+        return of;
     }
 
     private static Stream<Arguments> getRawExpression() {
@@ -220,5 +235,4 @@ public class ExpressionDigestionServiceTest {
                 Arguments.of("(1 + 2) * (1 + 3) * {6 - 4 / (2 - 4)}, 1 + 2, 3 + 4", 51)
         );
     }
-
 }

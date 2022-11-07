@@ -8,10 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -26,7 +23,7 @@ import static java.lang.String.format;
  *
  * Setting and retrieving values can be done using:
  *          - static methods in the concrete implementing class but also
- *          - in the abstract class by the static method {@link ConstantConfiguration#get(Class)}.
+ *          - in the abstract class by the static method {@link ConstantConfiguration#get()}.
  *
  * Values are enums either:
  *          - stateless (only the enum value is specified to set the value) or
@@ -99,9 +96,9 @@ public abstract class ConstantConfiguration<T> {
             }
         }
         if (StringUtils.isEmpty(value)) {
-            throw new IllegalStateException(format("\nNo default value specified for property %s." +
-                    "\nPlease specify this value as a system property -D%1$s=<value>" +
-                    "\nor specify it as %1$s=<value> in file %2$s.", propertyName, PROPERTY_FILE_NAME));
+            throw new IllegalStateException(format("%nNo default value specified for property %s." +
+                    "%nPlease specify this value as a system property -D%1$s=<value>" +
+                    "%nor specify it as %1$s=<value> in file %2$s.", propertyName, PROPERTY_FILE_NAME));
         }
 
         return StringToObjectUtil.valueOf(value, valueTypeClass);

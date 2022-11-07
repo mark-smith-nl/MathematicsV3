@@ -39,7 +39,7 @@ public class MathematicalMethodUtil {
         }
 
         if (!valid) {
-            throw new IllegalStateException(format("Improper use of generics.\n" +
+            throw new IllegalStateException(format("Improper use of generics.%n" +
                             "Define your class as public abstract <N extends %s, S extends %s> extends %s<N, S>",
                     Number.class.getSimpleName(),
                     clazz.getSimpleName(),
@@ -135,7 +135,7 @@ public class MathematicalMethodUtil {
         }
 
         if (!valid) {
-            throw new IllegalStateException(format("The argument types of %s.%s are not valid.\n" +
+            throw new IllegalStateException(format("The argument types of %s.%s are not valid.%n" +
                             "It should be: T or T[] with <T extends %s>",
                     method.getDeclaringClass().getSimpleName(),
                     method.getName(),
