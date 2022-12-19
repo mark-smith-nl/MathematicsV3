@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
-public abstract class RecursiveFunctionContainer<N extends Number, S extends RecursiveFunctionContainer<N, ?>> extends RecursiveValidatedService<S> {
+public abstract class RecursiveFunctionContainer<N extends Number, S extends RecursiveFunctionContainer<N, S>> extends RecursiveValidatedService<S> {
 
     /** The annotation that describes the container. */
     protected final MathematicalFunctionContainer annotation;

@@ -20,7 +20,7 @@ import static nl.smith.mathematics.numbertype.RationalNumber.ZERO;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContainerExample<RationalNumberLogarithmicFunctions> {
+class RecursiveFunctionContainerExampleTest extends RecursiveFunctionContainerExample<RationalNumberLogarithmicFunctions> {
 
     @Test
     void getNumberType() {
@@ -28,7 +28,7 @@ class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContain
     }
 
     @ParameterizedTest
-    @MethodSource("exp")
+    @MethodSource()
     void exp(RationalNumber argument, RationalNumber expectedResult, String expectedConstraintMessage) {
         if (expectedConstraintMessage != null) {
             ConstraintViolationException exception = assertThrows(ConstraintViolationException.class, () -> functionContainer().ln(argument));
@@ -58,7 +58,7 @@ class RationalNumberLogarithmicFunctionsExample extends RecursiveFunctionContain
 
 
     @ParameterizedTest
-    @MethodSource("ln")
+    @MethodSource()
     @Timeout(20)
     void ln(RationalNumber argument, RationalNumber expectedResult, String expectedConstraintMessage) {
         if (expectedConstraintMessage != null) {

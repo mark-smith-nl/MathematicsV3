@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,7 +24,6 @@ import static java.lang.System.lineSeparator;
  *  - Containing empty lines
  *  - Containing lines ending with white spaces
  * </pre>
- * Invalid texts:
  */
 @Service
 public class TextAnnotationService extends RecursiveValidatedService<TextAnnotationService> {
@@ -61,7 +62,7 @@ public class TextAnnotationService extends RecursiveValidatedService<TextAnnotat
         return sibling.getAnnotatedText(text, Arrays.stream(position).boxed().collect(Collectors.toSet()));
     }
 
-    @CharacterPositionsInRange()
+  //  @CharacterPositionsInRange()
     public String getAnnotatedText(@NotBlank(message = "Please specify a string to annotate.") @TextWithoutLinesWithTrailingBlanks String text,
                                     @NotEmpty(message = "Please specify one or more positions at which the text should be annotated.") Set<@NotNull @Min(value = 0, message = "Negative positions (${validatedValue}) are not allowed.") Integer> positions) {
         return sibling.getAnnotatedText(split(text), positions);

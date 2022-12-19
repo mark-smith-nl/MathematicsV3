@@ -2,39 +2,39 @@ package nl.smith.mathematics.numbertype;
 
 import java.math.BigInteger;
 
-public abstract class ArithmeticOperations<T extends Number> extends Number {
+public interface ArithmeticOperations<T extends Number> {
 
-    public abstract T add(long augend) ;
+    abstract T add(long augend) ;
 
-    public abstract T add(BigInteger augend) ;
+    abstract T add(BigInteger augend) ;
 
-    public abstract T add(T augend) ;
+    abstract T add(T augend) ;
 
-    public abstract T subtract(long augend) ;
+    abstract T subtract(long augend) ;
 
-    public abstract T subtract(BigInteger augend) ;
+    abstract T subtract(BigInteger augend) ;
 
-    public abstract T subtract(T augend) ;
+    abstract T subtract(T augend) ;
 
-    public abstract T multiply(long multiplicand);
+    abstract T multiply(long multiplicand);
 
-    public abstract T multiply(BigInteger multiplicand);
+    abstract T multiply(BigInteger multiplicand);
 
-    public abstract T multiply(T multiplicand);
+    abstract T multiply(T multiplicand);
 
-    public abstract T divide(long divisor);
+    abstract T divide(long divisor);
 
-    public abstract T divide(BigInteger divisor);
+    abstract T divide(BigInteger divisor);
 
-    public abstract T divide(T divisor);
+    abstract T divide(T divisor);
 
-    public abstract T negate();
+    abstract T negate();
 
-    public abstract T abs();
+    abstract T abs();
     //TODO Tests
-    public abstract T[] divideAndRemainder(T divisor);
+    abstract T[] divideAndRemainder(T divisor);
     //TODO Tests
-    public abstract boolean isNaturalNumber();
+    abstract boolean isNaturalNumber();
     //TODO Tests
     /**
      * Returns the signum function of this {@code BigDecimal}.
@@ -42,6 +42,6 @@ public abstract class ArithmeticOperations<T extends Number> extends Number {
      * @return -1, 0, or 1 as the value of this {@code BigDecimal}
      *         is negative, zero, or positive.
      */
-    public abstract int signum();
+    abstract int signum();
 
 }

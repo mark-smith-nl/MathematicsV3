@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import static nl.smith.mathematics.annotation.MathematicalFunction.Type.*;
 
 @MathematicalFunctionContainer(name = "Arithmetic functions", description = "Arithmetic methods: add, subtract, multiply and divide")
-public abstract class ArithmeticFunctions<N extends Number, S extends ArithmeticFunctions<N, ?>> extends RecursiveFunctionContainer<N, S> {
+public abstract class ArithmeticFunctions<N extends Number, S extends ArithmeticFunctions<N, S>> extends RecursiveFunctionContainer<N, S> {
 
     public ArithmeticFunctions() {
         super(ArithmeticFunctions.class);

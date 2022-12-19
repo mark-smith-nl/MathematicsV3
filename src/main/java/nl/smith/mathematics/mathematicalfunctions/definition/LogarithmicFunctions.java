@@ -8,7 +8,7 @@ import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import javax.validation.constraints.NotNull;
 
 @MathematicalFunctionContainer(name = "Logarithmic methods", description = "Logarithmic methods: exp, ln, power, sqrt")
-public abstract class LogarithmicFunctions<N extends Number, S extends LogarithmicFunctions<N, ?>> extends RecursiveFunctionContainer<N, S> {
+public abstract class LogarithmicFunctions<N extends Number, S extends LogarithmicFunctions<N, S>> extends RecursiveFunctionContainer<N, S> {
 
   public LogarithmicFunctions() {
     super(LogarithmicFunctions.class);

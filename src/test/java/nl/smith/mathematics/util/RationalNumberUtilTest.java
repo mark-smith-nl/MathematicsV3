@@ -42,15 +42,15 @@ public class RationalNumberUtilTest {
         assertEquals(RationalNumberUtil.NOT_A_NUMBER_MESSAGE, exception.getMessage());
     }
 
-    @DisplayName("Testing valid numbers as described by @MethodSource(\"numbers\"")
-    @ParameterizedTest
+    @DisplayName("Testing valid numbers")
+    @ParameterizedTest(name = "{index}: {0} should be an valid number")
     @MethodSource("numbers")
     void assertIsNumber_legalNumbers(String numberString) {
         RationalNumberUtil.assertIsNumber(numberString);
     }
 
-    @DisplayName("Testing valid numbers as described by @MethodSource(\"notNumbers\"")
-    @ParameterizedTest
+    @DisplayName("Testing invalid numbers")
+    @ParameterizedTest(name = "{index}: {0} should be an invalid number")
     @MethodSource("notNumbers")
     void assertIsNumber_notNumbers(String numberString) {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> RationalNumberUtil.assertIsNumber(numberString));

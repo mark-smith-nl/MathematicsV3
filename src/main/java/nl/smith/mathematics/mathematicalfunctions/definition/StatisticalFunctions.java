@@ -7,7 +7,7 @@ import nl.smith.mathematics.mathematicalfunctions.RecursiveFunctionContainer;
 import javax.validation.constraints.NotNull;
 
 @MathematicalFunctionContainer(name = "Statistical methods", description = "Statistical methods: mean, standard deviation, maximum, minimum")
-public abstract class StatisticalFunctions<N extends Number, S extends StatisticalFunctions<N, ?>> extends RecursiveFunctionContainer<N, S> {
+public abstract class StatisticalFunctions<N extends Number, S extends StatisticalFunctions<N, S>> extends RecursiveFunctionContainer<N, S> {
 
     public StatisticalFunctions() {
         super(StatisticalFunctions.class);
